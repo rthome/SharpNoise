@@ -6,7 +6,7 @@ using System;
 namespace SharpNoise.Tests
 {
     [TestClass]
-    class ModuleTests
+    public class ModuleTests
     {
         [TestMethod]
         public void GetSourceModuleTest()
@@ -28,7 +28,7 @@ namespace SharpNoise.Tests
 
         [TestMethod]
         [ExpectedException(typeof(NoModuleException))]
-        public void InvalidGetSourceModule1()
+        public void InvalidGetSourceModule_NoModule_Test()
         {
             var module = new Abs();
             module.GetSourceModule(0);
@@ -36,7 +36,7 @@ namespace SharpNoise.Tests
 
         [TestMethod]
         [ExpectedException(typeof(IndexOutOfRangeException))]
-        public void InvalidGetSourceModule2()
+        public void InvalidGetSourceModule_HighIndex_Test()
         {
             var module = new Abs();
             module.GetSourceModule(15);
@@ -44,7 +44,7 @@ namespace SharpNoise.Tests
 
         [TestMethod]
         [ExpectedException(typeof(IndexOutOfRangeException))]
-        public void InvalidGetSourceModule3()
+        public void InvalidGetSourceModule_NegativeIndex_Test()
         {
             var module = new Abs();
             module.GetSourceModule(-1);

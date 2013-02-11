@@ -1,4 +1,6 @@
-﻿namespace SharpNoise.Utilities
+﻿using System;
+
+namespace SharpNoise.Utilities
 {
     /// <summary>
     /// Defines a color
@@ -11,7 +13,7 @@
     /// channel has a value of 0, the color is completely transparent.  If the
     /// alpha channel has a value of 255, the color is completely opaque.
     /// </remarks>
-    public struct Color
+    public struct Color : IEquatable<Color>
     {
         /// <summary>
         /// Gets the red color channel
@@ -85,6 +87,19 @@
                 BlendChannel(color0.Blue, color1.Blue, alpha),
                 BlendChannel(color0.Alpha, color1.Alpha, alpha)
             );
+        }
+
+        public bool Equals(Color other)
+        {
+            return Red == other.Red 
+                && Green == other.Green 
+                && Blue == other.Blue 
+                && Alpha == other.Alpha;
+        }
+
+        public override string ToString()
+        {
+            return String.Format("<Color {0} {1} {2} * {3}>", Red, Green, Blue, Alpha);
         }
     }
 }
