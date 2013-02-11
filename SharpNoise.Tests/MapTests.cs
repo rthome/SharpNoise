@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using SharpNoise.Builders;
 using SharpNoise.Modules;
@@ -6,18 +6,18 @@ using SharpNoise.Utilities;
 
 namespace SharpNoise.Tests
 {
-    [TestFixture]
+    [TestClass]
     class MapTests
     {
         NoiseMap map;
 
-        [SetUp]
+        [TestInitialize]
         public void SetUp()
         {
             map = new NoiseMap(2, 2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetSetValueTest()
         {
             var expected = 99f;
@@ -27,7 +27,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(expected, actual);
         }
 
-        [Test]
+        [TestMethod]
         public void BorderValueTest()
         {
             var expected = 1f;
@@ -45,7 +45,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(expected, map.GetValue(2, 2));
         }
 
-        [Test]
+        [TestMethod]
         public void ClearTest()
         {
             var expected = 5f;
@@ -55,7 +55,7 @@ namespace SharpNoise.Tests
                     Assert.AreEqual(expected, value);
         }
 
-        [Test]
+        [TestMethod]
         public void LineReaderTest()
         {
             var builder = new CylinderNoiseMapBuilder();

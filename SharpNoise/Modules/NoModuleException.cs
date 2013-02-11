@@ -5,6 +5,7 @@ namespace SharpNoise.Modules
     /// <summary>
     /// The exception that indicates that a module is missing
     /// </summary>
+    [Serializable]
     public class NoModuleException : Exception
     {
         /// <summary>
