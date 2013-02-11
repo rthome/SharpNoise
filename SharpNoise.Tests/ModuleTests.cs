@@ -1,14 +1,14 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using SharpNoise.Modules;
 using System;
 
 namespace SharpNoise.Tests
 {
-    [TestFixture]
+    [TestClass]
     class ModuleTests
     {
-        [Test]
+        [TestMethod]
         public void GetSourceModuleTest()
         {
             var source0 = new Constant();
@@ -26,7 +26,7 @@ namespace SharpNoise.Tests
             Assert.AreSame(module.Control, module.GetSourceModule(2));
         }
 
-        [Test]
+        [TestMethod]
         [ExpectedException(typeof(NoModuleException))]
         public void InvalidGetSourceModule1()
         {
@@ -34,7 +34,7 @@ namespace SharpNoise.Tests
             module.GetSourceModule(0);
         }
 
-        [Test]
+        [TestMethod]
         [ExpectedException(typeof(IndexOutOfRangeException))]
         public void InvalidGetSourceModule2()
         {
@@ -42,7 +42,7 @@ namespace SharpNoise.Tests
             module.GetSourceModule(15);
         }
 
-        [Test]
+        [TestMethod]
         [ExpectedException(typeof(IndexOutOfRangeException))]
         public void InvalidGetSourceModule3()
         {
@@ -50,7 +50,7 @@ namespace SharpNoise.Tests
             module.GetSourceModule(-1);
         }
 
-        [Test]
+        [TestMethod]
         public void AbsTest()
         {
             var source = new Constant() { Value = -1 };
@@ -59,7 +59,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(Math.Abs(source.GetValue(0, 0, 0)), module.GetValue(0, 0, 0));
         }
 
-        [Test]
+        [TestMethod]
         public void AddTest()
         {
             var source = new Constant() { Value = 5D };
@@ -68,7 +68,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(2D * source.GetValue(0, 0, 0), adder.GetValue(0, 0, 0));
         }
 
-        [Test]
+        [TestMethod]
         public void MaxTest()
         {
             var min = 0D;
@@ -81,7 +81,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(max, module.GetValue(0, 0, 0));
         }
 
-        [Test]
+        [TestMethod]
         public void MinTest()
         {
             var min = 0D;
@@ -94,7 +94,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(min, module.GetValue(0, 0, 0));
         }
 
-        [Test]
+        [TestMethod]
         public void MultiplyTest1()
         {
             var value = 3D;
@@ -104,7 +104,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(value * value, module.GetValue(0, 0, 0));
         }
 
-        [Test]
+        [TestMethod]
         public void MultiplyTest2()
         {
             var value1 = 3D;
@@ -116,7 +116,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(value1 * value2, module.GetValue(0, 0, 0));
         }
 
-        [Test]
+        [TestMethod]
         public void ScalePointTest()
         {
             double x = 1D,
@@ -132,7 +132,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(source.GetValue(x * scaleX, y * scaleY, z * scaleZ), module.GetValue(x, y, z));
         }
 
-        [Test]
+        [TestMethod]
         public void ClampTest1()
         {
             var max = 10D;
@@ -144,7 +144,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(max, module.GetValue(0, 0, 0));
         }
 
-        [Test]
+        [TestMethod]
         public void ClampTest2()
         {
             var max = 10D;
@@ -156,7 +156,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(min, module.GetValue(0, 0, 0));
         }
 
-        [Test]
+        [TestMethod]
         public void ClampTest3()
         {
             var max = 10D;

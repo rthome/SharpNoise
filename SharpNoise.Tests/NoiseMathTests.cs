@@ -1,32 +1,32 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SharpNoise.Tests
 {
-    [TestFixture]
+    [TestClass]
     class NoiseMathTests
     {
-        [TestCase]
+        [TestMethod]
         public void ClampTest1()
         {
             var expected = 10;
             Assert.AreEqual(expected, NoiseMath.Clamp(15, 0, expected));
         }
 
-        [TestCase]
+        [TestMethod]
         public void ClampTest2()
         {
             var expected = 5;
             Assert.AreEqual(expected, NoiseMath.Clamp(expected, 0, 10));
         }
 
-        [TestCase]
+        [TestMethod]
         public void ClampTest3()
         {
             var expected = 10;
             Assert.AreEqual(expected, NoiseMath.Clamp(5, expected, 20));
         }
 
-        [TestCase]
+        [TestMethod]
         public void MaxTest()
         {
             var min = 0D;
@@ -34,7 +34,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(max, NoiseMath.Max(min, max));
         }
 
-        [TestCase]
+        [TestMethod]
         public void MaxTest2()
         {
             var min = 0D;
@@ -42,7 +42,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(max, NoiseMath.Max(max, min));
         }
 
-        [TestCase]
+        [TestMethod]
         public void MinTest()
         {
             var min = 0D;
@@ -50,7 +50,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(min, NoiseMath.Min(min, max));
         }
 
-        [TestCase]
+        [TestMethod]
         public void MinTest2()
         {
             var min = 0D;
@@ -58,7 +58,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(min, NoiseMath.Min(max, min));
         }
 
-        [TestCase]
+        [TestMethod]
         public void LinearTest1()
         {
             var value1 = 0D;
@@ -71,7 +71,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(expected, actual);
         }
 
-        [TestCase]
+        [TestMethod]
         public void LinearTest2()
         {
             var value1 = 0D;
@@ -84,7 +84,7 @@ namespace SharpNoise.Tests
             Assert.AreEqual(expected, actual);
         }
 
-        [TestCase]
+        [TestMethod]
         public void LinearTest3()
         {
             var value1 = 0D;

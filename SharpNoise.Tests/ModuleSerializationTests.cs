@@ -1,14 +1,14 @@
 ﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpNoise.Modules;
 
 namespace SharpNoise.Tests
 {
-    [TestFixture]
+    [TestClass]
     class ModuleSerializationTests
     {
-        [Test]
+        [TestMethod]
         public void SerializeAllModules()
         {
             var source0 = new Constant() { Value = 5D };
@@ -74,7 +74,7 @@ namespace SharpNoise.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public void ConstantSerializeTest()
         {
             var module = new Constant() { Value = 5D };
