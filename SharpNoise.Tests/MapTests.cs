@@ -7,7 +7,7 @@ using SharpNoise.Utilities;
 namespace SharpNoise.Tests
 {
     [TestClass]
-    class MapTests
+   public class MapTests
     {
         NoiseMap map;
 
@@ -18,7 +18,7 @@ namespace SharpNoise.Tests
         }
 
         [TestMethod]
-        public void GetSetValueTest()
+        public void Map_GetSetValue_Test()
         {
             var expected = 99f;
             map.SetValue(1, 1, expected);
@@ -28,7 +28,7 @@ namespace SharpNoise.Tests
         }
 
         [TestMethod]
-        public void BorderValueTest()
+        public void Map_BorderValue_Test()
         {
             var expected = 1f;
             map.BorderValue = expected;
@@ -46,7 +46,7 @@ namespace SharpNoise.Tests
         }
 
         [TestMethod]
-        public void ClearTest()
+        public void Map_ClearMap_Test()
         {
             var expected = 5f;
             map.Clear(expected);
@@ -56,7 +56,7 @@ namespace SharpNoise.Tests
         }
 
         [TestMethod]
-        public void LineReaderTest()
+        public void Map_LineReader_Test()
         {
             var builder = new CylinderNoiseMapBuilder();
             builder.DestNoiseMap = new NoiseMap();

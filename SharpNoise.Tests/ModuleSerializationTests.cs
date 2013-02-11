@@ -6,7 +6,7 @@ using SharpNoise.Modules;
 namespace SharpNoise.Tests
 {
     [TestClass]
-    class ModuleSerializationTests
+    public class ModuleSerializationTests
     {
         [TestMethod]
         public void SerializeAllModules()
@@ -67,7 +67,7 @@ namespace SharpNoise.Tests
                 }
             }
 
-            for(var i = 0; i < modules.Length; i++)
+            for (var i = 0; i < modules.Length; i++)
             {
                 Assert.AreEqual(modules[i].GetValue(0, 0, 0), deserializedModules[i].GetValue(0, 0, 0));
                 Assert.AreEqual(modules[i].GetValue(1, 2, 3), deserializedModules[i].GetValue(1, 2, 3));

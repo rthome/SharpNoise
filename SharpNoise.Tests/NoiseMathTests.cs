@@ -3,7 +3,7 @@
 namespace SharpNoise.Tests
 {
     [TestClass]
-    class NoiseMathTests
+    public class NoiseMathTests
     {
         [TestMethod]
         public void ClampTest1()

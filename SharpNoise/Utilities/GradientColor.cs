@@ -49,7 +49,7 @@ namespace SharpNoise.Utilities
         /// The ColorGradient class defines a color gradient by a list of these
         /// objects.
         /// </remarks>
-        public struct GradientPoint
+        public struct GradientPoint : IComparable<GradientPoint>
         {
             /// <summary>
             /// The position of this gradient point.
@@ -70,6 +70,11 @@ namespace SharpNoise.Utilities
             {
                 Position = position;
                 Color = color;
+            }
+
+            public int CompareTo(GradientPoint other)
+            {
+                return Position.CompareTo(other.Position);
             }
         }
 
@@ -116,7 +121,8 @@ namespace SharpNoise.Utilities
         {
             var gradientPoint = new GradientPoint(gradientPos, color);
 
-            if (gradientPoints.BinarySearch(gradientPoint) < 0)
+            var s = gradientPoints.BinarySearch(gradientPoint);
+            if (s > 0)
                 throw new ArgumentException("All GradientPoints must have unique positions");
 
             gradientPoints.Add(new GradientPoint(gradientPos, color));
