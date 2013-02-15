@@ -170,8 +170,6 @@ namespace SharpNoise.Modules
             Quality = DefaultQuality;
             OctaveCount = DefaultOctaveCount;
             Seed = DefaultSeed;
-
-            spectralWeights = new double[MaxOctaves];
         }
 
         /// <summary>
@@ -182,6 +180,8 @@ namespace SharpNoise.Modules
             // This exponent parameter should be user-defined; it may be exposed in a
             // future version of libnoise.
             double h = 1.0;
+
+            spectralWeights = new double[MaxOctaves];
 
             double frequency = 1.0;
             for (var i = 0; i < MaxOctaves; i++)
