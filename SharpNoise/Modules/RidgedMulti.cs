@@ -111,8 +111,19 @@ namespace SharpNoise.Modules
         /// <remarks>
         /// The lacunarity is the frequency multiplier between successive
         /// octaves.
+        /// 
+        /// The setter recalculates spectral weights for the module,
+        /// which may be a costly operation.
         /// </remarks>
-        public double Lacunarity { get; set; }
+        public double Lacunarity
+        {
+            get { return lacunarity; }
+            set
+            {
+                lacunarity = value;
+                CalcSpectralWeights();
+            }
+        }
 
         /// <summary>
         /// Gets or sets the quality of the ridged-multifractal noise.
@@ -145,6 +156,7 @@ namespace SharpNoise.Modules
         public int Seed { get; set; }
 
         double[] spectralWeights;
+        double lacunarity;
         int octaves;
 
         /// <summary>
