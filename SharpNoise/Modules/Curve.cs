@@ -50,12 +50,7 @@ namespace SharpNoise.Modules
             // Here, too, only InputValues are taken into account
             public int CompareTo(ControlPoint other)
             {
-                if (InputValue < other.InputValue)
-                    return -1;
-                else if (InputValue > other.InputValue)
-                    return 1;
-                else
-                    return 0;
+                return InputValue.CompareTo(other.InputValue);
             }
 
             /// <summary>
@@ -104,8 +99,8 @@ namespace SharpNoise.Modules
         {
             var controlPoint = new ControlPoint(inputValue, outputValue);
 
-            if (controlPoints.BinarySearch(controlPoint) < 0)
-                throw new ArgumentException("All ControlPoints must have unique inpu values.");
+            if (controlPoints.BinarySearch(controlPoint) > 0)
+                throw new ArgumentException("All ControlPoints must have unique input values.");
 
             controlPoints.Add(controlPoint);
             controlPoints.Sort();

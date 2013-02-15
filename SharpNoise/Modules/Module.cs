@@ -313,12 +313,17 @@ namespace SharpNoise.Modules
         /// </remarks>
         public virtual Module GetSourceModule(int index)
         {
-            if (index >= SourceModuleCount || index < 0)
-                throw new IndexOutOfRangeException("Source module index is out of range");
             if (sourceModules[index] == null)
                 throw new NoModuleException();
 
-            return sourceModules[index];
+            try
+            {
+                return sourceModules[index];
+            }
+            catch (IndexOutOfRangeException e)
+            {
+                throw new IndexOutOfRangeException("Source module index is out of range", e);
+            }
         }
 
         /// <summary>
@@ -352,12 +357,17 @@ namespace SharpNoise.Modules
         /// </remarks>
         public virtual void SetSourceModule(int index, Module module)
         {
-            if (index >= SourceModuleCount || index < 0)
-                throw new IndexOutOfRangeException("Target index is out of range");
             if (module == null)
-                throw new ArgumentNullException("module", "module cannot be null");
+                throw new ArgumentNullException("module", "The given Module must not be null.");
 
-            sourceModules[index] = module;
+            try
+            {
+                sourceModules[index] = module;
+            }
+            catch (IndexOutOfRangeException e)
+            {
+                throw new IndexOutOfRangeException("Target index is out of range", e);
+            }
         }
 
         /// <summary>
@@ -390,7 +400,7 @@ namespace SharpNoise.Modules
             {
                 throw new ModuleSerializationException("Module graph could not be serialized.", ex);
             }
-            
+
         }
 
         /// <summary>
@@ -408,7 +418,7 @@ namespace SharpNoise.Modules
             {
                 return (T)formatter.Deserialize(source);
             }
-            catch(SerializationException ex)
+            catch (SerializationException ex)
             {
                 throw new ModuleSerializationException("An error occurred during deserialization.", ex);
             }
