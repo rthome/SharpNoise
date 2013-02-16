@@ -217,8 +217,7 @@ namespace SharpNoise.Modules
                 signal = NoiseGenerator.GradientCoherentNoise3D(x, y, z, seed, Quality);
 
                 // Make the ridges.
-                signal = Math.Abs(signal);
-                signal = offset - signal;
+                signal = offset - Math.Abs(signal);
 
                 // Square the signal to increase the sharpness of the ridges.
                 signal *= signal;
