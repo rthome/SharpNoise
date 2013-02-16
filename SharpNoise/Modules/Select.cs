@@ -261,8 +261,7 @@ namespace SharpNoise.Modules
                     // the output values from the first and second source modules.
                     double lowerCurve = (LowerBound - EdgeFalloff);
                     double upperCurve = (LowerBound + EdgeFalloff);
-                    alpha = NoiseMath.SCurve3(
-                      (controlValue - lowerCurve) / (upperCurve - lowerCurve));
+                    alpha = NoiseMath.SCurve3((controlValue - lowerCurve) / (upperCurve - lowerCurve));
                     return NoiseMath.Linear(sourceModules[0].GetValue(x, y, z),
                       sourceModules[1].GetValue(x, y, z),
                       alpha);
@@ -280,8 +279,7 @@ namespace SharpNoise.Modules
                     // the output values from the first and second source modules.
                     double lowerCurve = (UpperBound - EdgeFalloff);
                     double upperCurve = (UpperBound + EdgeFalloff);
-                    alpha = NoiseMath.SCurve3(
-                      (controlValue - lowerCurve) / (upperCurve - lowerCurve));
+                    alpha = NoiseMath.SCurve3((controlValue - lowerCurve) / (upperCurve - lowerCurve));
                     return NoiseMath.Linear(sourceModules[1].GetValue(x, y, z),
                       sourceModules[0].GetValue(x, y, z),
                       alpha);
