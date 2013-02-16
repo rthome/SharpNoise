@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNoise", "SharpNoise\Sh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNoise.Tests", "SharpNoise.Tests\SharpNoise.Tests.csproj", "{5A1EED31-C385-4846-91CF-257B3B720CD9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNoise.Serialization", "SharpNoise.Serialization\SharpNoise.Serialization.csproj", "{55CBEE91-B9D3-4DD2-ADFE-AD5716F6018E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{5A1EED31-C385-4846-91CF-257B3B720CD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A1EED31-C385-4846-91CF-257B3B720CD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A1EED31-C385-4846-91CF-257B3B720CD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55CBEE91-B9D3-4DD2-ADFE-AD5716F6018E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55CBEE91-B9D3-4DD2-ADFE-AD5716F6018E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55CBEE91-B9D3-4DD2-ADFE-AD5716F6018E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55CBEE91-B9D3-4DD2-ADFE-AD5716F6018E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
