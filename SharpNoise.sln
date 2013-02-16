@@ -6,6 +6,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNoise.Tests", "SharpNoise.Tests\SharpNoise.Tests.csproj", "{5A1EED31-C385-4846-91CF-257B3B720CD9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNoise.Serialization", "SharpNoise.Serialization\SharpNoise.Serialization.csproj", "{55CBEE91-B9D3-4DD2-ADFE-AD5716F6018E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{948B0E7C-6FB1-41ED-BAFC-971E54F8C14D} = {948B0E7C-6FB1-41ED-BAFC-971E54F8C14D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
