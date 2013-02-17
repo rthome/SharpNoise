@@ -1,5 +1,6 @@
 ﻿using SharpNoise.Modules;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace SharpNoise.Serialization
@@ -13,8 +14,18 @@ namespace SharpNoise.Serialization
     /// </remarks>
     public abstract class Serializer
     {
-        protected abstract void Serialize(Stream targetStream, Module root);
+        /// <summary>
+        /// Override in derived classes to implement serialization
+        /// </summary>
+        /// <param name="targetStream">The stream to write serialized data to</param>
+        /// <param name="module">The root module of the module graph</param>
+        protected abstract void Serialize(Stream targetStream, Module module);
 
+        /// <summary>
+        /// Override in derived classes to implement deserialization
+        /// </summary>
+        /// <param name="sourceStream">The stream that contains serialized data</param>
+        /// <returns>Returns the root module of the deserialized module graph</returns>
         protected abstract Module Deserialize(Stream sourceStream);
 
         /// <summary>
@@ -60,6 +71,8 @@ namespace SharpNoise.Serialization
             if (module == null)
                 throw new ArgumentNullException("module");
 
+            Debug.Assert(stream.CanWrite, "The given stream is not writable.");
+
             Serialize(stream, module);
         }
 
@@ -95,6 +108,8 @@ namespace SharpNoise.Serialization
         {
             if (stream == null)
                 throw new ArgumentNullException("stream");
+
+            Debug.Assert(stream.CanRead, "The given stream is not readable.");
 
             return Deserialize(stream);
         }
