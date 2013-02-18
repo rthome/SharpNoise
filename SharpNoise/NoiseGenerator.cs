@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 
 namespace SharpNoise
 {
@@ -280,6 +281,17 @@ namespace SharpNoise
         };
 
         /// <summary>
+        /// Gets a read-only wrapper of the current Vector Table
+        /// </summary>
+        public static ReadOnlyCollection<double> VectorTable
+        {
+            get
+            {
+                return Array.AsReadOnly(vectortable);
+            }
+        }
+
+        /// <summary>
         /// ReInitialize the Noise Generator with a given vector table.
         /// </summary>
         /// <param name="table">The new vector table</param>
@@ -311,10 +323,26 @@ namespace SharpNoise
         /// Generates a random vector table for use in the Noise Generator
         /// </summary>
         /// <returns>An array of doubles that can serve as a vector table</returns>
+        /// <remarks>
+        /// This uses a default seed for the RNG, which is
+        /// <code>
+        /// Environment.TickCount ^ (int)TimeSpan.FromTicks(DateTime.Now.Ticks).TotalMilliseconds
+        /// </code>
+        /// </remarks>
         public static double[] GenerateRandomVectorTable()
         {
+            return GenerateRandomVectorTable(Environment.TickCount ^ (int)TimeSpan.FromTicks(DateTime.Now.Ticks).TotalMilliseconds);
+        }
+
+        /// <summary>
+        /// Generates a random vector table for use in the Noise Generator
+        /// </summary>
+        /// <param name="seed">The seed for the RNG</param>
+        /// <returns>An array of doubles that can serve as a vector table</returns>
+        public static double[] GenerateRandomVectorTable(int seed)
+        {
             var table = new double[1024];
-            var rng = new Random();
+            var rng = new Random(seed);
 
             for (var i = 0; i < vectortable.Length; i += 4)
             {
