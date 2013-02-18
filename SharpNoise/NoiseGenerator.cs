@@ -20,7 +20,7 @@ namespace SharpNoise
         const int SeedNoiseGen = 1013;
         const int ShiftNoiseGen = 8;
 
-        static readonly double[] DefaultVectorTable =
+        static readonly double[] DefaultVectors =
         {
             -0.763874, -0.596439, -0.246489, 0.0,
             0.396055, 0.904518, -0.158073, 0.0,
@@ -281,6 +281,17 @@ namespace SharpNoise
         };
 
         /// <summary>
+        /// Gets a read-only wrapper of the default Vector Table
+        /// </summary>
+        public static ReadOnlyCollection<double> DefaultVectorTable
+        {
+            get
+            {
+                return Array.AsReadOnly(DefaultVectors);
+            }
+        }
+
+        /// <summary>
         /// Gets a read-only wrapper of the current Vector Table
         /// </summary>
         public static ReadOnlyCollection<double> VectorTable
@@ -316,7 +327,7 @@ namespace SharpNoise
         /// </summary>
         public static void SetDefaultVectorTable()
         {
-            SetVectorTable(DefaultVectorTable);
+            SetVectorTable(DefaultVectors);
         }
 
         /// <summary>
