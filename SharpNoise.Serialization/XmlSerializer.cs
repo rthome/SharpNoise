@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using Module = SharpNoise.Modules.Module;
 
@@ -80,14 +81,116 @@ namespace SharpNoise.Serialization
             return doc;
         }
 
+        Dictionary<string, Type> CreateModuleTypeMapping()
+        {
+            var dict = new Dictionary<string, Type>();
+
+            var moduleType = typeof(Module);
+            var types = moduleType.Assembly.GetTypes().Where(t => t.IsSubclassOf(moduleType));
+
+            foreach (var type in types)
+            {
+                dict.Add(type.Name, type);
+            }
+
+            return dict;
+        }
+
         Dictionary<string, Module> RestoreModules(IEnumerable<XElement> moduleElements)
         {
-            throw new NotImplementedException();
+            var modules = new Dictionary<string, Module>();
+
+            var typeMapping = CreateModuleTypeMapping();
+
+            foreach (var element in moduleElements)
+            {
+                var propertyMapping = CreatePropertyMapping(element);
+                
+                var moduleID = element.Attribute("id").Value;
+                var typeName = element.Attribute("type").Value;
+                var moduleType = typeMapping[typeName];
+
+                var moduleInstance = Activator.CreateInstance(moduleType) as Module;
+                SetProperties(moduleInstance, propertyMapping);
+
+                modules.Add(moduleID, moduleInstance);
+            }
+
+            return modules;
+        }
+
+        Dictionary<string, string> CreatePropertyMapping(XElement moduleElement)
+        {
+            var dict = new Dictionary<string, string>();
+
+            var propertyElements = moduleElement.Elements("Property");
+            foreach (var property in propertyElements)
+            {
+                var name = property.Attribute("name").Value;
+                var value = property.Attribute("value").Value;
+
+                dict.Add(name, value);
+            }
+
+            return dict;
         }
 
         void SetProperties(Module instance, Dictionary<string, string> propertyMapping)
         {
-            throw new NotImplementedException();
+            var instanceType = instance.GetType();
+            foreach (var property in propertyMapping)
+            {
+                var propertyInfo = instanceType.GetProperty(property.Key);
+                var propertyType = propertyInfo.PropertyType;
+
+                object transformedValue = null;
+
+                if (propertyType == typeof(double))
+                {
+                    transformedValue = double.Parse(property.Value);
+                }
+                else if (propertyType == typeof(float))
+                {
+                    transformedValue = float.Parse(property.Value);
+                }
+                else if (propertyType == typeof(byte))
+                {
+                    transformedValue = byte.Parse(property.Value);
+                }
+                else if (propertyType == typeof(short))
+                {
+                    transformedValue = short.Parse(property.Value);
+                }
+                else if (propertyType == typeof(int))
+                {
+                    transformedValue = int.Parse(property.Value);
+                }
+                else if (propertyType == typeof(long))
+                {
+                    transformedValue = long.Parse(property.Value);
+                }
+                else if (propertyType == typeof(string))
+                {
+                    transformedValue = property.Value;
+                }
+                else if (propertyType == typeof(bool))
+                {
+                    transformedValue = bool.Parse(property.Value);
+                }
+                else if (propertyType.IsEnum)
+                {
+                    transformedValue = Enum.Parse(propertyType, property.Value);
+                }
+
+                if (transformedValue != null)
+                {
+                    propertyInfo.SetValue(instance, transformedValue);
+                }
+                else
+                {
+                    throw new InvalidOperationException(String.Format("Can not set property of type <{0}>.", propertyType));
+                }
+            }
         }
 
         void SetSources(IEnumerable<XElement> connectionElements, Dictionary<string, Module> modules)
@@ -126,7 +229,7 @@ namespace SharpNoise.Serialization
 
             var moduleElements = document.Root.Elements("Module");
             var connectionElements = document.Root.Elements("Connection");
-            var rootElement = document.Root.Element("Root");
+            var rootElement = document.Root.Attribute("root");
 
             var moduleMapping = RestoreModules(moduleElements);
             SetSources(connectionElements, moduleMapping);

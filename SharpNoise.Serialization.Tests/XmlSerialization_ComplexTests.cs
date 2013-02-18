@@ -29,12 +29,14 @@ namespace SharpNoise.Serialization.Tests
             // check if it's actually correct on the original module
             Debug.Assert(object.ReferenceEquals(root.Source0, root.Source1));
 
-            Module restoredModule;
-            using (var ms = new MemoryStream())
-            {
-                serializer.Save(root, ms);
-                restoredModule = serializer.Restore(ms);
-            }
+            var saveStream = new MemoryStream();
+            serializer.Save(root, saveStream);
+
+            var restoreStream = XmlSerializerTests.SwitchStream(saveStream);
+            var restoredModule = serializer.Restore(restoreStream);
+
+            saveStream.Close();
+            restoreStream.Close();
 
             Assert.AreEqual(root.GetValue(0, 0, 0), restoredModule.GetValue(0, 0, 0));
             Assert.AreSame(restoredModule.GetSourceModule(0), restoredModule.GetSourceModule(1));
@@ -54,12 +56,14 @@ namespace SharpNoise.Serialization.Tests
 
             var root = new Add { Source0 = abs, Source1 = max };
 
-            Module restoredModule;
-            using (var ms = new MemoryStream())
-            {
-                serializer.Save(root, ms);
-                restoredModule = serializer.Restore(ms);
-            }
+            var saveStream = new MemoryStream();
+            serializer.Save(root, saveStream);
+
+            var restoreStream = XmlSerializerTests.SwitchStream(saveStream);
+            var restoredModule = serializer.Restore(restoreStream);
+
+            saveStream.Close();
+            restoreStream.Close();
 
             Assert.AreEqual(root.GetType(), restoredModule.GetType());
             for (double x = 0; x < 2; x += 0.25)

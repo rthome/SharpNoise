@@ -12,6 +12,12 @@ namespace SharpNoise.Serialization.Tests
         Add root;
         Constant source0, source1;
 
+        public static MemoryStream SwitchStream(MemoryStream stream)
+        {
+            var bytes = stream.ToArray();
+            return new MemoryStream(bytes);
+        }
+
         [TestInitialize]
         public void SetUp()
         {
@@ -25,14 +31,14 @@ namespace SharpNoise.Serialization.Tests
         [TestMethod]
         public void Serialization_Xml_Restore_ValuesEqual_Test()
         {
-            Add restoredModule;
+            var saveStream = new MemoryStream();
+            serializer.Save(root, saveStream);
 
-            using (var ms = new MemoryStream())
-            {
-                serializer.Save(root, ms);
+            var restoreStream = SwitchStream(saveStream);
+            var restoredModule = serializer.Restore<Add>(restoreStream);
 
-                restoredModule = serializer.Restore<Add>(ms);
-            }
+            saveStream.Close();
+            restoreStream.Close();
 
             Assert.AreEqual(root.GetValue(0, 0, 0), restoredModule.GetValue(0, 0, 0));
             Assert.AreEqual(root.Source0.GetValue(0, 0, 0), restoredModule.Source0.GetValue(0, 0, 0));
@@ -42,14 +48,14 @@ namespace SharpNoise.Serialization.Tests
         [TestMethod]
         public void Serialization_Xml_Restore_TypesEqual_Test()
         {
-            Module restoredModule;
+            var saveStream = new MemoryStream();
+            serializer.Save(root, saveStream);
 
-            using (var ms = new MemoryStream())
-            {
-                serializer.Save(root, ms);
+            var restoreStream = SwitchStream(saveStream);
+            var restoredModule = serializer.Restore(restoreStream);
 
-                restoredModule = serializer.Restore(ms);
-            }
+            saveStream.Close();
+            restoreStream.Close();
 
             Assert.IsInstanceOfType(restoredModule, root.GetType());
             Assert.IsInstanceOfType(restoredModule.GetSourceModule(0), source0.GetType());
