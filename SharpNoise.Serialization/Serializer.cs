@@ -1,7 +1,9 @@
 ﻿using SharpNoise.Modules;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace SharpNoise.Serialization
 {
@@ -27,6 +29,74 @@ namespace SharpNoise.Serialization
         /// <param name="sourceStream">The stream that contains serialized data</param>
         /// <returns>Returns the root module of the deserialized module graph</returns>
         protected abstract Module Deserialize(Stream sourceStream);
+
+        /// <summary>
+        /// Create a mapping of properties to their values for a module
+        /// </summary>
+        /// <param name="module">The module to create a property mapping for</param>
+        /// <returns>A dictionary of property names to property values</returns>
+        protected Dictionary<string, string> ReadProperties(Module module)
+        {
+            var dict = new Dictionary<string, string>();
+
+            var properties = module.GetType().GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+            foreach (var property in properties)
+            {
+                if (property.DeclaringType == typeof(Module))
+                    continue;
+                if (property.PropertyType == typeof(Module) || property.PropertyType.IsSubclassOf(typeof(Module)))
+                    continue;
+
+                var value = property.GetValue(module);
+                dict.Add(property.Name, value.ToString());
+            }
+
+            return dict;
+        }
+
+        /// <summary>
+        /// Flattens a module graoh into a list of modules
+        /// </summary>
+        /// <param name="module">The root module of the module graph</param>
+        /// <returns>Returns an enumerable with the given module and, recursively, it's source modules</returns>
+        /// <remarks>
+        /// This will filter out duplicate modules from the graph. Only distinct modules will be returned.
+        /// </remarks>
+        protected IEnumerable<Module> GetModulesRecursive(Module module)
+        {
+            IEnumerable<Module> result = Enumerable.Repeat(module, 1);
+
+            if (module.SourceModuleCount > 0)
+            {
+                for (int i = 0; i < module.SourceModuleCount; ++i)
+                {
+                    var childModules = GetModulesRecursive(module.GetSourceModule(i));
+                    result = result.Concat(childModules);
+                }
+            }
+
+            return result.Distinct();
+        }
+
+        /// <summary>
+        /// Create a mapping of modules to unique IDs
+        /// </summary>
+        /// <param name="modules">The modules to create IDs for</param>
+        /// <returns>Returns a dictionary of modules to strings</returns>
+        /// <remarks>
+        /// The given enumerable of modules must not contain duplicate elements. All modules must be distinct.
+        /// </remarks>
+        protected Dictionary<Module, string> CreateIDMapping(IEnumerable<Module> modules)
+        {
+            var dict = new Dictionary<Module, string>();
+
+            foreach (var module in modules)
+            {
+                dict.Add(module, Guid.NewGuid().ToString());
+            }
+
+            return dict;
+        }
 
         /// <summary>
         /// Save a module graph to a file
