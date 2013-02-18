@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using Module = SharpNoise.Modules.Module;
 
@@ -17,7 +16,6 @@ namespace SharpNoise.Serialization
     /// </remarks>
     public class XmlSerializer : Serializer
     {
-
         #region Save Helpers
 
         IEnumerable<XElement> CreateModuleElements(IEnumerable<Module> modules, Dictionary<Module, string> idMapping)
@@ -79,21 +77,6 @@ namespace SharpNoise.Serialization
         {
             var doc = XDocument.Load(source);
             return doc;
-        }
-
-        Dictionary<string, Type> CreateModuleTypeMapping()
-        {
-            var dict = new Dictionary<string, Type>();
-
-            var moduleType = typeof(Module);
-            var types = moduleType.Assembly.GetTypes().Where(t => t.IsSubclassOf(moduleType));
-
-            foreach (var type in types)
-            {
-                dict.Add(type.Name, type);
-            }
-
-            return dict;
         }
 
         Dictionary<string, Module> RestoreModules(IEnumerable<XElement> moduleElements)
