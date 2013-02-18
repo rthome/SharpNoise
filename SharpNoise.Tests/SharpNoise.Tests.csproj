@@ -57,6 +57,7 @@
     <Compile Include="NoiseMathTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ColorTest.cs" />
+    <Compile Include="NoiseGeneratorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpNoise\SharpNoise.csproj">
