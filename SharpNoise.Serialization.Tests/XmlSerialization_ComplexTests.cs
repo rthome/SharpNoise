@@ -26,9 +26,6 @@ namespace SharpNoise.Serialization.Tests
 
             var root = new Add { Source0 = add, Source1 = add };
 
-            // check if it's actually correct on the original module
-            Debug.Assert(object.ReferenceEquals(root.Source0, root.Source1));
-
             var saveStream = new MemoryStream();
             serializer.Save(root, saveStream);
 
