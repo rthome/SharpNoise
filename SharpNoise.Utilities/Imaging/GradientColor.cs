@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SharpNoise.Utilities
+namespace SharpNoise.Utilities.Imaging
 {
     /// <summary>
     /// Defines a color gradient.

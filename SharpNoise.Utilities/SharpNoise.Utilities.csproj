@@ -38,10 +38,10 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Color.cs" />
-    <Compile Include="GradientColor.cs" />
-    <Compile Include="Image.cs" />
-    <Compile Include="ImageRenderer.cs" />
+    <Compile Include="Imaging\Color.cs" />
+    <Compile Include="Imaging\GradientColor.cs" />
+    <Compile Include="Imaging\Image.cs" />
+    <Compile Include="Imaging\ImageRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

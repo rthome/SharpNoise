@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharpNoise.Utilities
+namespace SharpNoise.Utilities.Imaging
 {
     /// <summary>
     /// Renders an image from a noise map.

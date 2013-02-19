@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharpNoise.Utilities
+namespace SharpNoise.Utilities.Imaging
 {
     /// <summary>
     /// Defines a color
