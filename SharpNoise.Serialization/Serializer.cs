@@ -1,6 +1,7 @@
 ﻿using SharpNoise.Modules;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -31,11 +32,32 @@ namespace SharpNoise.Serialization
         protected abstract Module Deserialize(Stream sourceStream);
 
         /// <summary>
+        /// Create a mapping of module names to module types in SharpNoise
+        /// </summary>
+        /// <returns>A dictionary of module name strings to module types</returns>
+        protected ReadOnlyDictionary<string, Type> CreateModuleTypeMapping()
+        {
+            var dict = new Dictionary<string, Type>();
+
+            var moduleType = typeof(Module);
+            var types = moduleType.Assembly.GetTypes().Where(t => t.IsSubclassOf(moduleType));
+
+            var allTypes = types.Concat(customModuleTypes);
+
+            foreach (var type in allTypes)
+            {
+                dict.Add(type.Name, type);
+            }
+
+            return new ReadOnlyDictionary<string, Type>(dict);
+        }
+
+        /// <summary>
         /// Create a mapping of properties to their values for a module
         /// </summary>
         /// <param name="module">The module to create a property mapping for</param>
         /// <returns>A dictionary of property names to property values</returns>
-        protected Dictionary<string, string> ReadProperties(Module module)
+        protected ReadOnlyDictionary<string, string> ReadProperties(Module module)
         {
             var dict = new Dictionary<string, string>();
 
@@ -51,7 +73,7 @@ namespace SharpNoise.Serialization
                 dict.Add(property.Name, value.ToString());
             }
 
-            return dict;
+            return new ReadOnlyDictionary<string, string>(dict);
         }
 
         /// <summary>
@@ -97,6 +119,53 @@ namespace SharpNoise.Serialization
 
             return dict;
         }
+
+        #region Custom Module Types
+
+        readonly List<Type> customModuleTypes;
+
+        /// <summary>
+        /// Gets an enumeration of added custom noise module types
+        /// </summary>
+        public IEnumerable<Type> CustomModuleTypes
+        {
+            get
+            {
+                return customModuleTypes.AsReadOnly();
+            }
+        }
+
+        /// <summary>
+        /// Add some custom noise module types to the serializer
+        /// </summary>
+        /// <param name="moduleTypes">An enumeration of Type, where each item must derive from Module</param>
+        public void AddCustomModuleTypes(IEnumerable<Type> moduleTypes)
+        {
+            if (moduleTypes == null)
+                throw new ArgumentNullException("moduleTypes");
+
+            foreach (var type in moduleTypes)
+            {
+                if (!type.IsSubclassOf(typeof(Module)))
+                    throw new ArgumentException(String.Format("A given Type does not derive from Module: <[0}>.", type));
+                if (customModuleTypes.Contains(type))
+                    throw new ArgumentException(String.Format("A given Type was already registered: <[0}>.", type));
+            }
+
+            customModuleTypes.AddRange(moduleTypes);
+        }
+
+        /// <summary>
+        /// Remove all previously added custom noise module types
+        /// </summary>
+        public void ClearCustomModuleTypes()
+        {
+            customModuleTypes.Clear();
+        }
+
+        #endregion
+
+        #region Public Interface
 
         /// <summary>
         /// Save a module graph to a file
@@ -204,6 +273,13 @@ namespace SharpNoise.Serialization
         public T Restore<T>(Stream stream) where T : Module
         {
             return (T)Restore(stream);
+        }
+
+        #endregion
+
+        protected Serializer()
+        {
+            customModuleTypes = new List<Type>();
         }
     }
 }
