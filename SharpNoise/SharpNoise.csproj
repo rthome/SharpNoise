@@ -42,7 +42,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
@@ -90,12 +89,8 @@
     <Compile Include="NoiseMath.cs" />
     <Compile Include="NoiseQuality.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\Color.cs" />
-    <Compile Include="Utilities\GradientColor.cs" />
-    <Compile Include="Utilities\Image.cs" />
-    <Compile Include="Utilities\ImageRenderer.cs" />
-    <Compile Include="Utilities\Map.cs" />
-    <Compile Include="Utilities\NoiseMap.cs" />
+    <Compile Include="Map.cs" />
+    <Compile Include="NoiseMap.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

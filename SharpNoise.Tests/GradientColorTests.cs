@@ -16,7 +16,7 @@ namespace SharpNoise.Tests
         }
 
         [TestMethod]
-        public void Gradient_Insert_Test()
+        public void Utilities_Gradient_Insert_Test()
         {
             gradient.AddGradientPoint(0, new Color());
             gradient.AddGradientPoint(1, new Color());
@@ -29,7 +29,7 @@ namespace SharpNoise.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void Gradient_Insert_SameValue_Test()
+        public void Utilities_Gradient_Insert_SameValue_Test()
         {
             gradient.AddGradientPoint(0, new Color());
             gradient.AddGradientPoint(1, new Color());
@@ -37,7 +37,7 @@ namespace SharpNoise.Tests
         }
 
         [TestMethod]
-        public void Gradient_GetColor_Middle_Test()
+        public void Utilities_Gradient_GetColor_Middle_Test()
         {
             gradient.AddGradientPoint(0, new Color(0, 0, 0, byte.MaxValue));
             gradient.AddGradientPoint(1, new Color(byte.MaxValue, 0, 0, byte.MaxValue));
@@ -49,7 +49,7 @@ namespace SharpNoise.Tests
         }
 
         [TestMethod]
-        public void Gradient_GetColor_UpperEnd_Test()
+        public void Utilities_Gradient_GetColor_UpperEnd_Test()
         {
             gradient.AddGradientPoint(0, new Color(0, 0, 0, byte.MaxValue));
             gradient.AddGradientPoint(1, new Color(byte.MaxValue, 0, 0, byte.MaxValue));
@@ -61,7 +61,7 @@ namespace SharpNoise.Tests
         }
 
         [TestMethod]
-        public void Gradient_GetColor_LowerEnd_Test()
+        public void Utilities_Gradient_GetColor_LowerEnd_Test()
         {
             gradient.AddGradientPoint(0, new Color(0, 0, 0, byte.MaxValue));
             gradient.AddGradientPoint(1, new Color(byte.MaxValue, 0, 0, byte.MaxValue));
@@ -73,7 +73,7 @@ namespace SharpNoise.Tests
         }
 
         [TestMethod]
-        public void Gradient_ClearPoints_Test()
+        public void Utilities_Gradient_ClearPoints_Test()
         {
             gradient.AddGradientPoint(0, new Color());
             gradient.AddGradientPoint(1, new Color());

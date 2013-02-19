@@ -58,8 +58,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ColorTest.cs" />
     <Compile Include="NoiseGeneratorTests.cs" />
+    <Compile Include="XmlSerialization_ComplexTests.cs" />
+    <Compile Include="XmlSerializerTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SharpNoise.Serialization\SharpNoise.Serialization.csproj">
+      <Project>{55cbee91-b9d3-4dd2-adfe-ad5716f6018e}</Project>
+      <Name>SharpNoise.Serialization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpNoise.Utilities\SharpNoise.Utilities.csproj">
+      <Project>{efe8b9d6-9a63-4112-9830-e46901ed4578}</Project>
+      <Name>SharpNoise.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharpNoise\SharpNoise.csproj">
       <Project>{948b0e7c-6fb1-41ed-bafc-971e54f8c14d}</Project>
       <Name>SharpNoise</Name>

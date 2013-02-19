@@ -1,7 +1,6 @@
 ﻿using System;
 
 using SharpNoise.Modules;
-using SharpNoise.Utilities;
 
 namespace SharpNoise.Builders
 {

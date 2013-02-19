@@ -1,8 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpNoise.Modules;
+using SharpNoise.Serialization;
 using System.IO;
 
-namespace SharpNoise.Serialization.Tests
+namespace SharpNoise.Tests
 {
     [TestClass]
     public class XmlSerializerTests

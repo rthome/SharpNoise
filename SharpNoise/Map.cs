@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 
-namespace SharpNoise.Utilities
+namespace SharpNoise
 {
     /// <summary>
     /// Base class for 2D arrays like NoiseMap and Image
     /// </summary>
     /// <typeparam name="T">The type of the data within the map</typeparam>
-    public abstract class Map<T>
+    public abstract class Map<T> where T : struct
     {
         /// <summary>
         /// Provides read-only access to a single line in the map.

@@ -1,4 +1,4 @@
-﻿namespace SharpNoise.Utilities
+﻿namespace SharpNoise
 {
     /// <summary>
     /// Implements a noise map, a 2-dimensional array of floating-point
