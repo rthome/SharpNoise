@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpNoise.Utilities;
+using SharpNoise.Utilities.Imaging;
 using System;
 
 namespace SharpNoise.Tests

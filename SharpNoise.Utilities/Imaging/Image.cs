@@ -1,4 +1,4 @@
-﻿namespace SharpNoise.Utilities
+﻿namespace SharpNoise.Utilities.Imaging
 {
     /// <summary>
     /// Implements an image, a 2-dimensional array of color values.
