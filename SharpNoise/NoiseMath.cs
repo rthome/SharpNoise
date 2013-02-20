@@ -76,7 +76,7 @@ namespace SharpNoise
         /// <remarks>
         /// <paramref name="a"/> should range from 0.0 to 1.0.
         ///
-        /// The derivitive of a cubic S-curve is zero at <paramref name="a"/> = 0.0 
+        /// The derivitive of a cubic S-curve is zero at <paramref name="a"/> = 0.0
         /// and <paramref name="a"/> = 1.0
         /// </remarks>
         public static double SCurve3(double a)
@@ -100,10 +100,10 @@ namespace SharpNoise
         /// </remarks>
         public static double SCurve5(double a)
         {
-          var a3 = a * a * a;
-          var a4 = a3 * a;
-          var a5 = a4 * a;
-          return (6.0 * a5) - (15.0 * a4) + (10.0 * a3);
+            var a3 = a * a * a;
+            var a4 = a3 * a;
+            var a5 = a4 * a;
+            return (6.0 * a5) - (15.0 * a4) + (10.0 * a3);
         }
 
         /// <summary>
@@ -182,6 +182,17 @@ namespace SharpNoise
             var c = a;
             a = b;
             b = c;
+        }
+
+        /// <summary>
+        /// Performs fast flooring on a positive double value
+        /// </summary>
+        /// <param name="x">The value to floor</param>
+        /// <returns>Returns the floored value as an integer</returns>
+        public static int FastFloor(double x)
+        {
+            int xi = (int)x;
+            return x < xi ? xi - 1 : xi;
         }
     }
 }
