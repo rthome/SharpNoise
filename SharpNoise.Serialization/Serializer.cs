@@ -46,7 +46,7 @@ namespace SharpNoise.Serialization
 
             foreach (var type in allTypes)
             {
-                dict.Add(type.Name, type);
+                dict.Add(type.FullName, type);
             }
 
             return new ReadOnlyDictionary<string, Type>(dict);
@@ -125,7 +125,7 @@ namespace SharpNoise.Serialization
         readonly List<Type> customModuleTypes;
 
         /// <summary>
-        /// Gets an enumeration of added custom noise module types
+        /// Gets an enumeration of added custom noise module types used for deserialization for custom modules
         /// </summary>
         public IEnumerable<Type> CustomModuleTypes
         {
@@ -139,6 +139,9 @@ namespace SharpNoise.Serialization
         /// Add some custom noise module types to the serializer
         /// </summary>
         /// <param name="moduleTypes">An enumeration of Type, where each item must derive from Module</param>
+        /// <remarks>
+        /// Custom module types are only used for deserialization. On serialization, custom types are handled automatically.
+        /// </remarks>
         public void AddCustomModuleTypes(IEnumerable<Type> moduleTypes)
         {
             if (moduleTypes == null)

@@ -27,7 +27,7 @@ namespace SharpNoise.Serialization
                 var propertyMapping = ReadProperties(module);
                 var element = new XElement("Module",
                     new XAttribute("id", idMapping[module]),
-                    new XAttribute("type", module.GetType().Name),
+                    new XAttribute("type", module.GetType().FullName),
                     from property in propertyMapping
                     select new XElement("Property",
                         new XAttribute("name", property.Key),
