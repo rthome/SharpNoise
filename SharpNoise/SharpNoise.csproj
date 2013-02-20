@@ -80,6 +80,7 @@
     <Compile Include="Modules\ScaleBias.cs" />
     <Compile Include="Modules\ScalePoint.cs" />
     <Compile Include="Modules\Select.cs" />
+    <Compile Include="Modules\Simplex.cs" />
     <Compile Include="Modules\Spheres.cs" />
     <Compile Include="Modules\Terrace.cs" />
     <Compile Include="Modules\TranslatePoint.cs" />
