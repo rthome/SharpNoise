@@ -8,5 +8,9 @@ syntax: glob
 *.suo
 *.orig
 
+TestResults\*
+
 *\obj\*
 *\bin\*
+
+
