@@ -82,11 +82,10 @@ namespace SharpNoise.Modules
         /// </remarks>
         public void AddControlPoint(double value)
         {
-            if (controlPoints.BinarySearch(value) < 0)
+            if (controlPoints.Contains(value))
                 throw new ArgumentException("Duplicate ControlPoint found. ControlPoints must be unique!");
 
             controlPoints.Add(value);
-            controlPoints.Sort();
         }
 
         /// <summary>
@@ -120,9 +119,9 @@ namespace SharpNoise.Modules
 
             ClearControlPoints();
 
-            var terraceStep = 2.0 / ((double)ControlPointCount - 1.0);
+            var terraceStep = 2.0 / ((double)count - 1.0);
             var curValue = -1.0;
-            for (var i = 0; i < (int)ControlPointCount; i++)
+            for (var i = 0; i < (int)count; i++)
             {
                 AddControlPoint(curValue);
                 curValue += terraceStep;
