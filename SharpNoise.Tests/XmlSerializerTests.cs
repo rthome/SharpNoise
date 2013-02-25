@@ -131,5 +131,33 @@ namespace SharpNoise.Tests
             Assert.AreEqual(root.Source0.GetValue(0, 0, 0), restoredModule.Source0.GetValue(0, 0, 0));
             Assert.AreEqual(root.Source1.GetValue(0, 0, 0), restoredModule.Source1.GetValue(0, 0, 0));
         }
+
+        [TestMethod]
+        public void Serialization_Xml_Restore_CustomSimplexSeed_Test()
+        {
+            var simplex = new Simplex();
+            simplex.Seed = 6463;
+
+            var saveStream = new MemoryStream();
+            serializer.Save(simplex, saveStream);
+
+            var restoreStream = SwitchStream(saveStream);
+            var restoredModule = serializer.Restore<Simplex>(restoreStream);
+
+            saveStream.Close();
+            restoreStream.Close();
+
+            Assert.AreEqual(simplex.Seed, restoredModule.Seed);
+            for (double x = -1; x < 1; x += 0.3)
+            {
+                for (double y = -1; y < 1; y += 0.3)
+                {
+                    for (double z = -1; z < 1; z += 0.3)
+                    {
+                        Assert.AreEqual(simplex.GetValue(x, y, z), restoredModule.GetValue(x, y, z));
+                    }
+                }
+            }
+        }
     }
 }
