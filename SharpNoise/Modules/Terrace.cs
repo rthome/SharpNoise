@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace SharpNoise.Modules
 {
@@ -35,7 +36,7 @@ namespace SharpNoise.Modules
     [Serializable]
     public class Terrace : Module
     {
-        List<double> controlPoints;
+        readonly List<double> controlPoints;
 
         /// <summary>
         /// Gets the number of control points on the terrace-forming curve.
@@ -47,6 +48,17 @@ namespace SharpNoise.Modules
         /// between the control points.
         /// </summary>
         public bool InvertTerraces { get; set; }
+
+        /// <summary>
+        /// Gets a read-only wrapper over all ControlPoints in the Module
+        /// </summary>
+        public ReadOnlyCollection<double> ControlPoints
+        {
+            get
+            {
+                return new ReadOnlyCollection<double>(controlPoints);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the first source module

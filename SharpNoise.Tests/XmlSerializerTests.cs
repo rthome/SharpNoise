@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpNoise.Modules;
 using SharpNoise.Serialization;
+using System.Collections;
 using System.Diagnostics;
 using System.IO;
 
@@ -84,6 +85,50 @@ namespace SharpNoise.Tests
             Assert.IsInstanceOfType(restoredModule, root.GetType());
             Assert.IsInstanceOfType(restoredModule.GetSourceModule(0), source0.GetType());
             Assert.IsInstanceOfType(restoredModule.GetSourceModule(1), source1.GetType());
+        }
+
+        [TestMethod]
+        public void Serialization_Terrace_DefaultControlPoints_Test()
+        {
+            var source = new Perlin();
+            var terrace = new Terrace { Source0 = source };
+            terrace.MakeControlPoints(4);
+
+            var saveStream = new MemoryStream();
+            serializer.Save(terrace, saveStream);
+
+            var restoreStream = SwitchStream(saveStream);
+            var restoredModule = serializer.Restore<Terrace>(restoreStream);
+
+            saveStream.Close();
+            restoreStream.Close();
+
+            Assert.AreEqual(terrace.ControlPointCount, restoredModule.ControlPointCount);
+            CollectionAssert.AreEquivalent(terrace.ControlPoints, restoredModule.ControlPoints);
+        }
+
+        [TestMethod]
+        public void Serialization_Curve_ControlPoints_Test()
+        {
+            var source = new Perlin();
+            var curve = new Curve { Source0 = source };
+            curve.AddControlPoint(-1, 1);
+            curve.AddControlPoint(-0.75, 0.5);
+            curve.AddControlPoint(0, 0);
+            curve.AddControlPoint(0.75, -0.5);
+            curve.AddControlPoint(1, -1);
+
+            var saveStream = new MemoryStream();
+            serializer.Save(curve, saveStream);
+
+            var restoreStream = SwitchStream(saveStream);
+            var restoredModule = serializer.Restore<Terrace>(restoreStream);
+
+            saveStream.Close();
+            restoreStream.Close();
+
+            Assert.AreEqual(curve.ControlPointCount, restoredModule.ControlPointCount);
+            CollectionAssert.AreEquivalent(curve.ControlPoints, restoredModule.ControlPoints);
         }
 
         [TestMethod]
