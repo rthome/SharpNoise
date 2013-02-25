@@ -107,6 +107,29 @@ namespace SharpNoise.Tests
         }
 
         [TestMethod]
+        public void Serialization_Curve_ControlPoints_Test()
+        {
+            var curve = new Curve();
+            curve.AddControlPoint(-1, 1);
+            curve.AddControlPoint(-0.75, 0.5);
+            curve.AddControlPoint(0, 0);
+            curve.AddControlPoint(0.75, -0.5);
+            curve.AddControlPoint(1, -1);
+
+            var saveStream = new MemoryStream();
+            serializer.Save(curve, saveStream);
+
+            var restoreStream = SwitchStream(saveStream);
+            var restoredModule = serializer.Restore<Terrace>(restoreStream);
+
+            saveStream.Close();
+            restoreStream.Close();
+
+            Assert.AreEqual(curve.ControlPointCount, restoredModule.ControlPointCount);
+            CollectionAssert.AreEquivalent(curve.ControlPoints, restoredModule.ControlPoints);
+        }
+
+        [TestMethod]
         public void Serialization_CustomModule_TypeEqual_Test()
         {
             serializer.AddCustomModuleTypes(new[] { typeof(CustomModule) });
