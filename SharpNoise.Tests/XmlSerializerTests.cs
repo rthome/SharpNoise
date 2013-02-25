@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpNoise.Modules;
 using SharpNoise.Serialization;
+using System.Collections;
 using System.Diagnostics;
 using System.IO;
 
@@ -84,6 +85,25 @@ namespace SharpNoise.Tests
             Assert.IsInstanceOfType(restoredModule, root.GetType());
             Assert.IsInstanceOfType(restoredModule.GetSourceModule(0), source0.GetType());
             Assert.IsInstanceOfType(restoredModule.GetSourceModule(1), source1.GetType());
+        }
+
+        [TestMethod]
+        public void Serialization_Terrace_DefaultControlPoints_Test()
+        {
+            var terrace = new Terrace();
+            terrace.MakeControlPoints(4);
+
+            var saveStream = new MemoryStream();
+            serializer.Save(terrace, saveStream);
+
+            var restoreStream = SwitchStream(saveStream);
+            var restoredModule = serializer.Restore<Terrace>(restoreStream);
+
+            saveStream.Close();
+            restoreStream.Close();
+
+            Assert.AreEqual(terrace.ControlPointCount, restoredModule.ControlPointCount);
+            CollectionAssert.AreEquivalent(terrace.ControlPoints, restoredModule.ControlPoints);
         }
 
         [TestMethod]
