@@ -80,7 +80,7 @@ namespace SharpNoise.Modules
         }
 
         // 3D simplex noise
-        public static double SimplexNoise3D(double xin, double yin, double zin, int seed = 0)
+        public static double SimplexNoise3D(double xin, double yin, double zin)
         {
             // Skew the input space to determine which simplex cell we're in
             // Very nice and simple skew factor for 3D
@@ -201,28 +201,28 @@ namespace SharpNoise.Modules
             if (t0 >= 0)
             {
                 t0 *= t0;
-                n0 = t0 * t0 * Dot(ref Grad3[(gi0 * seed) % 12], x0, y0, z0);
+                n0 = t0 * t0 * Dot(ref Grad3[gi0], x0, y0, z0);
             }
 
             double t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1;
             if (t1 >= 0)
             {
                 t1 *= t1;
-                n1 = t1 * t1 * Dot(ref Grad3[(gi1 * seed) % 12], x1, y1, z1);
+                n1 = t1 * t1 * Dot(ref Grad3[gi1], x1, y1, z1);
             }
 
             double t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2;
             if (t2 >= 0)
             {
                 t2 *= t2;
-                n2 = t2 * t2 * Dot(ref Grad3[(gi2 * seed) % 12], x2, y2, z2);
+                n2 = t2 * t2 * Dot(ref Grad3[gi2], x2, y2, z2);
             }
 
             double t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3;
             if (t3 >= 0)
             {
                 t3 *= t3;
-                n3 = t3 * t3 * Dot(ref Grad3[(gi3 * seed) % 12], x3, y3, z3);
+                n3 = t3 * t3 * Dot(ref Grad3[gi3], x3, y3, z3);
             }
 
             // Add contributions from each corner to get the final noise value.
@@ -249,11 +249,6 @@ namespace SharpNoise.Modules
         /// Default persistence value for the Simplex noise module.
         /// </summary>
         public const double DefaultPersistence = 0.5D;
-
-        /// <summary>
-        /// Default seed value for the Simplex noise module.
-        /// </summary>
-        public const int DefaultSeed = 0;
 
         /// <summary>
         /// Gets or sets the frequency of the first octave.
@@ -296,11 +291,6 @@ namespace SharpNoise.Modules
         public double Persistence { get; set; }
 
         /// <summary>
-        /// Gets or sets the seed value used by the Simplex noise function.
-        /// </summary>
-        public int Seed { get; set; }
-
-        /// <summary>
         /// See documentation on the base class
         /// </summary>
         /// <param name="x">X coordinate</param>
@@ -319,7 +309,7 @@ namespace SharpNoise.Modules
 
             for (var currentOctave = 0; currentOctave < OctaveCount; currentOctave++)
             {
-                signal = SimplexNoise3D(x, y, z, Seed);
+                signal = SimplexNoise3D(x, y, z);
                 value += signal * currentPersistence;
 
                 x *= Lacunarity;
