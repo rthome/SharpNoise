@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace SharpNoise.Modules
 {
@@ -115,21 +116,26 @@ namespace SharpNoise.Modules
         }
 
         /// <summary>
-        /// Gets all control points on the curve
+        /// Gets a read-only wrapper over all control points on the curve
         /// </summary>
-        /// <returns>An IEnumerable containing all control points</returns>
-        public IEnumerable<ControlPoint> GetControlPoints()
+        public ReadOnlyCollection<ControlPoint> ControlPoints
         {
-            return controlPoints;
+            get
+            {
+                return new ReadOnlyCollection<ControlPoint>(controlPoints);
+            }
         }
 
         /// <summary>
         /// Gets the number of control points on the curve
         /// </summary>
         /// <returns>Returns the number of control points on the curve</returns>
-        public int GetControlPointCount()
+        public int ControlPointCount
         {
-            return controlPoints.Count;
+            get
+            {
+                return controlPoints.Count;
+            }
         }
 
         /// <summary>

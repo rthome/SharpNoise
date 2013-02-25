@@ -58,15 +58,13 @@ namespace SharpNoise.Modules
         public TranslatePoint()
             : base(1)
         {
-            XTranslation = DefaultTranslation;
-            YTranslation = DefaultTranslation;
-            ZTranslation = DefaultTranslation;
+            SetTranslation(DefaultTranslation);
         }
 
         /// <summary>
-        /// Sets the translation amount to apply to the input value.
+        /// Sets the translation value to apply to the input value.
         /// </summary>
-        /// <param name="translation">The translation amount to apply.</param>
+        /// <param name="translation">The translation value to apply.</param>
         /// <remarks>
         /// The <see cref="GetValue"/> method moves the ( x, y, z ) coordinates
         /// of the input value by a translation amount before returning the
@@ -77,6 +75,24 @@ namespace SharpNoise.Modules
             XTranslation = translation;
             YTranslation = translation;
             ZTranslation = translation;
+        }
+
+        /// <summary>
+        /// Sets the translation values to apply to the input value.
+        /// </summary>
+        /// <param name="xTranslation">Translation value to apply to the X coordinate.</param>
+        /// <param name="yTranslation">Translation value to apply to the Y coordinate.</param>
+        /// <param name="zTranslation">Translation value to apply to the Z coordinate.</param>
+        /// <remarks>
+        /// The <see cref="GetValue"/> method moves the ( x, y, z ) coordinates
+        /// of the input value by a translation amount before returning the
+        /// output value from the source module
+        /// </remarks>
+        public void SetTranslation(double xTranslation, double yTranslation, double zTranslation)
+        {
+            XTranslation = xTranslation;
+            YTranslation = yTranslation;
+            ZTranslation = zTranslation;
         }
 
         /// <summary>

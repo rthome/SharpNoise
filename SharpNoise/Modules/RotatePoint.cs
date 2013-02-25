@@ -23,6 +23,11 @@ namespace SharpNoise.Modules
     [Serializable]
     public class RotatePoint : Module
     {
+        /// <summary>
+        /// Default rotation angle for all axes
+        /// </summary>
+        public const double DefaultRotation = 0D;
+
         // 1st column: x1, x2, x3
         // 2nd column: y1, y2, y3
         // 3rd column: z1, z2, z3
@@ -37,11 +42,6 @@ namespace SharpNoise.Modules
             get { return GetSourceModule(0); }
             set { SetSourceModule(0, value); }
         }
-
-        /// <summary>
-        /// Default rotation angle for all axes
-        /// </summary>
-        public const double DefaultRotation = 0D;
 
         /// <summary>
         /// Gets or sets the rotation angle around the x axis to apply to the

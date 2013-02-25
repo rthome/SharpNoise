@@ -62,6 +62,11 @@ namespace SharpNoise.Modules
         public const double DefaultFrequency = 1D;
 
         /// <summary>
+        /// Default value for EnableDistance
+        /// </summary>
+        public bool DefaultEnableDistance = false;
+
+        /// <summary>
         /// Default seed of the noise function
         /// </summary>
         public const int DefaultSeed = 0;
@@ -187,7 +192,7 @@ namespace SharpNoise.Modules
             : base(0)
         {
             Displacement = DefaultDisplacement;
-            EnableDistance = false;
+            EnableDistance = DefaultEnableDistance;
             Frequency = DefaultFrequency;
             Seed = DefaultSeed;
         }
