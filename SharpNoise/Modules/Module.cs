@@ -359,6 +359,8 @@ namespace SharpNoise.Modules
         {
             if (module == null)
                 throw new ArgumentNullException("module", "The given Module must not be null.");
+            if (ReferenceEquals(this, module))
+                throw new ArgumentException("You cannot set a module as it's own source module.");
 
             try
             {

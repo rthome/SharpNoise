@@ -53,13 +53,36 @@ namespace SharpNoise.Tests
         [TestMethod]
         public void Serialization_GetModulesRecursive_NoModule_Test()
         {
-            throw new NotImplementedException();
+            var source0 = new Perlin();
+            var source1 = new Add { Source0 = null, Source1 = null };
+            var root = new Power { Source0 = source0, Source1 = source1 };
+
+            var items = new List<Module>(serializer.GetModulesRecursiveAccessor(root));
+
+            var expected = new Module[] { source0, source1, root };
+            CollectionAssert.AreEquivalent(expected, items);
         }
 
+        //[TestMethod]
+        //public void Serialization_GetModulesRecursive_Cyclic_Test()
+        //{
+        //    var source0 = new Constant();
+        //    var add = new Add { Source0 = source0 };
+        //    var add2 = new Add { Source0 = source0 };
+
+        //    add.Source1 = add2;
+        //    add2.Source1 = add;
+
+        //    var items = new List<Module>(serializer.GetModulesRecursiveAccessor(add2));
+
+        //    var expected = new Module[] { source0, add, add2 };
+        //    CollectionAssert.AreEquivalent(expected, items);
+        //}
+
         [TestMethod]
-        public void Serialization_GetModulesRecursive_Cyclic_Test()
+        public void Serialization_GetModulesRecursive_NullArgument_Test()
         {
-            throw new NotImplementedException();
+            CollectionAssert.AreEqual(new List<Module>(), new List<Module>(serializer.GetModulesRecursiveAccessor(null)));
         }
     }
 }
