@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace SharpNoise.Modules
 {
@@ -47,6 +48,14 @@ namespace SharpNoise.Modules
         /// between the control points.
         /// </summary>
         public bool InvertTerraces { get; set; }
+
+        public ReadOnlyCollection<double> ControlPoints
+        {
+            get
+            {
+                return new ReadOnlyCollection<double>(controlPoints);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the first source module
