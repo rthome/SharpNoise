@@ -36,7 +36,7 @@ namespace SharpNoise.Modules
     [Serializable]
     public class Terrace : Module
     {
-        List<double> controlPoints;
+        readonly List<double> controlPoints;
 
         /// <summary>
         /// Gets the number of control points on the terrace-forming curve.
@@ -49,6 +49,9 @@ namespace SharpNoise.Modules
         /// </summary>
         public bool InvertTerraces { get; set; }
 
+        /// <summary>
+        /// Gets a read-only wrapper over all ControlPoints in the Module
+        /// </summary>
         public ReadOnlyCollection<double> ControlPoints
         {
             get
