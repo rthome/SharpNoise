@@ -10,18 +10,33 @@ namespace SharpNoise.Modules
     {
         private struct Grad
         {
-            public readonly double X, Y, Z;
+            public readonly double X, Y, Z, W;
 
             public Grad(double x, double y, double z)
             {
                 X = x;
                 Y = y;
                 Z = z;
+                W = 0;
+            }
+
+            public Grad(double x, double y, double z, double w)
+            {
+                X = x;
+                Y = y;
+                Z = z;
+                W = w;
             }
         }
 
+        private const double Sqrt3 = 1.7320508075688772;
+        private const double Sqrt5 = 2.23606797749979;
+        private const double F2 = 0.5 * (Sqrt3 - 1.0);
+        private const double G2 = (3.0 - Sqrt3) / 6.0;
         private const double F3 = 1.0 / 3.0;
         private const double G3 = 1.0 / 6.0;
+        private const double F4 = (Sqrt5 - 1.0) / 4.0;
+        private const double G4 = (5.0 - Sqrt5) / 20.0;
 
         private static readonly Grad[] Grad3 = 
         {
@@ -30,16 +45,28 @@ namespace SharpNoise.Modules
             new Grad(0,1,1), new Grad(0,-1,1), new Grad(0,1,-1), new Grad(0,-1,-1),
         };
 
-        private readonly byte[] P = new byte[256];
-
-        private readonly short[] Perm = new short[512];
-        private readonly short[] PermMod12 = new short[512];
-
-        private void RegeneratePermutations()
+        private static readonly short[] P = 
         {
-            var rng = new Random(Seed);
-            rng.NextBytes(P);
+            151,160,137,91,90,15,
+            131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
+            190, 6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,
+            88,237,149,56,87,174,20,125,136,171,168, 68,175,74,165,71,134,139,48,27,166,
+            77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,41,55,46,245,40,244,
+            102,143,54, 65,25,63,161, 1,216,80,73,209,76,132,187,208, 89,18,169,200,196,
+            135,130,116,188,159,86,164,100,109,198,173,186, 3,64,52,217,226,250,124,123,
+            5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,17,182,189,28,42,
+            223,183,170,213,119,248,152, 2,44,154,163, 70,221,153,101,155,167, 43,172,9,
+            129,22,39,253, 19,98,108,110,79,113,224,232,178,185, 112,104,218,246,97,228,
+            251,34,242,193,238,210,144,12,191,179,162,241, 81,51,145,235,249,14,239,107,
+            49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
+            138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
+        };
 
+        private static short[] Perm = new short[512];
+        private static short[] PermMod12 = new short[512];
+
+        static Simplex()
+        {
             for (int i = 0; i < 512; i++)
             {
                 Perm[i] = P[i & 255];
@@ -47,96 +74,99 @@ namespace SharpNoise.Modules
             }
         }
 
-        private static double Dot(ref Grad g, double[] xyz)
+        private static double Dot(ref Grad g, double x, double y, double z)
         {
-            return g.X * xyz[0] + g.Y * xyz[1] + g.Z * xyz[2];
-        }
-
-        private static double SquareSub(double[] values)
-        {
-            double r = 0.6;
-
-            for (int i = 1; i < values.Length; i++)
-            {
-                r -= values[i] * values[i];
-            }
-
-            return r;
+            return g.X * x + g.Y * y + g.Z * z;
         }
 
         // 3D simplex noise
-        private double SimplexNoise3D(double xin, double yin, double zin)
+        public static double SimplexNoise3D(double xin, double yin, double zin, int seed = 0)
         {
             // Skew the input space to determine which simplex cell we're in
             // Very nice and simple skew factor for 3D
             double s = (xin + yin + zin) * F3;
+            int i = NoiseMath.FastFloor(xin + s);
+            int j = NoiseMath.FastFloor(yin + s);
+            int k = NoiseMath.FastFloor(zin + s);
 
-            int[] ijk = 
-            {
-                NoiseMath.FastFloor(xin + s),
-                NoiseMath.FastFloor(yin + s),
-                NoiseMath.FastFloor(zin + s),
-            };
-
-            double t = (ijk[0] + ijk[1] + ijk[2]) * G3;
-
+            double t = (i + j + k) * G3;
             // Unskew the cell origin back to (x,y,z) space
-            double[] XYZ0 = new double[3];
-            for (var i = 0; i < 3; ++i)
-                XYZ0[i] = ijk[i] - t;
-
+            double X0 = i - t;
+            double Y0 = j - t;
+            double Z0 = k - t;
             // The x,y,z distances from the cell origin
-            double[] xyz0 = 
-            {
-                xin - XYZ0[0],
-                yin - XYZ0[1],
-                zin - XYZ0[2],
-            };
+            double x0 = xin - X0;
+            double y0 = yin - Y0;
+            double z0 = zin - Z0;
 
             // For the 3D case, the simplex shape is a slightly irregular tetrahedron.
             // Determine which simplex we are in.
-            int[] ijk1; // Offsets for second corner of simplex in (i,j,k) coords
-            int[] ijk2; // Offsets for third corner of simplex in (i,j,k) coords
-            if (xyz0[0] >= xyz0[1])
+            int i1, j1, k1; // Offsets for second corner of simplex in (i,j,k) coords
+            int i2, j2, k2; // Offsets for third corner of simplex in (i,j,k) coords
+            if (x0 >= y0)
             {
                 // X Y Z order
-                if (xyz0[1] >= xyz0[2])
+                if (y0 >= z0)
                 {
-                    ijk1 = new[] { 1, 0, 0 };
-                    ijk2 = new[] { 1, 1, 0 };
+                    i1 = 1;
+                    j1 = 0;
+                    k1 = 0;
+                    i2 = 1;
+                    j2 = 1;
+                    k2 = 0;
                 }
                 // X Z Y order
-                else if (xyz0[0] >= xyz0[2])
+                else if (x0 >= z0)
                 {
-                    ijk1 = new[] { 1, 0, 0 };
-                    ijk2 = new[] { 1, 0, 1 };
+                    i1 = 1;
+                    j1 = 0;
+                    k1 = 0;
+                    i2 = 1;
+                    j2 = 0;
+                    k2 = 1;
                 }
                 // Z X Y order
                 else
                 {
-                    ijk1 = new[] { 0, 0, 1 };
-                    ijk2 = new[] { 1, 0, 1 };
+                    i1 = 0;
+                    j1 = 0;
+                    k1 = 1;
+                    i2 = 1;
+                    j2 = 0;
+                    k2 = 1;
                 }
             }
             else // x0<y0
             {
                 // Z Y X order
-                if (xyz0[1] < xyz0[2])
+                if (y0 < z0)
                 {
-                    ijk1 = new[] { 0, 0, 1 };
-                    ijk2 = new[] { 0, 1, 1 };
+                    i1 = 0;
+                    j1 = 0;
+                    k1 = 1;
+                    i2 = 0;
+                    j2 = 1;
+                    k2 = 1;
                 }
                 // Y Z X order
-                else if (xyz0[0] < xyz0[2])
+                else if (x0 < z0)
                 {
-                    ijk1 = new[] { 0, 1, 0 };
-                    ijk2 = new[] { 0, 1, 1 };
+                    i1 = 0;
+                    j1 = 1;
+                    k1 = 0;
+                    i2 = 0;
+                    j2 = 1;
+                    k2 = 1;
                 }
                 // Y X Z order
                 else
                 {
-                    ijk1 = new[] { 0, 1, 0 };
-                    ijk2 = new[] { 1, 1, 0 };
+                    i1 = 0;
+                    j1 = 1;
+                    k1 = 0;
+                    i2 = 1;
+                    j2 = 1;
+                    k2 = 0;
                 }
             }
 
@@ -144,54 +174,60 @@ namespace SharpNoise.Modules
             // a step of (0,1,0) in (i,j,k) means a step of (-c,1-c,-c) in (x,y,z), and
             // a step of (0,0,1) in (i,j,k) means a step of (-c,-c,1-c) in (x,y,z), where
             // c = 1/6.
-            var xyz1 = new double[3]; // Offsets for second corner in (x,y,z) coords
-            var xyz2 = new double[3]; // Offsets for third corner in (x,y,z) coords
-            var xyz3 = new double[3]; // Offsets for last corner in (x,y,z) coords
-            for (var i = 0; i < 3; ++i)
-            {
-                xyz1[i] = xyz0[i] - ijk1[i] + G3;
-                xyz2[i] = xyz0[i] - ijk2[i] + 2 * G3;
-                xyz3[i] = xyz0[i] - 1 + 3 * G3;
-            }
-
-            var xyz = new double[][]
-            {
-                xyz0,
-                xyz1,
-                xyz2,
-                xyz3,
-            };
+            double x1 = x0 - i1 + G3; // Offsets for second corner in (x,y,z) coords
+            double y1 = y0 - j1 + G3;
+            double z1 = z0 - k1 + G3;
+            double x2 = x0 - i2 + 2.0 * G3; // Offsets for third corner in (x,y,z) coords
+            double y2 = y0 - j2 + 2.0 * G3;
+            double z2 = z0 - k2 + 2.0 * G3;
+            double x3 = x0 - 1.0 + 3.0 * G3; // Offsets for last corner in (x,y,z) coords
+            double y3 = y0 - 1.0 + 3.0 * G3;
+            double z3 = z0 - 1.0 + 3.0 * G3;
 
             // Work out the hashed gradient indices of the four simplex corners
-            int ii = ijk[0] & 255;
-            int jj = ijk[1] & 255;
-            int kk = ijk[2] & 255;
-            int[] gi = 
-            {
-                PermMod12[ii + Perm[jj + Perm[kk]]],
-                PermMod12[ii + ijk1[0] + Perm[jj + ijk[1] + Perm[kk + ijk1[2]]]],
-                PermMod12[ii + ijk2[0] + Perm[jj + ijk2[1] + Perm[kk + ijk2[2]]]],
-                PermMod12[ii + 1 + Perm[jj + 1 + Perm[kk + 1]]],
-            };
+            int ii = i & 255;
+            int jj = j & 255;
+            int kk = k & 255;
+            int gi0 = PermMod12[ii + Perm[jj + Perm[kk]]];
+            int gi1 = PermMod12[ii + i1 + Perm[jj + j1 + Perm[kk + k1]]];
+            int gi2 = PermMod12[ii + i2 + Perm[jj + j2 + Perm[kk + k2]]];
+            int gi3 = PermMod12[ii + 1 + Perm[jj + 1 + Perm[kk + 1]]];
 
             // Noise contributions from the four corners
-            double[] ni = new double[4];
-            double[] ti = new double[4];
+            double n0 = 0.0, n1 = 0.0, n2 = 0.0, n3 = 0.0;
 
-            for (var i = 0; i < 4; ++i)
+            // Calculate the contribution from the four corners
+            double t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0;
+            if (t0 >= 0)
             {
-                var value = SquareSub(xyz[i]);
-                ti[i] = value;
-                if (value >= 0)
-                {
-                    ti[i] = value * value;
-                    ni[i] = ti[i] + ti[i] * Dot(ref Grad3[gi[i]], xyz[i]);
-                }
+                t0 *= t0;
+                n0 = t0 * t0 * Dot(ref Grad3[(gi0 * seed) % 12], x0, y0, z0);
+            }
+
+            double t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1;
+            if (t1 >= 0)
+            {
+                t1 *= t1;
+                n1 = t1 * t1 * Dot(ref Grad3[(gi1 * seed) % 12], x1, y1, z1);
+            }
+
+            double t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2;
+            if (t2 >= 0)
+            {
+                t2 *= t2;
+                n2 = t2 * t2 * Dot(ref Grad3[(gi2 * seed) % 12], x2, y2, z2);
+            }
+
+            double t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3;
+            if (t3 >= 0)
+            {
+                t3 *= t3;
+                n3 = t3 * t3 * Dot(ref Grad3[(gi3 * seed) % 12], x3, y3, z3);
             }
 
             // Add contributions from each corner to get the final noise value.
             // The result is scaled to stay just inside [-1,1]
-            return 32.0 * (ni[0] + ni[1] + ni[2] + ni[3]);
+            return 32.0 * (n0 + n1 + n2 + n3);
         }
 
         /// <summary>
@@ -223,8 +259,6 @@ namespace SharpNoise.Modules
         /// Gets or sets the frequency of the first octave.
         /// </summary>
         public double Frequency { get; set; }
-
-        private int seed;
 
         /// <summary>
         /// Gets or sets the lacunarity of the Simplex noise.
@@ -264,19 +298,7 @@ namespace SharpNoise.Modules
         /// <summary>
         /// Gets or sets the seed value used by the Simplex noise function.
         /// </summary>
-        /// <remarks>
-        /// Setting this property regenerates the permutation tables with the new seed.
-        /// This is a somewhat costly operation.
-        /// </remarks>
-        public int Seed
-        {
-            get { return seed; }
-            set
-            {
-                seed = value;
-                RegeneratePermutations();
-            }
-        }
+        public int Seed { get; set; }
 
         /// <summary>
         /// See documentation on the base class
@@ -297,7 +319,7 @@ namespace SharpNoise.Modules
 
             for (var currentOctave = 0; currentOctave < OctaveCount; currentOctave++)
             {
-                signal = SimplexNoise3D(x, y, z);
+                signal = SimplexNoise3D(x, y, z, Seed);
                 value += signal * currentPersistence;
 
                 x *= Lacunarity;
@@ -319,7 +341,6 @@ namespace SharpNoise.Modules
             Lacunarity = DefaultLacunarity;
             OctaveCount = DefaultOctaveCount;
             Persistence = DefaultPersistence;
-            Seed = DefaultSeed;
         }
     }
 }
