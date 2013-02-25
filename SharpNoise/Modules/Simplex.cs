@@ -264,6 +264,10 @@ namespace SharpNoise.Modules
         /// <summary>
         /// Gets or sets the seed value used by the Simplex noise function.
         /// </summary>
+        /// <remarks>
+        /// Setting this property regenerates the permutation tables with the new seed.
+        /// This is a somewhat costly operation.
+        /// </remarks>
         public int Seed
         {
             get { return seed; }
