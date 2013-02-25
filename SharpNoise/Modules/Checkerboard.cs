@@ -36,9 +36,9 @@ namespace SharpNoise.Modules
         /// <returns>Returns the computed value</returns>
         public override double GetValue(double x, double y, double z)
         {
-            var ix = (int)Math.Floor(x);
-            var iy = (int)Math.Floor(y);
-            var iz = (int)Math.Floor(z);
+            var ix = NoiseMath.FastFloor(x);
+            var iy = NoiseMath.FastFloor(y);
+            var iz = NoiseMath.FastFloor(z);
             return ((ix & 1) ^ (iy & 1) ^ (iz & 1)) != 0 ? -1.0 : 1.0;
         }
     }
