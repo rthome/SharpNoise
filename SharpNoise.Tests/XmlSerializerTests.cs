@@ -90,7 +90,8 @@ namespace SharpNoise.Tests
         [TestMethod]
         public void Serialization_Terrace_DefaultControlPoints_Test()
         {
-            var terrace = new Terrace();
+            var source = new Perlin();
+            var terrace = new Terrace { Source0 = source };
             terrace.MakeControlPoints(4);
 
             var saveStream = new MemoryStream();
@@ -109,7 +110,8 @@ namespace SharpNoise.Tests
         [TestMethod]
         public void Serialization_Curve_ControlPoints_Test()
         {
-            var curve = new Curve();
+            var source = new Perlin();
+            var curve = new Curve { Source0 = source };
             curve.AddControlPoint(-1, 1);
             curve.AddControlPoint(-0.75, 0.5);
             curve.AddControlPoint(0, 0);
