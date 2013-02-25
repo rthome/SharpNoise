@@ -34,6 +34,8 @@ namespace SharpNoise.Modules
         /// </summary>
         public const double DefaultUpperBound = 1D;
 
+        double lowerBound, upperBound;
+
         /// <summary>
         /// Gets the lower bound of the clamping range.
         /// </summary>
@@ -42,7 +44,14 @@ namespace SharpNoise.Modules
         /// bound of the clamping range, this noise module clamps that value
         /// to the lower bound.
         /// </remarks>
-        public double LowerBound { get; set; }
+        public double LowerBound
+        {
+            get { return lowerBound; }
+            set
+            {
+                SetBounds(value, upperBound);
+            }
+        }
 
         /// <summary>
         /// Gets the upper bound of the clamping range.
@@ -52,7 +61,14 @@ namespace SharpNoise.Modules
         /// upper bound of the clamping range, this noise module clamps that
         /// value to the upper bound.
         /// </remarks>
-        public double UpperBound { get; set; }
+        public double UpperBound
+        {
+            get { return upperBound; }
+            set
+            {
+                SetBounds(lowerBound, value);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the first source module
@@ -89,8 +105,11 @@ namespace SharpNoise.Modules
         /// </remarks>
         public void SetBounds(double lower, double upper)
         {
-            LowerBound = lower;
-            UpperBound = upper;
+            if (lower > upper)
+                throw new InvalidOperationException("lower cannot be greater than upper.");
+
+            lowerBound = lower;
+            upperBound = upper;
         }
 
         /// <summary>
@@ -103,9 +122,6 @@ namespace SharpNoise.Modules
         /// <returns>Returns the computed value</returns>
         public override double GetValue(double x, double y, double z)
         {
-            if (LowerBound > UpperBound)
-                throw new InvalidOperationException("LowerBound cannot be greater than UpperBound.");
-
             return NoiseMath.Clamp(sourceModules[0].GetValue(x, y, z), LowerBound, UpperBound);
         }
     }
