@@ -27,6 +27,14 @@ namespace SharpNoise.Tests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Serialization_GetModulesRecursive_CyclicSelf_Test()
+        {
+            var add = new Add();
+            add.Source0 = add;
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(NoModuleException))]
         public void InvalidGetSourceModule_NoModule_Test()
         {

@@ -86,14 +86,24 @@ namespace SharpNoise.Serialization
         /// </remarks>
         protected IEnumerable<Module> GetModulesRecursive(Module module)
         {
+            if (module == null)
+                return Enumerable.Empty<Module>();
+
             IEnumerable<Module> result = Enumerable.Repeat(module, 1);
 
             if (module.SourceModuleCount > 0)
             {
                 for (int i = 0; i < module.SourceModuleCount; ++i)
                 {
-                    var childModules = GetModulesRecursive(module.GetSourceModule(i));
-                    result = result.Concat(childModules);
+                    try
+                    {
+                        var childModules = GetModulesRecursive(module.GetSourceModule(i));
+                        result = result.Concat(childModules);
+                    }
+                    catch (NoModuleException)
+                    {
+                        Debug.Print("NoModuleException was silenced.");
+                    }
                 }
             }
 
