@@ -1,0 +1,16 @@
+syntax: glob
+
+*.obj
+*.pyc
+*.pyo
+*.project
+*.pydevproject
+*.suo
+*.orig
+
+TestResults\*
+
+*\obj\*
+*\bin\*
+
+
