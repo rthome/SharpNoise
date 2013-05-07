@@ -10,33 +10,18 @@ namespace SharpNoise.Modules
     {
         private struct Grad
         {
-            public readonly double X, Y, Z, W;
+            public readonly double X, Y, Z;
 
             public Grad(double x, double y, double z)
             {
                 X = x;
                 Y = y;
                 Z = z;
-                W = 0;
-            }
-
-            public Grad(double x, double y, double z, double w)
-            {
-                X = x;
-                Y = y;
-                Z = z;
-                W = w;
             }
         }
 
-        private const double Sqrt3 = 1.7320508075688772;
-        private const double Sqrt5 = 2.23606797749979;
-        private const double F2 = 0.5 * (Sqrt3 - 1.0);
-        private const double G2 = (3.0 - Sqrt3) / 6.0;
         private const double F3 = 1.0 / 3.0;
         private const double G3 = 1.0 / 6.0;
-        private const double F4 = (Sqrt5 - 1.0) / 4.0;
-        private const double G4 = (5.0 - Sqrt5) / 20.0;
 
         private static readonly Grad[] Grad3 = 
         {
