@@ -408,7 +408,7 @@ namespace SharpNoise.Utilities.Imaging
             {
                 for (int x = 0; x < width; x++)
                 {
-                    float source = SourceNoiseMap.GetValue(x, y);
+                    float source = SourceNoiseMap[x, y];
 
                     // Get the color based on the value at the current point in the noise
                     // map.
@@ -494,11 +494,11 @@ namespace SharpNoise.Utilities.Imaging
 
                         // Get the noise value of the current point in the source noise map
                         // and the noise values of its four-neighbors.
-                        var nc = (double)(SourceNoiseMap.GetValue(x, y));
-                        var nl = (double)(SourceNoiseMap.GetValue(x + xLeftOffset, y));
-                        var nr = (double)(SourceNoiseMap.GetValue(x + xRightOffset, y));
-                        var nd = (double)(SourceNoiseMap.GetValue(x, y + yDownOffset));
-                        var nu = (double)(SourceNoiseMap.GetValue(x, y + yUpOffset));
+                        var nc = (double)(SourceNoiseMap[x, y]);
+                        var nl = (double)(SourceNoiseMap[x + xLeftOffset, y]);
+                        var nr = (double)(SourceNoiseMap[x + xRightOffset, y]);
+                        var nd = (double)(SourceNoiseMap[x, y + yDownOffset]);
+                        var nu = (double)(SourceNoiseMap[x, y + yUpOffset]);
 
                         // Now we can calculate the lighting intensity.
                         lightIntensity = CalcLightIntensity(nc, nl, nr, nd, nu);
@@ -513,14 +513,14 @@ namespace SharpNoise.Utilities.Imaging
                     // Get the current background color from the background image.
                     Color backgroundColor;
                     if (BackgroundImage != null)
-                        backgroundColor = BackgroundImage.GetValue(x, y);
+                        backgroundColor = BackgroundImage[x, y];
                     else
                         backgroundColor = new Color(255, 255, 255, 255);
 
                     // Blend the destination color, background color, and the light
                     // intensity together, then update the destination image with that
                     // color.
-                    DestinationImage.SetValue(x, y, CalcDestinationColor(destColor, backgroundColor, lightIntensity));
+                    DestinationImage[x, y] = CalcDestinationColor(destColor, backgroundColor, lightIntensity);
                 }
             }
         }

@@ -116,7 +116,7 @@ namespace SharpNoise.Builders
                         finalValue = (float)NoiseMath.Linear(z0, z1, zBlend);
                     }
                     xCur += xDelta;
-                    DestNoiseMap.SetValue(x, z, finalValue);
+                    DestNoiseMap[x, z] = finalValue;
                 }
                 if (callback != null)
                     callback(DestNoiseMap.GetLineReader(z));

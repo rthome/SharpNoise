@@ -97,7 +97,7 @@ namespace SharpNoise.Builders
                 for (var x = 0; x < destWidth; x++)
                 {
                     var curValue = (float)cylinderModel.GetValue(curAngle, curHeight);
-                    DestNoiseMap.SetValue(x, y, curValue);
+                    DestNoiseMap[x, y] = curValue;
                     curAngle += xDelta;
                 }
                 if (callback != null)
