@@ -42,7 +42,6 @@
     <Compile Include="Imaging\GradientColor.cs" />
     <Compile Include="Imaging\Image.cs" />
     <Compile Include="Imaging\ImageRenderer.cs" />
-    <Compile Include="Maps\Heightmap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
