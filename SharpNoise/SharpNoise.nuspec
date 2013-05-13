@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>$id$</id>
+    <id>SharpNoise</id>
     <version>$version$</version>
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<licenseUrl>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</licenseUrl>
 	<projectUrl>https://bitbucket.org/rthome/sharpnoise</projectUrl>
     <description>$description$</description>
     <releaseNotes>NuGet package for version $version$ of SharpNoise.
