@@ -315,7 +315,7 @@ namespace SharpNoise
         public static void SetVectorTable(double[] table)
         {
             if (table == null)
-                throw new ArgumentNullException("The given vector table must not be null.");
+                throw new ArgumentNullException("table");
             if (table.Length != vectortable.Length)
                 throw new ArgumentException("The given vector table isn't the right size (" + vectortable.Length + ")");
 

@@ -100,7 +100,7 @@ namespace SharpNoise.Builders
                     curLon += xDelta;
                 }
                 if (callback != null)
-                    callback(DestNoiseMap.GetLineReader(y));
+                    callback(DestNoiseMap.IterateLine(y));
                 curLat += yDelta;
             }
         }

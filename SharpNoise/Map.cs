@@ -13,7 +13,7 @@ namespace SharpNoise
         /// <summary>
         /// Provides read-only access to a single line in the map.
         /// </summary>
-        public sealed class LineReader : IEnumerator<T>, IEnumerable<T>
+        public sealed class LineIterator : IEnumerator<T>, IEnumerable<T>
         {
             int currentIndex;
             T currentItem;
@@ -65,7 +65,7 @@ namespace SharpNoise
             /// <param name="map">The map to read from.</param>
             /// <param name="lower">The lower (start) index of the row.</param>
             /// <param name="upper">The upper (end) index of the row.</param>
-            internal LineReader(Map<T> map, int lower, int upper)
+            internal LineIterator(Map<T> map, int lower, int upper)
             {
                 this.map = map;
                 lowerIndex = lower;
@@ -111,7 +111,7 @@ namespace SharpNoise
         /// <summary>
         /// Constructor for an empty Map.
         /// </summary>
-        public Map()
+        protected Map()
         {
         }
 
@@ -126,7 +126,7 @@ namespace SharpNoise
         /// It is considered an error if the specified dimensions are not
         /// positive.
         /// </remarks>
-        public Map(int width, int height)
+        protected Map(int width, int height)
         {
             SetSize(height, width);
         }
@@ -135,8 +135,11 @@ namespace SharpNoise
         /// Copy Constructor
         /// </summary>
         /// <param name="other">The Map to copy</param>
-        public Map(Map<T> other)
+        protected Map(Map<T> other)
         {
+            if (other == null)
+                throw new ArgumentNullException("other");
+
             SetSize(other.Height, other.Width);
             other.values.CopyTo(values, 0);
             BorderValue = other.BorderValue;
@@ -153,8 +156,6 @@ namespace SharpNoise
         ///
         /// This method does not perform bounds checking so be careful when
         /// calling it.
-        /// 
-        /// This method will throw an InvalidOperationException if the Map is empty.
         /// </remarks>
         protected int GetIndex(int x, int y)
         {
@@ -171,8 +172,6 @@ namespace SharpNoise
         ///
         /// This method does not perform bounds checking so be careful when
         /// calling it.
-        /// 
-        /// This method will throw an InvalidOperationException if the Map is empty.
         /// </remarks>
         protected int GetIndex(int row)
         {
@@ -191,27 +190,27 @@ namespace SharpNoise
         }
 
         /// <summary>
-        /// Create a LineReader for the specified row in the Map.
+        /// Create a LineIterator for the specified row in the Map.
         /// </summary>
-        /// <param name="row">The index of the row that will be read.</param>
-        /// <returns>Returns a new LineReader.</returns>
-        public LineReader GetLineReader(int row)
+        /// <param name="line">The index of the row that will be read.</param>
+        /// <returns>Returns a new LineIterator.</returns>
+        public LineIterator IterateLine(int line)
         {
-            if (row < 0 || row >= Height)
+            if (line < 0 || line >= Height)
                 throw new ArgumentException("row must be greater than 0 and less than Height.");
 
-            var lower = GetIndex(row);
-            return new LineReader(this, lower, lower + Width);
+            var lower = GetIndex(line);
+            return new LineIterator(this, lower, lower + Width);
         }
 
         /// <summary>
         /// Creates LineReaders for all rows in the Map.
         /// </summary>
         /// <returns>Returns LineReaders for all rows in the Map from 0 to Height.</returns>
-        public IEnumerable<LineReader> GetLineReaders()
+        public IEnumerable<LineIterator> IterateAllLines()
         {
             for (var row = 0; row < Height; row++)
-                yield return GetLineReader(row);
+                yield return IterateLine(row);
         }
 
         /// <summary>

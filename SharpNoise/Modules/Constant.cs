@@ -6,7 +6,7 @@ namespace SharpNoise.Modules
     /// Noise module that outputs a constant value.
     /// </summary>
     /// <remarks>
-    /// To specify the constant value, modify the <see cref="Value"/> property.
+    /// To specify the constant value, modify the <see cref="ConstantValue"/> property.
     ///
     /// This noise module is not useful by itself, but it is often used as a
     /// source module for other noise modules.
@@ -24,7 +24,7 @@ namespace SharpNoise.Modules
         /// <summary>
         /// The value that will be produced by the module
         /// </summary>
-        public double Value { get; set; }
+        public double ConstantValue { get; set; }
 
         /// <summary>
         /// Constructor.
@@ -32,7 +32,7 @@ namespace SharpNoise.Modules
         public Constant()
             : base(0)
         {
-            Value = DefaultConstantValue;
+            ConstantValue = DefaultConstantValue;
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace SharpNoise.Modules
         /// <returns>Returns the computed value</returns>
         public override double GetValue(double x, double y, double z)
         {
-            return Value;
+            return ConstantValue;
         }
     }
 }

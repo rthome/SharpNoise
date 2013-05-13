@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace SharpNoise.Modules
 {
@@ -33,5 +34,15 @@ namespace SharpNoise.Modules
             : base(message, inner)
         {
         }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="info">Serialization info</param>
+        /// <param name="context">Serialization context</param>
+        protected NoModuleException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        } 
     }
 }

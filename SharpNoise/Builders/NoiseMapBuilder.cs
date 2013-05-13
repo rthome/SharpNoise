@@ -39,7 +39,7 @@ namespace SharpNoise.Builders
         protected int destWidth, destHeight;
 
         // the callback action, will be called by build every time a new line is completed
-        protected Action<NoiseMap.LineReader> callback;
+        protected Action<NoiseMap.LineIterator> callback;
 
         /// <summary>
         /// Builds the noise map.
@@ -102,7 +102,7 @@ namespace SharpNoise.Builders
         /// <remarks>
         /// Set the callback to null to clear the callback.
         /// </remarks>
-        public void SetCallback(Action<NoiseMap.LineReader> callback)
+        public void SetCallback(Action<NoiseMap.LineIterator> callback)
         {
             this.callback = callback;
         }

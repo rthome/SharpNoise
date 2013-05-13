@@ -50,7 +50,7 @@ namespace SharpNoise.Tests
         {
             var expected = 5f;
             map.Clear(expected);
-            foreach (var line in map.GetLineReaders())
+            foreach (var line in map.IterateAllLines())
                 foreach (var value in line)
                     Assert.AreEqual(expected, value);
         }
@@ -66,7 +66,7 @@ namespace SharpNoise.Tests
             builder.Build();
 
             int row = 0, x = 0;
-            foreach (var line in builder.DestNoiseMap.GetLineReaders())
+            foreach (var line in builder.DestNoiseMap.IterateAllLines())
             {
                 foreach (var value in line)
                 {
