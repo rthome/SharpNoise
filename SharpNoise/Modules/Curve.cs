@@ -48,6 +48,11 @@ namespace SharpNoise.Modules
                 return false;
             }
 
+            public override int GetHashCode()
+            {
+                return InputValue.GetHashCode();
+            }
+
             /// <summary>
             /// Compare two ControlPoints for equality
             /// </summary>
