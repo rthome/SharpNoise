@@ -21,9 +21,9 @@ namespace SharpNoise.Tests
         public void Map_GetSetValue_Test()
         {
             var expected = 99f;
-            map.SetValue(1, 1, expected);
+            map[1, 1] = expected;
 
-            var actual = map.GetValue(1, 1);
+            var actual = map[1, 1];
             Assert.AreEqual(expected, actual);
         }
 
@@ -34,15 +34,15 @@ namespace SharpNoise.Tests
             map.BorderValue = expected;
             map.Clear(10f);
 
-            Assert.AreEqual(expected, map.GetValue(-1, -1));
-            Assert.AreEqual(expected, map.GetValue(-1, 0));
-            Assert.AreEqual(expected, map.GetValue(-1, 1));
-            Assert.AreEqual(expected, map.GetValue(-1, 2));
-
-            Assert.AreEqual(expected, map.GetValue(2, -1));
-            Assert.AreEqual(expected, map.GetValue(2, 0));
-            Assert.AreEqual(expected, map.GetValue(2, 1));
-            Assert.AreEqual(expected, map.GetValue(2, 2));
+            Assert.AreEqual(expected, map[-1, -1]);
+            Assert.AreEqual(expected, map[-1, 0]);
+            Assert.AreEqual(expected, map[-1, 1]);
+            Assert.AreEqual(expected, map[-1, 2]);
+                                               
+            Assert.AreEqual(expected, map[2, -1]);
+            Assert.AreEqual(expected, map[2, 0]);
+            Assert.AreEqual(expected, map[2, 1]);
+            Assert.AreEqual(expected, map[2, 2]);
         }
 
         [TestMethod]
@@ -70,7 +70,7 @@ namespace SharpNoise.Tests
             {
                 foreach (var value in line)
                 {
-                    Assert.AreEqual(builder.DestNoiseMap.GetValue(x, row), value);
+                    Assert.AreEqual(builder.DestNoiseMap[x, row], value);
                     x++;
                 }
                 row++;

@@ -96,7 +96,7 @@ namespace SharpNoise.Builders
                 for (var x = 0; x < destWidth; x++)
                 {
                     var curValue = (float)sphereModel.GetValue(curLat, curLon);
-                    DestNoiseMap.SetValue(x, y, curValue);
+                    DestNoiseMap[x, y] = curValue;
                     curLon += xDelta;
                 }
                 if (callback != null)
