@@ -261,7 +261,7 @@ namespace SharpNoise
         /// <param name="y">The y coordinate of the position.</param>
         /// <returns>The value at that position</returns>
         /// <remarks>
-        /// This calls <see cref="SetValue()"/> or <see cref="GetValue()"/>
+        /// This calls <see cref="SetValue"/> or <see cref="GetValue"/>
         /// </remarks>
         public T this[int x, int y]
         {
