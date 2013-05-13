@@ -9,7 +9,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
 	<projectUrl>https://bitbucket.org/rthome/sharpnoise</projectUrl>
     <description>$description$</description>
-    <releaseNotes>NuGet package for version $version$ of SharpNoise.</releaseNotes>
+    <releaseNotes>NuGet package for version $version$ of SharpNoise.
+
+This release fixes some small problems. It also breaks API compatibility.</releaseNotes>
     <copyright>Copyright Raffael Thome 2013</copyright>
   </metadata>
 </package>
