@@ -140,12 +140,7 @@ namespace SharpNoise
         /// </returns>
         public static T Clamp<T>(T value, T lowerBound, T upperBound) where T : IComparable<T>
         {
-            if (value.CompareTo(lowerBound) < 0)
-                return lowerBound;
-            else if (value.CompareTo(upperBound) > 0)
-                return upperBound;
-            else
-                return value;
+            return Max(lowerBound, Min(upperBound, value));
         }
 
         /// <summary>

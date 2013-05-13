@@ -61,7 +61,7 @@ namespace SharpNoise.Tests
         [TestMethod]
         public void AbsTest()
         {
-            var source = new Constant() { Value = -1 };
+            var source = new Constant() { ConstantValue = -1 };
             var module = new Abs() { Source0 = source };
 
             Assert.AreEqual(Math.Abs(source.GetValue(0, 0, 0)), module.GetValue(0, 0, 0));
@@ -70,7 +70,7 @@ namespace SharpNoise.Tests
         [TestMethod]
         public void AddTest()
         {
-            var source = new Constant() { Value = 5D };
+            var source = new Constant() { ConstantValue = 5D };
             var adder = new Add() { Source0 = source, Source1 = source };
 
             Assert.AreEqual(2D * source.GetValue(0, 0, 0), adder.GetValue(0, 0, 0));
@@ -82,8 +82,8 @@ namespace SharpNoise.Tests
             var min = 0D;
             var max = 1D;
 
-            var source0 = new Constant() { Value = min };
-            var source1 = new Constant() { Value = max };
+            var source0 = new Constant() { ConstantValue = min };
+            var source1 = new Constant() { ConstantValue = max };
             var module = new Max() { Source0 = source0, Source1 = source1 };
 
             Assert.AreEqual(max, module.GetValue(0, 0, 0));
@@ -95,8 +95,8 @@ namespace SharpNoise.Tests
             var min = 0D;
             var max = 1D;
 
-            var source0 = new Constant() { Value = min };
-            var source1 = new Constant() { Value = max };
+            var source0 = new Constant() { ConstantValue = min };
+            var source1 = new Constant() { ConstantValue = max };
             var module = new Min() { Source0 = source0, Source1 = source1 };
 
             Assert.AreEqual(min, module.GetValue(0, 0, 0));
@@ -106,7 +106,7 @@ namespace SharpNoise.Tests
         public void MultiplyTest1()
         {
             var value = 3D;
-            var source = new Constant() { Value = value };
+            var source = new Constant() { ConstantValue = value };
             var module = new Multiply() { Source0 = source, Source1 = source };
 
             Assert.AreEqual(value * value, module.GetValue(0, 0, 0));
@@ -117,8 +117,8 @@ namespace SharpNoise.Tests
         {
             var value1 = 3D;
             var value2 = 5D;
-            var source1 = new Constant() { Value = value1 };
-            var source2 = new Constant() { Value = value2 };
+            var source1 = new Constant() { ConstantValue = value1 };
+            var source2 = new Constant() { ConstantValue = value2 };
             var module = new Multiply() { Source0 = source1, Source1 = source2 };
 
             Assert.AreEqual(value1 * value2, module.GetValue(0, 0, 0));
@@ -145,7 +145,7 @@ namespace SharpNoise.Tests
         {
             var max = 10D;
             var min = 0D;
-            var source = new Constant() { Value = 25D };
+            var source = new Constant() { ConstantValue = 25D };
 
             var module = new Clamp() { LowerBound = min, UpperBound = max, Source0 = source };
 
@@ -157,7 +157,7 @@ namespace SharpNoise.Tests
         {
             var max = 10D;
             var min = 0D;
-            var source = new Constant() { Value = -1D };
+            var source = new Constant() { ConstantValue = -1D };
 
             var module = new Clamp() { LowerBound = min, UpperBound = max, Source0 = source };
 
@@ -169,7 +169,7 @@ namespace SharpNoise.Tests
         {
             var max = 10D;
             var min = 0D;
-            var source = new Constant() { Value = 5D };
+            var source = new Constant() { ConstantValue = 5D };
 
             var module = new Clamp() { LowerBound = min, UpperBound = max, Source0 = source };
 

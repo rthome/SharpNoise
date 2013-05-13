@@ -621,6 +621,8 @@ namespace SharpNoise.Utilities.Imaging
         /// </summary>
         public ImageRenderer()
         {
+            gradient = new GradientColor();
+
             EnableLight = false;
             EnableWrap = false;
             LightAzimuth = 45D;

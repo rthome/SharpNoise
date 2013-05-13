@@ -11,7 +11,7 @@ namespace SharpNoise.Tests
         [TestMethod]
         public void SerializeAllModules()
         {
-            var source0 = new Constant() { Value = 5D };
+            var source0 = new Constant() { ConstantValue = 5D };
             var source1 = new Add() { Source0 = source0, Source1 = source0 };
             var source2 = new Multiply() { Source0 = source0, Source1 = source1 };
 
@@ -21,11 +21,11 @@ namespace SharpNoise.Tests
                 new Abs() { Source0=source0},
                 new Add() { Source0=source0, Source1=source1},
                 new Billow() { Quality= NoiseQuality.Fast, Lacunarity=Billow.DefaultLacunarity*2},
-                new Blend(){ Control=new Constant(){ Value=0.5D}, Source0=source0, Source1=source1},
+                new Blend(){ Control=new Constant(){ ConstantValue=0.5D}, Source0=source0, Source1=source1},
                 new Cache() { Source0=source2},
                 new Checkerboard(),
                 new Clamp() { LowerBound=0D, UpperBound=5D, Source0=source0},
-                new Constant() { Value=9D},
+                new Constant() { ConstantValue=9D},
                 new Cylinder() { Frequency=Cylinder.DefaultFrequency*2},
                 new Displace() { Source0=source0, XDisplace=source0, YDisplace=source1, ZDisplace=source2},
                 new Exponent(){ Exp=Exponent.DefaultExponent*3, Source0=source0},
@@ -77,7 +77,7 @@ namespace SharpNoise.Tests
         [TestMethod]
         public void ConstantSerializeTest()
         {
-            var module = new Constant() { Value = 5D };
+            var module = new Constant() { ConstantValue = 5D };
             var formatter = new BinaryFormatter();
 
             byte[] data;
@@ -91,7 +91,7 @@ namespace SharpNoise.Tests
             using (var ms = new MemoryStream(data))
                 deserializedModule = Constant.Deserialize<Constant>(ms, formatter);
 
-            Assert.AreEqual(module.Value, deserializedModule.Value);
+            Assert.AreEqual(module.ConstantValue, deserializedModule.ConstantValue);
         }
     }
 }

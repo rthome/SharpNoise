@@ -119,7 +119,7 @@ namespace SharpNoise.Builders
                     DestNoiseMap[x, z] = finalValue;
                 }
                 if (callback != null)
-                    callback(DestNoiseMap.GetLineReader(z));
+                    callback(DestNoiseMap.IterateLine(z));
                 zCur += zDelta;
             }
         }

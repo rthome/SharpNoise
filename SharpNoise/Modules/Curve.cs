@@ -39,8 +39,20 @@ namespace SharpNoise.Modules
             public readonly double InputValue;
             public readonly double OutputValue;
 
-            // For the purpose of the struct, we only compare InputValues
-            // and no OutputValues
+            public override bool Equals(object obj)
+            {
+                if (obj is ControlPoint)
+                {
+                    return Equals((ControlPoint)obj);
+                }
+                return false;
+            }
+
+            /// <summary>
+            /// Compare two ControlPoints for equality
+            /// </summary>
+            /// <param name="other">The 'other' ControlPoint</param>
+            /// <returns>Returns true, if other's InputValue equals this' InputValue</returns>
             public bool Equals(ControlPoint other)
             {
                 if (InputValue == other.InputValue)
@@ -52,6 +64,26 @@ namespace SharpNoise.Modules
             public int CompareTo(ControlPoint other)
             {
                 return InputValue.CompareTo(other.InputValue);
+            }
+
+            public static bool operator ==(ControlPoint a, ControlPoint b)
+            {
+                return a.Equals(b);
+            }
+
+            public static bool operator !=(ControlPoint a, ControlPoint b)
+            {
+                return !a.Equals(b);
+            }
+
+            public static bool operator <(ControlPoint a, ControlPoint b)
+            {
+                return a.CompareTo(b) < 0;
+            }
+
+            public static bool operator >(ControlPoint a, ControlPoint b)
+            {
+                return a.CompareTo(b) > 0;
             }
 
             /// <summary>
