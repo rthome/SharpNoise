@@ -255,6 +255,27 @@ namespace SharpNoise
         }
 
         /// <summary>
+        /// Gets or sets a value at the specified position
+        /// </summary>
+        /// <param name="x">The x coordinate of the position.</param>
+        /// <param name="y">The y coordinate of the position.</param>
+        /// <returns>The value at that position</returns>
+        /// <remarks>
+        /// This calls <see cref="SetValue()"/> or <see cref="GetValue()"/>
+        /// </remarks>
+        public T this[int x, int y]
+        {
+            get
+            {
+                return GetValue(x, y);
+            }
+            set
+            {
+                SetValue(x, y, value);
+            }
+        }
+
+        /// <summary>
         /// Returns a value from the specified position in the map.
         /// </summary>
         /// <param name="x">The x coordinate of the position.</param>
