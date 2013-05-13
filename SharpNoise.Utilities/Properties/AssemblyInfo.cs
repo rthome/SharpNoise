@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("SharpNoise.Utilities")]
 [assembly: AssemblyDescription("Utility functionality for SharpNoise")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Raffael Thome")]
 [assembly: AssemblyProduct("SharpNoise")]
 [assembly: AssemblyCopyright("Copyright © Raffael Thome 2013")]
 [assembly: AssemblyTrademark("")]
