@@ -33,7 +33,7 @@ namespace SharpNoise.Modules
     /// This noise module does not require any source modules.
     /// </remarks>
     [Serializable]
-    public class Cylinder : Module
+    public class Cylinders : Module
     {
         /// <summary>
         /// Default frequency value
@@ -52,7 +52,7 @@ namespace SharpNoise.Modules
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Cylinder()
+        public Cylinders()
             : base(0)
         {
             Frequency = DefaultFrequency;

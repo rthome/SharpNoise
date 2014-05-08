@@ -64,7 +64,7 @@
     <Compile Include="Modules\Constant.cs" />
     <Compile Include="Modules\Min.cs" />
     <Compile Include="Modules\Curve.cs" />
-    <Compile Include="Modules\Cylinder.cs" />
+    <Compile Include="Modules\Cylinders.cs" />
     <Compile Include="Modules\Displace.cs" />
     <Compile Include="Modules\Exponent.cs" />
     <Compile Include="Modules\Invert.cs" />
