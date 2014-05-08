@@ -281,8 +281,8 @@ namespace SharpNoise
         /// <param name="y">The y coordinate of the position.</param>
         /// <returns>The value at that position.</returns>
         /// <remarks>
-        /// This method returns the border value if the coordinates exist
-        /// outside of the map.
+        /// This method returns the border value if the coordinates are
+        /// outside of the map bounds.
         /// </remarks>
         public T GetValue(int x, int y)
         {
