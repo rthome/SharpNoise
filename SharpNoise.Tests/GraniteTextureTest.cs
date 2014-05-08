@@ -85,7 +85,7 @@ namespace SharpNoise.Tests
             testRenderer.LightColor = new Color(255, 255, 255, 0);
         }
 
-        [Ignore]
+        //[Ignore]
         [TestMethod]
         public void GraniteTexture_PlanarRender()
         {
@@ -101,15 +101,25 @@ namespace SharpNoise.Tests
             testRenderer.SourceNoiseMap = noiseMap;
             testRenderer.DestinationImage = testTextureImage;
             testRenderer.Render();
-
-            Assert.Fail();
         }
 
-        [Ignore]
         [TestMethod]
         public void GraniteTexture_SphericalRender()
         {
+            var noiseMap = new NoiseMap();
+            var sphere = new SphereNoiseMapBuilder();
+            sphere.SetBounds(-90, 90, -180, 180);
+            sphere.SetDestSize(512, 256);
+            sphere.SourceModule = testModule;
+            sphere.DestNoiseMap = noiseMap;
+            sphere.Build();
 
+            testRenderer.SourceNoiseMap = noiseMap;
+            testRenderer.DestinationImage = testTextureImage;
+            testRenderer.Render();
+
+            var bitmap = testTextureImage.ToGdiBitmap();
+            bitmap.Save(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "test.bmp"), System.Drawing.Imaging.ImageFormat.Bmp);
         }
     }
 }
