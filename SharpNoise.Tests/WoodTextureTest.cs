@@ -18,7 +18,7 @@ namespace SharpNoise.Tests
         [ClassInitialize]
         public static void CreateTestModuleTree(TestContext context)
         {
-            var baseWood = new Cylinder
+            var baseWood = new Cylinders
             {
                 Frequency = 16,
             };

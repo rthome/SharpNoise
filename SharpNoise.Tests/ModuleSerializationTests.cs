@@ -26,7 +26,7 @@ namespace SharpNoise.Tests
                 new Checkerboard(),
                 new Clamp() { LowerBound=0D, UpperBound=5D, Source0=source0},
                 new Constant() { ConstantValue=9D},
-                new Cylinder() { Frequency=Cylinder.DefaultFrequency*2},
+                new Cylinders() { Frequency=Cylinders.DefaultFrequency*2},
                 new Displace() { Source0=source0, XDisplace=source0, YDisplace=source1, ZDisplace=source2},
                 new Exponent(){ Exp=Exponent.DefaultExponent*3, Source0=source0},
                 new Invert() {  Source0=source0},
