@@ -61,6 +61,16 @@ namespace SharpNoise.Utilities.Imaging
             /// </summary>
             public readonly Color Color;
 
+            public int CompareTo(GradientPoint other)
+            {
+                return Position.CompareTo(other.Position);
+            }
+
+            public override string ToString()
+            {
+                return String.Format("<GradientPoint {0} {1}>", Position, Color);
+            }
+
             /// <summary>
             /// Constructor.
             /// </summary>
@@ -70,11 +80,6 @@ namespace SharpNoise.Utilities.Imaging
             {
                 Position = position;
                 Color = color;
-            }
-
-            public int CompareTo(GradientPoint other)
-            {
-                return Position.CompareTo(other.Position);
             }
         }
 
@@ -122,11 +127,10 @@ namespace SharpNoise.Utilities.Imaging
             var gradientPoint = new GradientPoint(gradientPos, color);
 
             var s = gradientPoints.BinarySearch(gradientPoint);
-            if (s > 0)
+            if (s >= 0)
                 throw new ArgumentException("All GradientPoints must have unique positions");
-
-            gradientPoints.Add(new GradientPoint(gradientPos, color));
-            gradientPoints.Sort();
+            else
+                gradientPoints.Insert(~s, gradientPoint);
         }
 
         /// <summary>
