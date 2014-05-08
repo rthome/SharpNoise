@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpNoise.Utilities.Imaging;
 
-namespace SharpNoise.Tests
+namespace SharpNoise.Tests.Utilities
 {
     [TestClass]
     public class ColorTests

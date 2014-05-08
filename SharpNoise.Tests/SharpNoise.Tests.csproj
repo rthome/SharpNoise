@@ -50,13 +50,18 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="GradientColorTests.cs" />
+    <Compile Include="ModuleTests\MinMaxTests.cs" />
+    <Compile Include="ModuleTests\ArithmeticTests.cs" />
+    <Compile Include="ModuleTests\ClampTests.cs" />
+    <Compile Include="ModuleTests\ScaleTests.cs" />
+    <Compile Include="ModuleTests\MiscTests.cs" />
+    <Compile Include="UtilitiesTests\GradientColorTests.cs" />
     <Compile Include="MapTests.cs" />
     <Compile Include="ModuleSerializationTests.cs" />
-    <Compile Include="ModuleTests.cs" />
+    <Compile Include="ModuleTests\ModuleTests.cs" />
     <Compile Include="NoiseMathTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ColorTest.cs" />
+    <Compile Include="UtilitiesTests\ColorTest.cs" />
     <Compile Include="NoiseGeneratorTests.cs" />
   </ItemGroup>
   <ItemGroup>
