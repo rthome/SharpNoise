@@ -108,7 +108,7 @@ namespace SharpNoise.Tests
             plane.SetDestSize(256, 256);
             plane.SourceModule = testModule;
             plane.DestNoiseMap = noiseMap;
-            plane.EnableSeamless = true;
+            plane.EnableSeamless = false;
             plane.Build();
 
             testRenderer.SourceNoiseMap = noiseMap;
