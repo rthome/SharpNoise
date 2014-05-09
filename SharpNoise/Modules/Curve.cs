@@ -153,13 +153,18 @@ namespace SharpNoise.Modules
         }
 
         /// <summary>
-        /// Gets a read-only wrapper over all control points on the curve
+        /// Gets or sets all control points on the curve
         /// </summary>
-        public ReadOnlyCollection<ControlPoint> ControlPoints
+        public IEnumerable<ControlPoint> ControlPoints
         {
             get
             {
-                return new ReadOnlyCollection<ControlPoint>(controlPoints);
+                return controlPoints.AsReadOnly();
+            }
+            set
+            {
+                controlPoints.Clear();
+                controlPoints.AddRange(value);
             }
         }
 

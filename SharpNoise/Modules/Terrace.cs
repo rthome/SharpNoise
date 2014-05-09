@@ -50,13 +50,18 @@ namespace SharpNoise.Modules
         public bool InvertTerraces { get; set; }
 
         /// <summary>
-        /// Gets a read-only wrapper over all ControlPoints in the Module
+        /// Gets or sets all ControlPoints in the Module
         /// </summary>
-        public ReadOnlyCollection<double> ControlPoints
+        public IEnumerable<double> ControlPoints
         {
             get
             {
-                return new ReadOnlyCollection<double>(controlPoints);
+                return controlPoints.AsReadOnly();
+            }
+            set
+            {
+                controlPoints.Clear();
+                controlPoints.AddRange(value);
             }
         }
 
