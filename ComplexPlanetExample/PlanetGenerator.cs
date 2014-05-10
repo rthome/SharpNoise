@@ -683,7 +683,181 @@ namespace ComplexPlanetExample
 
         Module CreateBadlandsTerrain()
         {
-            throw new NotImplementedException();
+            // Generates the sandy terrain for the badlands.
+            //
+            // -1.0 represents the lowest elevations and +1.0 represents the highest
+            // elevations.
+            //
+            // [Badlands-sand subgroup]: Caches the output value from the dunes-with-
+            // detail module.
+            var badlandsSand = new Cache
+            {
+                // [Dunes-with-detail module]: This addition module combines the scaled-
+                // sand-dunes module with the scaled-dune-detail module.
+                Source0 = new Add
+                {
+                    // [Scaled-sand-dunes module]: This scale/bias module shrinks the dune
+                    // heights by a small amount.  This is necessary so that the subsequent
+                    // noise modules in this subgroup can add some detail to the dunes.
+                    Source0 = new ScaleBias
+                    {
+                        Scale = 0.875,
+                        Bias = 0,
+                        // [Sand-dunes module]: This ridged-multifractal-noise module generates
+                        // sand dunes.  This ridged-multifractal noise is generated with a single
+                        // octave, which makes very smooth dunes.
+                        Source0 = new RidgedMulti
+                        {
+                            Seed = Settings.Seed + 80,
+                            Frequency = 6163.5,
+                            Lacunarity = Settings.BadlandsLacunarity,
+                            Quality = NoiseQuality.Best,
+                            OctaveCount = 1,
+                        },
+                    },
+                    // [Scaled-dune-detail module]: This scale/bias module shrinks the dune
+                    // details by a large amount.  This is necessary so that the subsequent
+                    // noise modules in this subgroup can add this detail to the sand-dunes
+                    // module.
+                    Source1 = new ScaleBias
+                    {
+                        Scale = 0.25,
+                        Bias = 0.25,
+                        // [Dune-detail module]: This noise module uses Voronoi polygons to
+                        // generate the detail to add to the dunes.  By enabling the distance
+                        // algorithm, small polygonal pits are generated; the edges of the pits
+                        // are joined to the edges of nearby pits.
+                        Source0 = new Voronoi
+                        {
+                            Seed = Settings.Seed + 81,
+                            Frequency = 16183.25,
+                            Displacement = 0,
+                            EnableDistance = true,
+                        },
+                    },
+                },
+            };
+
+            // Generates the cliffs for the badlands.
+            //
+            // -1.0 represents the lowest elevations and +1.0 represents the highest
+            // elevations.
+            //
+            // [Badlands-cliffs subgroup]: Caches the output value from the warped-
+            // cliffs module.
+            var badlandsCliffs = new Cache
+            {
+                // [Warped-cliffs module]: This turbulence module warps the output value
+                // from the coarse-turbulence module.  This turbulence has a higher
+                // frequency, but lower power, than the coarse-turbulence module, adding
+                // some fine detail to it.
+                Source0 = new Turbulence
+                {
+                    Seed = Settings.Seed = 92,
+                    Frequency = 36107,
+                    Power = 1.0 / 211543.0 * Settings.BadlandsTwist,
+                    Roughness = 3,
+                    // [Coarse-turbulence module]: This turbulence module warps the output
+                    // value from the terraced-cliffs module, adding some coarse detail to
+                    // it.
+                    Source0 = new Turbulence
+                    {
+                        Seed = Settings.Seed = 91,
+                        Frequency = 16111,
+                        Power = 1.0 / 141539.0 * Settings.BadlandsTwist,
+                        Roughness = 3,
+                        // [Terraced-cliffs module]: Next, this terracing module applies some
+                        // terraces to the clamped-cliffs module in the lower elevations before
+                        // the sharp cliff transition.
+                        Source0 = new Terrace
+                        {
+                            ControlPoints = new List<double>
+                            {
+                                -1.0000,
+                                -0.8750,
+                                -0.7500,
+                                -0.5000,
+                                 0.0000,
+                                 1.0000,
+                            },
+                            // [Clamped-cliffs module]: This clamping module makes the tops of the
+                            // cliffs very flat by clamping the output value from the cliff-shaping
+                            // module so that the tops of the cliffs are very flat.
+                            Source0 = new Clamp
+                            {
+                                LowerBound = -999.125,
+                                UpperBound = 0.875,
+                                // [Cliff-shaping module]: Next, this curve module applies a curve to the
+                                // output value from the cliff-basis module.  This curve is initially
+                                // very shallow, but then its slope increases sharply.  At the highest
+                                // elevations, the curve becomes very flat again.  This produces the
+                                // stereotypical Utah-style desert cliffs.
+                                Source0 = new Curve
+                                {
+                                    ControlPoints = new List<Curve.ControlPoint>
+                                    {
+                                        new Curve.ControlPoint(-2.0000, -2.0000),
+                                        new Curve.ControlPoint(-1.0000, -1.2500),
+                                        new Curve.ControlPoint(-0.0000, -0.7500),
+                                        new Curve.ControlPoint( 0.5000, -0.2500),
+                                        new Curve.ControlPoint( 0.6250,  0.8750),
+                                        new Curve.ControlPoint( 0.7500,  1.0000),
+                                        new Curve.ControlPoint( 2.0000,  1.2500),
+                                    },
+                                    // [Cliff-basis module]: This Perlin-noise module generates some coherent
+                                    // noise that will be used to generate the cliffs.
+                                    Source0 = new Perlin
+                                    {
+                                        Seed = Settings.Seed + 90,
+                                        Frequency = Settings.ContinentFrequency * 839,
+                                        Persistence = 0.5,
+                                        Lacunarity = Settings.BadlandsLacunarity,
+                                        OctaveCount = 6,
+                                        Quality = NoiseQuality.Standard,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            };
+
+            //Generates the final badlands terrain.
+            //
+            // Using a scale/bias module, the badlands sand is flattened considerably,
+            // then the sand elevations are lowered to around -1.0.  The maximum value
+            // from the flattened sand module and the cliff module contributes to the
+            // final elevation.  This causes sand to appear at the low elevations since
+            // the sand is slightly higher than the cliff base.
+            //
+            // -1.0 represents the lowest elevations and +1.0 represents the highest
+            // elevations.
+            //
+            // [Badlands-terrain group]: Caches the output value from the dunes-and-
+            // cliffs module.  This is the output value for the entire badlands-
+            // terrain group.
+            var badlandsTerrain = new Cache
+            {
+                // [Dunes-and-cliffs module]: This maximum-value module causes the dunes
+                // to appear in the low areas and the cliffs to appear in the high areas.
+                // It does this by selecting the maximum of the output values from the
+                // scaled-sand-dunes module and the badlands-cliffs subgroup.
+                Source0 = new Max
+                {
+                    Source0 = badlandsCliffs,
+                    // [Scaled-sand-dunes module]: This scale/bias module considerably
+                    // flattens the output value from the badlands-sands subgroup and lowers
+                    // this value to near -1.0.
+                    Source1 = new ScaleBias
+                    {
+                        Scale = 0.25,
+                        Bias = -0.75,
+                        Source0 = badlandsSand,
+                    },
+                },
+            };
+
+            return badlandsTerrain;
         }
 
         Module CreateRiverPositions()
