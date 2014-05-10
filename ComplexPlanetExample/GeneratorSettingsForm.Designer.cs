@@ -48,6 +48,7 @@
             this.startButton.TabIndex = 3;
             this.startButton.Text = "Generate Planet";
             this.startButton.UseVisualStyleBackColor = true;
+            this.startButton.Click += new System.EventHandler(this.startButton_Click);
             // 
             // GeneratorSettingsForm
             // 
