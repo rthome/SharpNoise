@@ -753,7 +753,7 @@ namespace ComplexPlanetExample
                 // some fine detail to it.
                 Source0 = new Turbulence
                 {
-                    Seed = Settings.Seed = 92,
+                    Seed = Settings.Seed + 92,
                     Frequency = 36107,
                     Power = 1.0 / 211543.0 * Settings.BadlandsTwist,
                     Roughness = 3,
@@ -762,7 +762,7 @@ namespace ComplexPlanetExample
                     // it.
                     Source0 = new Turbulence
                     {
-                        Seed = Settings.Seed = 91,
+                        Seed = Settings.Seed + 91,
                         Frequency = 16111,
                         Power = 1.0 / 141539.0 * Settings.BadlandsTwist,
                         Roughness = 3,
@@ -894,11 +894,20 @@ namespace ComplexPlanetExample
                         // the river bottom.
                         Source0 = new Curve
                         {
+                            ControlPoints = new List<Curve.ControlPoint>
+                            {
+                                new Curve.ControlPoint(-2.000,  2.000),
+                                new Curve.ControlPoint(-1.000,  1.000),
+                                new Curve.ControlPoint(-0.125,  0.875),
+                                new Curve.ControlPoint( 0.000, -1.000),
+                                new Curve.ControlPoint( 1.000, -1.500),
+                                new Curve.ControlPoint( 2.000, -2.000),
+                            },
                             // [Large-river-basis module]: This ridged-multifractal-noise module
                             // creates the large, deep rivers.
                             Source0 = new RidgedMulti
                             {
-                                Seed = Settings.Seed = 100,
+                                Seed = Settings.Seed + 100,
                                 Frequency = 18.75,
                                 Lacunarity = Settings.ContinentLacunarity,
                                 OctaveCount = 1,
@@ -925,7 +934,7 @@ namespace ComplexPlanetExample
                             // creates the small, shallow rivers.
                             Source0 = new RidgedMulti
                             {
-                                Seed = Settings.Seed = 101,
+                                Seed = Settings.Seed + 101,
                                 Frequency = 43.25,
                                 Lacunarity = Settings.ContinentLacunarity,
                                 OctaveCount = 1,
@@ -996,7 +1005,7 @@ namespace ComplexPlanetExample
                             // randomly change the elevations of the mountain peaks.
                             Source0 = new Perlin
                             {
-                                Seed = Settings.Seed = 110,
+                                Seed = Settings.Seed + 110,
                                 Frequency = 14.5,
                                 Persistence = 0.5,
                                 Lacunarity = Settings.MountainLacunarity,
@@ -1070,7 +1079,7 @@ namespace ComplexPlanetExample
                             // randomly change the elevations of the hilltops.
                             Source0 = new Perlin
                             {
-                                Seed = Settings.Seed = 120,
+                                Seed = Settings.Seed + 120,
                                 Frequency = 13.5,
                                 Persistence = 0.5,
                                 Lacunarity = Settings.HillsLacunarity,
@@ -1211,7 +1220,7 @@ namespace ComplexPlanetExample
                         // oceanic trenches.  The ridges represent the bottom of the trenches.
                         Source0 = new RidgedMulti
                         {
-                            Seed = Settings.Seed = 130,
+                            Seed = Settings.Seed + 130,
                             Frequency = Settings.ContinentFrequency * 4.375,
                             Lacunarity = Settings.ContinentLacunarity,
                             OctaveCount = 16,
@@ -1422,7 +1431,7 @@ namespace ComplexPlanetExample
                         // locations of the badlands.
                         Control = new Perlin
                         {
-                            Seed = Settings.Seed = 140,
+                            Seed = Settings.Seed + 140,
                             Frequency = 16.5,
                             Persistence = 0.5,
                             Lacunarity = Settings.ContinentLacunarity,
