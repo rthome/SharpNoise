@@ -1,18 +1,18 @@
-<?xml version="1.0"?>
-<package >
-  <metadata>
-    <id>SharpNoise</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-	<licenseUrl>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</licenseUrl>
-	<projectUrl>https://bitbucket.org/rthome/sharpnoise</projectUrl>
-    <description>$description$</description>
-    <releaseNotes>NuGet package for version $version$ of SharpNoise.
-
-This release fixes some small problems. It also breaks API compatibility.</releaseNotes>
-    <copyright>Copyright Raffael Thome 2013</copyright>
-  </metadata>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>SharpNoise</id>
+        <version>0.10.0</version>
+        <title>SharpNoise</title>
+        <authors>Raffael Thome</authors>
+        <owners />
+        <licenseUrl>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</licenseUrl>
+        <projectUrl>https://bitbucket.org/rthome/sharpnoise</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>SharpNoise is a library for generating coherent noise.
+This library is based on libNoise (http://libnoise.sourceforge.net/), but adds some .Net features such as support for serialization.</description>
+        <summary>A library to generate coherent noise.</summary>
+        <releaseNotes />
+        <copyright>Copyright Raffael Thome 2014</copyright>
+    </metadata>
 </package>
