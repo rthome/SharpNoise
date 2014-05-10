@@ -5,6 +5,13 @@ using System.Collections.Generic;
 
 namespace ComplexPlanetExample
 {
+    /// <summary>
+    /// Contains planet generator module creation code
+    /// </summary>
+    /// <remarks>
+    /// A port of the complex planetary surface example from libnoise
+    /// See http://libnoise.sourceforge.net/examples/complexplanet/index.html
+    /// </remarks>
     public class PlanetGenerator
     {
         public PlanetGenerationSettings Settings { get; set; }
