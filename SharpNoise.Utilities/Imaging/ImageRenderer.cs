@@ -402,7 +402,7 @@ namespace SharpNoise.Utilities.Imaging
             // Create the destination image.  It is safe to reuse it if this is also the
             // background image.
             if (DestinationImage != BackgroundImage)
-                DestinationImage.SetSize(width, height);
+                DestinationImage.SetSize(height, width);
 
             for (int y = 0; y < height; y++)
             {
