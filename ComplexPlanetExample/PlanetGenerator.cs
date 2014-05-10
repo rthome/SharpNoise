@@ -194,7 +194,7 @@ namespace ComplexPlanetExample
             // [Terrain-type-definition group]: Caches the output value from the
             // roughness-probability-shift module.  This is the output value for
             // the entire terrain-type-definition group.
-            var terrainTypeDef = new Cache
+            var terrainTypeDefinition = new Cache
             {
                 // [Roughness-probability-shift module]: This terracing module sharpens
                 // the edges of the warped-continent module near sea level and lowers
@@ -225,7 +225,7 @@ namespace ComplexPlanetExample
                 },
             };
 
-            return terrainTypeDef;
+            return terrainTypeDefinition;
         }
 
         Module CreateMountainousTerrain()
@@ -862,39 +862,669 @@ namespace ComplexPlanetExample
 
         Module CreateRiverPositions()
         {
-            throw new NotImplementedException();
+            // Generates the river positions.
+            //
+            // -1.0 represents the lowest elevations and +1.0 represents the highest
+            // elevations.
+            //
+            // [River-positions group]: Caches the output value from the warped-
+            // rivers module.  This is the output value for the entire river-
+            // positions group.
+            var riverPositions = new Cache
+            {
+                // [Warped-rivers module]: This turbulence module warps the output value
+                // from the combined-rivers module, which twists the rivers.  The high
+                // roughness produces less-smooth rivers.
+                Source0 = new Turbulence
+                {
+                    Seed = Settings.Seed + 102,
+                    Frequency = 9.25,
+                    Power = 1.0 / 57.75,
+                    Roughness = 6,
+                    // [Combined-rivers module]: This minimum-value module causes the small
+                    // rivers to cut into the large rivers.  It does this by selecting the
+                    // minimum output values from the large-river-curve module and the small-
+                    // river-curve module.
+                    Source0 = new Min
+                    {
+                        // [Large-river-curve module]: This curve module applies a curve to the
+                        // output value from the large-river-basis module so that the ridges
+                        // become inverted.  This creates the rivers.  This curve also compresses
+                        // the edge of the rivers, producing a sharp transition from the land to
+                        // the river bottom.
+                        Source0 = new Curve
+                        {
+                            // [Large-river-basis module]: This ridged-multifractal-noise module
+                            // creates the large, deep rivers.
+                            Source0 = new RidgedMulti
+                            {
+                                Seed = Settings.Seed = 100,
+                                Frequency = 18.75,
+                                Lacunarity = Settings.ContinentLacunarity,
+                                OctaveCount = 1,
+                                Quality = NoiseQuality.Best,
+                            },
+                        },
+                        // [Small-river-curve module]: This curve module applies a curve to the
+                        // output value from the small-river-basis module so that the ridges
+                        // become inverted.  This creates the rivers.  This curve also compresses
+                        // the edge of the rivers, producing a sharp transition from the land to
+                        // the river bottom.
+                        Source1 = new Curve
+                        {
+                            ControlPoints = new List<Curve.ControlPoint>
+                            {
+                                new Curve.ControlPoint(-2.000,  2.0000),
+                                new Curve.ControlPoint(-1.000,  1.5000),
+                                new Curve.ControlPoint(-0.125,  1.4375),
+                                new Curve.ControlPoint( 0.000,  0.5000),
+                                new Curve.ControlPoint( 1.000,  0.2500),
+                                new Curve.ControlPoint( 2.000,  0.0000),
+                            },
+                            // [Small-river-basis module]: This ridged-multifractal-noise module
+                            // creates the small, shallow rivers.
+                            Source0 = new RidgedMulti
+                            {
+                                Seed = Settings.Seed = 101,
+                                Frequency = 43.25,
+                                Lacunarity = Settings.ContinentLacunarity,
+                                OctaveCount = 1,
+                                Quality = NoiseQuality.Best,
+                            },
+                        },
+                    },
+                },
+            };
+
+            return riverPositions;
         }
 
-        Module CreateScaledMountainousTerrain()
+        Module CreateScaledMountainousTerrain(Module mountainousTerrain)
         {
-            throw new NotImplementedException();
+            // Scales the output value from the mountainous-terrain group
+            // so that it can be added to the elevation defined by the continent-
+            // definition group.
+            //
+            // This subgroup scales the output value such that it is almost always
+            // positive.  This is done so that a negative elevation does not get applied
+            // to the continent-definition group, preventing parts of that group from
+            // having negative terrain features "stamped" into it.
+            //
+            // The output value from this module subgroup is measured in planetary
+            // elevation units (-1.0 for the lowest underwater trenches and +1.0 for the
+            // highest mountain peaks.)
+            //
+            // [Scaled-mountainous-terrain group]: Caches the output value from the
+            // peak-height-multiplier module.  This is the output value for the
+            // entire scaled-mountainous-terrain group.
+            var scaledMountainousTerrain = new Cache
+            {
+                // [Peak-height-multiplier module]: This multiplier module modulates the
+                // heights of the mountain peaks from the base-scaled-mountainous-terrain
+                // module using the output value from the scaled-peak-modulation module.
+                Source0 = new Multiply
+                {
+                    // [Base-scaled-mountainous-terrain module]: This scale/bias module
+                    // scales the output value from the mountainous-terrain group so that the
+                    // output value is measured in planetary elevation units.
+                    Source0 = new ScaleBias
+                    {
+                        Scale = 0.125,
+                        Bias = 0.125,
+                        Source0 = mountainousTerrain,
+                    },
+                    // [Scaled-peak-modulation module]: This scale/bias module modifies the
+                    // range of the output value from the peak-modulation module so that it
+                    // can be used as the modulator for the peak-height-multiplier module.
+                    // It is important that this output value is not much lower than 1.0.
+                    Source1 = new ScaleBias
+                    {
+                        Scale = 0.25,
+                        Bias = 1,
+                        // [Peak-modulation module]: This exponential-curve module applies an
+                        // exponential curve to the output value from the base-peak-modulation
+                        // module.  This produces a small number of high values and a much larger
+                        // number of low values.  This means there will be a few peaks with much
+                        // higher elevations than the majority of the peaks, making the terrain
+                        // features more varied.
+                        Source0 = new Exponent
+                        {
+                            Exp = 1.25,
+                            // [Base-peak-modulation module]: At this stage, most mountain peaks have
+                            // roughly the same elevation.  This Perlin-noise module generates some
+                            // random values that will be used by subsequent noise modules to
+                            // randomly change the elevations of the mountain peaks.
+                            Source0 = new Perlin
+                            {
+                                Seed = Settings.Seed = 110,
+                                Frequency = 14.5,
+                                Persistence = 0.5,
+                                Lacunarity = Settings.MountainLacunarity,
+                                OctaveCount = 6,
+                                Quality = NoiseQuality.Standard,
+                            },
+                        },
+                    },
+                },
+            };
+
+            return scaledMountainousTerrain;
         }
 
-        Module CreateScaledHillyTerrain()
+        Module CreateScaledHillyTerrain(Module hillyTerrain)
         {
-            throw new NotImplementedException();
+            // Scales the output value from the hilly-terrain group so
+            // that it can be added to the elevation defined by the continent-
+            // definition group.  The scaling amount applied to the hills is one half of
+            // the scaling amount applied to the scaled-mountainous-terrain group.
+            //
+            // This subgroup scales the output value such that it is almost always
+            // positive.  This is done so that negative elevations are not applied to
+            // the continent-definition group, preventing parts of the continent-
+            // definition group from having negative terrain features "stamped" into it.
+            //
+            // The output value from this module subgroup is measured in planetary
+            // elevation units (-1.0 for the lowest underwater trenches and +1.0 for the
+            // highest mountain peaks.)
+            //
+            // [Scaled-hilly-terrain group]: Caches the output value from the
+            // hilltop-height-multiplier module.  This is the output value for the
+            // entire scaled-hilly-terrain group.
+            var scaledHillyTerrain = new Cache
+            {
+                // [Hilltop-height-multiplier module]: This multiplier module modulates
+                // the heights of the hilltops from the base-scaled-hilly-terrain module
+                // using the output value from the scaled-hilltop-modulation module.
+                Source0 = new Multiply
+                {
+                    // [Base-scaled-hilly-terrain module]: This scale/bias module scales the
+                    // output value from the hilly-terrain group so that this output value is
+                    // measured in planetary elevation units 
+                    Source0 = new ScaleBias
+                    {
+                        Scale = 0.0625,
+                        Bias = 0.0625,
+                        Source0 = hillyTerrain,
+                    },
+                    // [Scaled-hilltop-modulation module]: This scale/bias module modifies
+                    // the range of the output value from the hilltop-modulation module so
+                    // that it can be used as the modulator for the hilltop-height-multiplier
+                    // module.  It is important that this output value is not much lower than
+                    // 1.0.
+                    Source1 = new ScaleBias
+                    {
+                        Scale = 0.5,
+                        Bias = 1.5,
+                        // [Hilltop-modulation module]: This exponential-curve module applies an
+                        // exponential curve to the output value from the base-hilltop-modulation
+                        // module.  This produces a small number of high values and a much larger
+                        // number of low values.  This means there will be a few hilltops with
+                        // much higher elevations than the majority of the hilltops, making the
+                        // terrain features more varied.
+                        Source0 = new Exponent
+                        {
+                            Exp = 1.25,
+                            // [Base-hilltop-modulation module]: At this stage, most hilltops have
+                            // roughly the same elevation.  This Perlin-noise module generates some
+                            // random values that will be used by subsequent noise modules to
+                            // randomly change the elevations of the hilltops.
+                            Source0 = new Perlin
+                            {
+                                Seed = Settings.Seed = 120,
+                                Frequency = 13.5,
+                                Persistence = 0.5,
+                                Lacunarity = Settings.HillsLacunarity,
+                                OctaveCount = 6,
+                                Quality = NoiseQuality.Standard,
+                            }
+                        },
+                    },
+                },
+            };
+
+            return scaledHillyTerrain;
         }
 
-        Module CreateScaledPlainsTerrain()
+        Module CreateScaledPlainsTerrain(Module plainsTerrain)
         {
-            throw new NotImplementedException();
+            // Scales the output value from the plains-terrain group so
+            // that it can be added to the elevations defined by the continent-
+            // definition group.
+            //
+            // This subgroup scales the output value such that it is almost always
+            // positive.  This is done so that negative elevations are not applied to
+            // the continent-definition group, preventing parts of the continent-
+            // definition group from having negative terrain features "stamped" into it.
+            //
+            // The output value from this module subgroup is measured in planetary
+            // elevation units (-1.0 for the lowest underwater trenches and +1.0 for the
+            // highest mountain peaks.)
+            //
+            // [Scaled-plains-terrain group]: Caches the output value from the
+            // scaled-plains-terrain module.  This is the output value for the entire
+            // scaled-plains-terrain group.
+            var scaledPlainsTerrain = new Cache
+            {
+                // [Scaled-plains-terrain module]: This scale/bias module greatly
+                // flattens the output value from the plains terrain.  This output value
+                // is measured in planetary elevation units 
+                Source0 = new ScaleBias
+                {
+                    Scale = 0.00390625,
+                    Bias = 0.0078125,
+                    Source0 = plainsTerrain,
+                },
+            };
+
+            return scaledPlainsTerrain;
         }
 
-        Module CreateScaledBadlandsTerrain()
+        Module CreateScaledBadlandsTerrain(Module badlandsTerrain)
         {
-            throw new NotImplementedException();
+            // Scales the output value from the badlands-terrain group so
+            // that it can be added to the elevations defined by the continent-
+            // definition group.
+            //
+            // This subgroup scales the output value such that it is almost always
+            // positive.  This is done so that negative elevations are not applied to
+            // the continent-definition group, preventing parts of the continent-
+            // definition group from having negative terrain features "stamped" into it.
+            //
+            // The output value from this module subgroup is measured in planetary
+            // elevation units (-1.0 for the lowest underwater trenches and +1.0 for the
+            // highest mountain peaks.)
+            //
+            // [Scaled-badlands-terrain group]: Caches the output value from the
+            // scaled-badlands-terrain module.  This is the output value for the
+            // entire scaled-badlands-terrain group.
+            var scaledBadlandsTerrain = new Cache
+            {
+                // [Scaled-badlands-terrain module]: This scale/bias module scales the
+                // output value from the badlands-terrain group so that it is measured
+                // in planetary elevation units 
+                Source0 = new ScaleBias
+                {
+                    Scale = 0.0625,
+                    Bias = 0.0625,
+                    Source0 = badlandsTerrain,
+                },
+            };
+
+            return scaledBadlandsTerrain;
         }
 
-        Module CreateFinalPlanet()
+        Module CreateFinalPlanet(Module continentDefinition, Module terrainTypeDefinition,
+            Module scaledPlainsTerrain, Module scaledHillyTerrain, Module scaledMountainousTerrain, 
+            Module scaledBadlandsTerrain, Module riverPositions)
         {
-            throw new NotImplementedException();
+            // Creates the continental shelves.
+            //
+            // The output value from this module subgroup are measured in planetary
+            // elevation units (-1.0 for the lowest underwater trenches and +1.0 for the
+            // highest mountain peaks.)
+            //
+            // [Continental-shelf subgroup]: Caches the output value from the shelf-
+            // and-trenches module.
+            var continentalShelf = new Cache
+            {
+                // [Shelf-and-trenches module]: This addition module adds the oceanic
+                // trenches to the clamped-sea-bottom module.
+                Source0 = new Add
+                {
+                    // [Oceanic-trench module]: This scale/bias module inverts the ridges
+                    // from the oceanic-trench-basis-module so that the ridges become
+                    // trenches.  This noise module also reduces the depth of the trenches so
+                    // that their depths are measured in planetary elevation units.
+                    Source0 = new ScaleBias
+                    {
+                        Scale = -0.125,
+                        Bias = -0.125,
+                        // [Shelf-creator module]: This terracing module applies a terracing
+                        // curve to the continent-definition group at the specified shelf level.
+                        // This terrace becomes the continental shelf.  Note that this terracing
+                        // module also places another terrace below the continental shelf near
+                        // -1.0.  The bottom of this terrace is defined as the bottom of the
+                        // ocean; subsequent noise modules will later add oceanic trenches to the
+                        // bottom of the ocean.
+                        Source0 = new Terrace
+                        {
+                            ControlPoints = new List<double>
+                            {
+                                -1.0,
+                                -0.75,
+                                Settings.ShelfLevel,
+                                1.0,
+                            },
+                            Source0 = continentDefinition,
+                        },
+                    },
+                    // [Clamped-sea-bottom module]: This clamping module clamps the output
+                    // value from the shelf-creator module so that its possible range is
+                    // from the bottom of the ocean to sea level.  This is done because this
+                    // subgroup is only concerned about the oceans.
+                    Source1 = new Clamp
+                    {
+                        LowerBound = -0.75,
+                        UpperBound = Settings.SeaLevel,
+                        // [Oceanic-trench-basis module]: This ridged-multifractal-noise module
+                        // generates some coherent noise that will be used to generate the
+                        // oceanic trenches.  The ridges represent the bottom of the trenches.
+                        Source0 = new RidgedMulti
+                        {
+                            Seed = Settings.Seed = 130,
+                            Frequency = Settings.ContinentFrequency * 4.375,
+                            Lacunarity = Settings.ContinentLacunarity,
+                            OctaveCount = 16,
+                            Quality = NoiseQuality.Best,
+                        }
+                    },
+                }
+            };
+
+            // Generates the base elevations for the continents, before
+            // terrain features are added.
+            //
+            // The output value from this module subgroup is measured in planetary
+            // elevation units (-1.0 for the lowest underwater trenches and +1.0 for the
+            // highest mountain peaks.)
+            //
+            // [Base-continent-elevation subgroup]: Caches the output value from the
+            // base-continent-with-oceans module.
+            var baseContinentElevation = new Cache
+            {
+                // [Base-continent-with-oceans module]: This selector module applies the
+                // elevations of the continental shelves to the base elevations of the
+                // continent.  It does this by selecting the output value from the
+                // continental-shelf subgroup if the corresponding output value from the
+                // continent-definition group is below the shelf level.  Otherwise, it
+                // selects the output value from the base-scaled-continent-elevations
+                // module.
+                Source0 = new Select
+                {
+                    LowerBound = Settings.ShelfLevel - 1000,
+                    UpperBound = Settings.ShelfLevel,
+                    EdgeFalloff = 0.03125,
+                    // [Base-scaled-continent-elevations module]: This scale/bias module
+                    // scales the output value from the continent-definition group so that it
+                    // is measured in planetary elevation units 
+                    Source0 = new ScaleBias
+                    {
+                        Scale = Settings.ContinentHeightScale,
+                        Bias = 0,
+                        Source0 = continentDefinition,
+                    },
+                    Source1 = continentalShelf,
+                    Control = continentDefinition,
+                }
+            };
+
+            // Applies the scaled-plains-terrain group to the base-
+            // continent-elevation subgroup.
+            //
+            // The output value from this module subgroup is measured in planetary
+            // elevation units (-1.0 for the lowest underwater trenches and +1.0 for the
+            // highest mountain peaks.)
+            //
+            // [Continents-with-plains subgroup]: Caches the output value from the
+            // continents-with-plains module.
+            var continentsWithPlains = new Cache
+            {
+                // [Continents-with-plains module]:  This addition module adds the
+                // scaled-plains-terrain group to the base-continent-elevation subgroup.
+                Source0 = new Add
+                {
+                    Source0 = baseContinentElevation,
+                    Source1 = scaledPlainsTerrain,
+                },
+            };
+
+            // Applies the scaled-hilly-terrain group to the continents-
+            // with-plains subgroup.
+            //
+            // The output value from this module subgroup is measured in planetary
+            // elevation units (-1.0 for the lowest underwater trenches and +1.0 for the
+            // highest mountain peaks.)
+            //
+            // [Continents-with-hills subgroup]: Caches the output value from the
+            // select-high-elevations module.
+            var continentsWithHills = new Cache
+            {
+                // [Select-high-elevations module]: This selector module ensures that
+                // the hills only appear at higher elevations.  It does this by selecting
+                // the output value from the continent-with-hills module if the
+                // corresponding output value from the terrain-type-defintion group is
+                // above a certain value. Otherwise, it selects the output value from the
+                // continents-with-plains subgroup.
+                Source0 = new Select
+                {
+                    LowerBound = 1 - Settings.HillsAmount,
+                    UpperBound = 1001 - Settings.HillsAmount,
+                    EdgeFalloff = 0.25,
+                    Source0 = continentsWithPlains,
+                    // [Continents-with-hills module]:  This addition module adds the scaled-
+                    // hilly-terrain group to the base-continent-elevation subgroup.
+                    Source1 = new Add
+                    {
+                        Source0 = baseContinentElevation,
+                        Source1 = scaledHillyTerrain,
+                    },
+                    Control = terrainTypeDefinition,
+                },
+            };
+
+            // Applies the scaled-mountainous-terrain group to the
+            // continents-with-hills subgroup.
+            //
+            // The output value from this module subgroup is measured in planetary
+            // elevation units (-1.0 for the lowest underwater trenches and +1.0 for the
+            // highest mountain peaks.)
+            //
+            // [Continents-with-mountains subgroup]: Caches the output value from
+            // the select-high-elevations module.
+            var continentsWithMountains = new Cache
+            {
+                // [Select-high-elevations module]: This selector module ensures that
+                // mountains only appear at higher elevations.  It does this by selecting
+                // the output value from the continent-with-mountains module if the
+                // corresponding output value from the terrain-type-defintion group is
+                // above a certain value.  Otherwise, it selects the output value from
+                // the continents-with-hills subgroup.  Note that the continents-with-
+                // hills subgroup also contains the plains terrain.
+                Source0 = new Select
+                {
+                    LowerBound = 1 - Settings.MountainsAmount,
+                    UpperBound = 1001 - Settings.MountainsAmount,
+                    EdgeFalloff = 0.25,
+                    Source0 = continentsWithHills,
+                    // [Add-increased-mountain-heights module]: This addition module adds
+                    // the increased-mountain-heights module to the continents-and-
+                    // mountains module.  The highest continent elevations now have the
+                    // highest mountains.
+                    Source1 = new Add
+                    {
+                        // [Continents-and-mountains module]:  This addition module adds the
+                        // scaled-mountainous-terrain group to the base-continent-elevation
+                        // subgroup.
+                        Source0 = new Add
+                        {
+                            Source0 = baseContinentElevation,
+                            Source1 = scaledMountainousTerrain,
+                        },
+                        // [Increase-mountain-heights module]:  This curve module applies a curve
+                        // to the output value from the continent-definition group.  This
+                        // modified output value is used by a subsequent noise module to add
+                        // additional height to the mountains based on the current continent
+                        // elevation.  The higher the continent elevation, the higher the
+                        // mountains.
+                        Source1 = new Curve
+                        {
+                            ControlPoints = new List<Curve.ControlPoint>
+                            {
+                                new Curve.ControlPoint (-1.0, -0.0625),
+                                new Curve.ControlPoint ( 0.0,  0.0000),
+                                new Curve.ControlPoint ( 1.0 - Settings.MountainsAmount,  0.0625),
+                                new Curve.ControlPoint ( 1.0,  0.2500),
+                            },
+                            Source0 = continentDefinition,
+                        },
+                    },
+                    Control = terrainTypeDefinition,
+                },
+            };
+
+            // Applies the scaled-badlands-terrain group to the
+            // continents-with-mountains subgroup.
+            //
+            // The output value from this module subgroup is measured in planetary
+            // elevation units (-1.0 for the lowest underwater trenches and +1.0 for the
+            // highest mountain peaks.)
+            //
+            // [Continents-with-badlands subgroup]: Caches the output value from the
+            // apply-badlands module.
+            var continentsWithBadlands = new Cache
+            {
+                // [Apply-badlands module]: This maximum-value module causes the badlands
+                // to "poke out" from the rest of the terrain.  It does this by ensuring
+                // that only the maximum of the output values from the continents-with-
+                // mountains subgroup and the select-badlands-positions modules
+                // contribute to the output value of this subgroup.  One side effect of
+                // this process is that the badlands will not appear in mountainous
+                // terrain.
+                Source0 = new Max
+                {
+                    Source0 = continentsWithMountains,
+                    // [Select-badlands-positions module]: This selector module places
+                    // badlands at random spots on the continents based on the Perlin noise
+                    // generated by the badlands-positions module.  To do this, it selects
+                    // the output value from the continents-and-badlands module if the
+                    // corresponding output value from the badlands-position module is
+                    // greater than a specified value.  Otherwise, this selector module
+                    // selects the output value from the continents-with-mountains subgroup.
+                    // There is also a wide transition between these two noise modules so
+                    // that the badlands can blend into the rest of the terrain on the
+                    // continents.
+                    Source1 = new Select
+                    {
+                        LowerBound = 1 - Settings.BadlandsAmount,
+                        UpperBound = 1001 - Settings.BadlandsAmount,
+                        EdgeFalloff = 0.25,
+                        Source0 = continentsWithMountains,
+                        // [Continents-and-badlands module]:  This addition module adds the
+                        // scaled-badlands-terrain group to the base-continent-elevation
+                        // subgroup.
+                        Source1 = new Add
+                        {
+                            Source0 = baseContinentElevation,
+                            Source1 = scaledBadlandsTerrain,
+                        },
+                        // [Badlands-positions module]: This Perlin-noise module generates some
+                        // random noise, which is used by subsequent noise modules to specify the
+                        // locations of the badlands.
+                        Control = new Perlin
+                        {
+                            Seed = Settings.Seed = 140,
+                            Frequency = 16.5,
+                            Persistence = 0.5,
+                            Lacunarity = Settings.ContinentLacunarity,
+                            OctaveCount = 2,
+                            Quality = NoiseQuality.Standard,
+                        },
+                    },
+                },
+            };
+
+            // Applies the river-positions group to the continents-with-
+            // badlands subgroup.
+            //
+            // The output value from this module subgroup is measured in planetary
+            // elevation units (-1.0 for the lowest underwater trenches and +1.0 for the
+            // highest mountain peaks.)
+            //
+            // [Continents-with-rivers subgroup]: Caches the output value from the
+            // blended-rivers-to-continents module.
+            var continentsWithRivers = new Cache
+            {
+                // [Blended-rivers-to-continents module]: This selector module outputs
+                // deep rivers near sea level and shallower rivers in higher terrain.  It
+                // does this by selecting the output value from the continents-with-
+                // badlands subgroup if the corresponding output value from the
+                // continents-with-badlands subgroup is far from sea level.  Otherwise,
+                // this selector module selects the output value from the add-rivers-to-
+                // continents module.
+                Source0 = new Select
+                {
+                    LowerBound = Settings.SeaLevel,
+                    UpperBound = Settings.ContinentHeightScale + Settings.SeaLevel,
+                    EdgeFalloff = Settings.ContinentHeightScale = Settings.SeaLevel,
+                    Source0 = continentsWithBadlands,
+                    // [Add-rivers-to-continents module]: This addition module adds the
+                    // rivers to the continents-with-badlands subgroup.  Because the scaled-
+                    // rivers module only outputs a negative value, the scaled-rivers module
+                    // carves the rivers out of the terrain.
+                    Source1 = new Add
+                    {
+                        Source0 = continentsWithBadlands,
+                        // [Scaled-rivers module]: This scale/bias module scales the output value
+                        // from the river-positions group so that it is measured in planetary
+                        // elevation units and is negative; this is required for Add-rivers-to-continents.
+                        Source1 = new ScaleBias
+                        {
+                            Scale = Settings.RiverDepth / 2.0,
+                            Bias = -Settings.RiverDepth / 2.0,
+                            Source0 = riverPositions,
+                        },
+                    },
+                    Control = continentsWithBadlands,
+                },
+            };
+
+
+            // Simply caches the output value from the continent-with-
+            // rivers subgroup to contribute to the final output value.
+            //
+            // [Unscaled-final-planet subgroup]: Caches the output value from the
+            // continent-with-rivers subgroup.
+            var unscaledFinalPlanet = new Cache
+            {
+                Source0 = continentsWithRivers,
+            };
+
+            // Scales the output value from the unscaled-final-planet
+            // subgroup so that it represents an elevation in meters.
+            //
+            // 2: [Final-planet group]: Caches the output value from the final-planet-
+            // in-meters module.
+            var finalPlanet = new Cache
+            {
+                // [Final-planet-in-meters module]: This scale/bias module scales the
+                // output value from the unscaled-final-planet subgroup so that its
+                // output value is measured in meters.
+                Source0 = new ScaleBias
+                {
+                    Scale = (Settings.MaxElev - Settings.MinElev) / 2.0,
+                    Bias = Settings.MinElev + ((Settings.MaxElev - Settings.MinElev) / 2.0),
+                    Source0 = unscaledFinalPlanet,
+                },
+            };
+
+            return finalPlanet;
         }
 
         #endregion
 
         public Module CreatePlanetModule()
         {
-            throw new NotImplementedException();
+            var continentDefinition = CreateContinentDefinition();
+            var terrainTypeDefinition = CreateTerrainTypeDefinition(continentDefinition);
+            var scaledPlainsTerrain = CreateScaledPlainsTerrain(CreatePlainsTerrain());
+            var scaledHillyTerrain = CreateScaledHillyTerrain(CreateHillyTerrain());
+            var scaledMountainousTerrain = CreateScaledMountainousTerrain(CreateMountainousTerrain());
+            var scaledbadlandsTerrain = CreateScaledBadlandsTerrain(CreateBadlandsTerrain());
+            var riverPositions = CreateRiverPositions();
+            var planet = CreateFinalPlanet(continentDefinition, terrainTypeDefinition,
+                scaledPlainsTerrain, scaledHillyTerrain, scaledMountainousTerrain,
+                scaledbadlandsTerrain, riverPositions);
+            return planet;
         }
     }
 }
