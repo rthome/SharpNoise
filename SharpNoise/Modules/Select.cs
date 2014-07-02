@@ -130,7 +130,7 @@ namespace SharpNoise.Modules
             set
             {
                 // Make sure that the edge falloff curves do not overlap.
-                var boundSize = UpperBound - UpperBound;
+                var boundSize = UpperBound - LowerBound;
                 edgeFalloff = (value > boundSize / 2) ? boundSize / 2 : value;
             }
         }
