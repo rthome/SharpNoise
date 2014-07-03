@@ -125,7 +125,12 @@ namespace SharpNoise.Builders
             var curAngle = LowerAngleBound;
             var curHeight = LowerHeightBound;
 
-            Parallel.For(0, destHeight, y =>
+            var po = new ParallelOptions()
+            {
+                CancellationToken = cancellationToken,
+            };
+
+            Parallel.For(0, destHeight, po, y =>
             {
                 for (var x = 0; x < destWidth; x++)
                 {
