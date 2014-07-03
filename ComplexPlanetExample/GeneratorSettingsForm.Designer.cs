@@ -30,11 +30,14 @@
         {
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.startButton = new System.Windows.Forms.Button();
+            this.timeLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // propertyGrid
             // 
-            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.propertyGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.propertyGrid.Location = new System.Drawing.Point(0, 41);
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.Size = new System.Drawing.Size(384, 420);
@@ -50,11 +53,20 @@
             this.startButton.UseVisualStyleBackColor = true;
             this.startButton.Click += new System.EventHandler(this.startButton_Click);
             // 
+            // timeLabel
+            // 
+            this.timeLabel.AutoSize = true;
+            this.timeLabel.Location = new System.Drawing.Point(138, 17);
+            this.timeLabel.Name = "timeLabel";
+            this.timeLabel.Size = new System.Drawing.Size(0, 13);
+            this.timeLabel.TabIndex = 4;
+            // 
             // GeneratorSettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(384, 461);
+            this.Controls.Add(this.timeLabel);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.propertyGrid);
             this.MaximizeBox = false;
@@ -62,6 +74,7 @@
             this.Name = "GeneratorSettingsForm";
             this.Text = "SharpNoise - Complex Planet Example";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -69,6 +82,7 @@
 
         private System.Windows.Forms.PropertyGrid propertyGrid;
         private System.Windows.Forms.Button startButton;
+        private System.Windows.Forms.Label timeLabel;
 
     }
 }
