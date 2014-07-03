@@ -40,23 +40,6 @@ namespace SharpNoise.Builders
         /// </summary>
         protected int destWidth, destHeight;
 
-        // the callback action, will be called by build every time a new line is completed
-        protected Action<NoiseMap.LineIterator> callback;
-
-        /// <summary>
-        /// Builds the noise map.
-        /// </summary>
-        /// <remarks>
-        /// The width and height values specified by <see cref="SetDestSize"/> must not
-        /// exceed the maximum possible width and height for the noise map.
-        /// 
-        /// If a callback function was set, it will be called after each row is completed.
-        /// 
-        /// The original contents of the destination noise map is
-        /// destroyed.
-        /// </remarks>
-        public abstract void Build();
-
         /// <summary>
         /// Gets or sets the source module
         /// </summary>
@@ -96,21 +79,8 @@ namespace SharpNoise.Builders
             destHeight = height;
         }
 
-        /// <summary>
-        /// Sets a callback function that will be called each time
-        /// a new row is filled with noise values.
-        /// </summary>
-        /// <param name="callback">The callback function.</param>
-        /// <remarks>
-        /// Set the callback to null to clear the callback.
-        /// </remarks>
-        public void SetCallback(Action<NoiseMap.LineIterator> callback)
-        {
-            this.callback = callback;
-        }
-
         protected abstract void PrepareBuild();
-        protected abstract void BuildParallelImpl(CancellationToken cancellationToken);
+        protected abstract void BuildImpl(CancellationToken cancellationToken);
 
         /// <summary>
         /// Builds the noise map.
@@ -121,9 +91,9 @@ namespace SharpNoise.Builders
         /// 
         /// The original contents of the destination noise map is destroyed.
         /// </remarks>
-        public void BuildParallel()
+        public void Build()
         {
-            BuildParallel(CancellationToken.None);
+            Build(CancellationToken.None);
         }
 
         /// <summary>
@@ -135,11 +105,11 @@ namespace SharpNoise.Builders
         /// 
         /// The original contents of the destination noise map is destroyed.
         /// </remarks>
-        public void BuildParallel(CancellationToken cancellationToken)
+        public void Build(CancellationToken cancellationToken)
         {
             PrepareBuild();
 
-            BuildParallelImpl(cancellationToken);
+            BuildImpl(cancellationToken);
         }
 
         /// <summary>
@@ -151,11 +121,11 @@ namespace SharpNoise.Builders
         /// 
         /// The original contents of the destination noise map is destroyed.
         /// </remarks>
-        public Task BuildParallelAsync(CancellationToken cancellationToken)
+        public Task BuildAsync(CancellationToken cancellationToken)
         {
             PrepareBuild();
 
-            return Task.Factory.StartNew(() => BuildParallelImpl(cancellationToken), cancellationToken,
+            return Task.Factory.StartNew(() => BuildImpl(cancellationToken), cancellationToken,
                 TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
     }

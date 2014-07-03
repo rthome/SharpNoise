@@ -85,35 +85,7 @@ namespace SharpNoise.Builders
             DestNoiseMap.SetSize(destHeight, destWidth);
         }
 
-        public override void Build()
-        {
-            PrepareBuild();
-
-            Sphere sphereModel = new Sphere(SourceModule);
-
-            var lonExtent = EastLonBound - WestLonBound;
-            var latExtent = NorthLatBound - SouthLatBound;
-            var xDelta = lonExtent / destWidth;
-            var yDelta = latExtent / destHeight;
-            var curLon = WestLonBound;
-            var curLat = SouthLatBound;
-
-            for (var y = 0; y < destHeight; y++)
-            {
-                curLon = WestLonBound;
-                for (var x = 0; x < destWidth; x++)
-                {
-                    var curValue = (float)sphereModel.GetValue(curLat, curLon);
-                    DestNoiseMap[x, y] = curValue;
-                    curLon += xDelta;
-                }
-                if (callback != null)
-                    callback(DestNoiseMap.IterateLine(y));
-                curLat += yDelta;
-            }
-        }
-
-        protected override void BuildParallelImpl(CancellationToken cancellationToken)
+        protected override void BuildImpl(CancellationToken cancellationToken)
         {
             Sphere sphereModel = new Sphere(SourceModule);
 

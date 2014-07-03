@@ -87,34 +87,7 @@ namespace SharpNoise.Builders
             DestNoiseMap.SetSize(destHeight, destWidth);
         }
 
-        public override void Build()
-        {
-            PrepareBuild();
-
-            Cylinder cylinderModel = new Cylinder(SourceModule);
-
-            var angleExtent = UpperAngleBound - LowerAngleBound;
-            var heightExtent = UpperHeightBound - LowerHeightBound;
-            var xDelta = angleExtent / destWidth;
-            var yDelta = heightExtent / destHeight;
-            var curAngle = LowerAngleBound;
-            var curHeight = LowerHeightBound;
-
-            for (var y = 0; y < destHeight; y++)
-            {
-                for (var x = 0; x < destWidth; x++)
-                {
-                    var curValue = (float)cylinderModel.GetValue(curAngle, curHeight);
-                    DestNoiseMap[x, y] = curValue;
-                    curAngle += xDelta;
-                }
-                if (callback != null)
-                    callback(DestNoiseMap.IterateLine(y));
-                curHeight += yDelta;
-            }
-        }
-
-        protected override void BuildParallelImpl(CancellationToken cancellationToken)
+        protected override void BuildImpl(CancellationToken cancellationToken)
         {
             Cylinder cylinderModel = new Cylinder(SourceModule);
 
