@@ -28,28 +28,22 @@ namespace ComplexPlanetExample
             stopwatch.Start();
 
             var generatorModule = new PlanetGenerator(GeneratorSettings).CreatePlanetModule();
-            var generatorTask = Task.Factory.StartNew(() =>
-            {
-                var planetBuilder = new SphereNoiseMapBuilder();
-                var noiseMap = new NoiseMap();
 
-                planetBuilder.SetBounds(GeneratorSettings.SouthCoord, GeneratorSettings.NorthCoord,
-                    GeneratorSettings.WestCoord, GeneratorSettings.EastCoord);
-                planetBuilder.SetDestSize(GeneratorSettings.GridWidth, GeneratorSettings.GridHeight);
+            var planetBuilder = new SphereNoiseMapBuilder();
+            var planetElevationMap = new NoiseMap();
 
-                planetBuilder.SourceModule = generatorModule;
-                planetBuilder.DestNoiseMap = noiseMap;
+            planetBuilder.SetBounds(GeneratorSettings.SouthCoord, GeneratorSettings.NorthCoord,
+                GeneratorSettings.WestCoord, GeneratorSettings.EastCoord);
+            planetBuilder.SetDestSize(GeneratorSettings.GridWidth, GeneratorSettings.GridHeight);
 
-                planetBuilder.Build();
+            planetBuilder.SourceModule = generatorModule;
+            planetBuilder.DestNoiseMap = planetElevationMap;
 
-                return noiseMap;
-            });
-            generatorTask.Wait();
+            planetBuilder.Build();
+
             stopwatch.Stop();
 
             timeLabel.Text = String.Format("Planet generated in {0}", stopwatch.Elapsed.ToString());
-
-            var planetElevationMap = generatorTask.Result;
 
             var degExtent = GeneratorSettings.EastCoord - GeneratorSettings.WestCoord;
             var gridExtent = (double)GeneratorSettings.GridWidth;
