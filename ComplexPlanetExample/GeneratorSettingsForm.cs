@@ -2,6 +2,7 @@
 using SharpNoise.Builders;
 using SharpNoise.Utilities.Imaging;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -21,6 +22,11 @@ namespace ComplexPlanetExample
 
         private void startButton_Click(object sender, EventArgs e)
         {
+            timeLabel.Text = string.Empty;
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             var generatorModule = new PlanetGenerator(GeneratorSettings).CreatePlanetModule();
             var generatorTask = Task.Factory.StartNew(() =>
             {
@@ -34,11 +40,14 @@ namespace ComplexPlanetExample
                 planetBuilder.SourceModule = generatorModule;
                 planetBuilder.DestNoiseMap = noiseMap;
 
-                planetBuilder.Build();
+                planetBuilder.BuildParallel();
 
                 return noiseMap;
             });
             generatorTask.Wait();
+            stopwatch.Stop();
+
+            timeLabel.Text = String.Format("Planet generated in {0}", stopwatch.Elapsed.ToString());
 
             var planetElevationMap = generatorTask.Result;
 
