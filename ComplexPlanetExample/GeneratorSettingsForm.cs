@@ -3,6 +3,7 @@ using SharpNoise.Builders;
 using SharpNoise.Utilities.Imaging;
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -20,9 +21,16 @@ namespace ComplexPlanetExample
             propertyGrid.SelectedObject = GeneratorSettings;
         }
 
-        private void startButton_Click(object sender, EventArgs e)
+        private async void startButton_Click(object sender, EventArgs e)
         {
             timeLabel.Text = string.Empty;
+
+            var cts = new CancellationTokenSource();
+
+            var dialog = new ProgressDialog();
+            dialog.Owner = this;
+            dialog.cancelButton.Click += (s, ea) => cts.Cancel();
+            dialog.Show();
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -39,10 +47,24 @@ namespace ComplexPlanetExample
             planetBuilder.SourceModule = generatorModule;
             planetBuilder.DestNoiseMap = planetElevationMap;
 
-            planetBuilder.Build();
+            bool cancelled = false;
+
+            try
+            {
+                await planetBuilder.BuildAsync(cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                cancelled = true;
+            }
 
             stopwatch.Stop();
 
+            dialog.Close();
+
+            if (cancelled)
+                return;
+            
             timeLabel.Text = String.Format("Planet generated in {0}", stopwatch.Elapsed.ToString());
 
             var degExtent = GeneratorSettings.EastCoord - GeneratorSettings.WestCoord;
