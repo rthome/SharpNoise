@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace SharpNoise.Modules
 {
@@ -31,20 +32,16 @@ namespace SharpNoise.Modules
     [Serializable]
     public class Cache : Module
     {
-        [NonSerialized]
-        bool isCached;
+        class CacheEntry
+        {
+            public double x;
+            public double y;
+            public double z;
+            public double value;
+        }
 
         [NonSerialized]
-        double xCache;
-
-        [NonSerialized]
-        double yCache;
-
-        [NonSerialized]
-        double zCache;
-
-        [NonSerialized]
-        double cachedValue;
+        ThreadLocal<CacheEntry> localCacheEntry = new ThreadLocal<CacheEntry>();
 
         /// <summary>
         /// Gets or sets the first source module
@@ -58,16 +55,15 @@ namespace SharpNoise.Modules
         public override void SetSourceModule(int index, Module module)
         {
             base.SetSourceModule(index, module);
-            isCached = false;
+            localCacheEntry.Value = null;
         }
-        
+
         /// <summary>
         /// Constructor.
         /// </summary>
         public Cache()
             : base(1)
         {
-
         }
 
         /// <summary>
@@ -80,15 +76,24 @@ namespace SharpNoise.Modules
         /// <returns>Returns the computed value</returns>
         public override double GetValue(double x, double y, double z)
         {
-            if (!(isCached && x == xCache && y == yCache && z == zCache))
+            CacheEntry cache = localCacheEntry.Value;
+
+            if (cache != null)
             {
-                cachedValue = sourceModules[0].GetValue(x, y, z);
-                xCache = x;
-                yCache = y;
-                zCache = z;
-                isCached = true;
+                if (cache.x == x && cache.y == y && cache.z == z)
+                    return cache.value;
             }
-            return cachedValue;
+            else
+            {
+                localCacheEntry.Value = cache = new CacheEntry();
+            }
+
+            cache.value = sourceModules[0].GetValue(x, y, z);
+            cache.x = x;
+            cache.y = y;
+            cache.z = z;
+
+            return cache.value;
         }
     }
 }
