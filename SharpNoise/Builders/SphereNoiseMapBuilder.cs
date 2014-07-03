@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 using SharpNoise.Models;
 
@@ -70,7 +72,7 @@ namespace SharpNoise.Builders
           EastLonBound = eastLonBound;
         }
 
-        public override void Build()
+        protected override void PrepareBuild()
         {
             if (EastLonBound <= WestLonBound ||
                 NorthLatBound <= SouthLatBound ||
@@ -81,6 +83,12 @@ namespace SharpNoise.Builders
                 throw new InvalidOperationException("Builder isn't properly set up.");
 
             DestNoiseMap.SetSize(destHeight, destWidth);
+        }
+
+        public override void Build()
+        {
+            PrepareBuild();
+
             Sphere sphereModel = new Sphere(SourceModule);
 
             var lonExtent = EastLonBound - WestLonBound;
@@ -103,6 +111,35 @@ namespace SharpNoise.Builders
                     callback(DestNoiseMap.IterateLine(y));
                 curLat += yDelta;
             }
+        }
+
+        protected override void BuildParallelImpl(CancellationToken cancellationToken)
+        {
+            Sphere sphereModel = new Sphere(SourceModule);
+
+            var lonExtent = EastLonBound - WestLonBound;
+            var latExtent = NorthLatBound - SouthLatBound;
+            var xDelta = lonExtent / destWidth;
+            var yDelta = latExtent / destHeight;
+
+            var po = new ParallelOptions()
+            {
+                CancellationToken = cancellationToken,
+            };
+
+            Parallel.For(0, destHeight, po, y =>
+            {
+                double curLat = SouthLatBound + y * yDelta;
+
+                int x;
+                double curLon = WestLonBound;
+
+                for (x = 0, curLon = WestLonBound; x < destWidth; x++, curLon += xDelta)
+                {
+                    var curValue = (float)sphereModel.GetValue(curLat, curLon);
+                    DestNoiseMap[x, y] = curValue;
+                }
+            });
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 using SharpNoise.Modules;
 
@@ -105,6 +107,29 @@ namespace SharpNoise.Builders
         public void SetCallback(Action<NoiseMap.LineIterator> callback)
         {
             this.callback = callback;
+        }
+
+        protected abstract void PrepareBuild();
+        protected abstract void BuildParallelImpl(CancellationToken cancellationToken);
+
+        public void BuildParallel()
+        {
+            BuildParallel(CancellationToken.None);
+        }
+
+        public void BuildParallel(CancellationToken cancellationToken)
+        {
+            PrepareBuild();
+
+            BuildParallelImpl(cancellationToken);
+        }
+
+        public Task BuildParallelAsync(CancellationToken cancellationToken)
+        {
+            PrepareBuild();
+
+            return Task.Factory.StartNew(() => BuildParallelImpl(cancellationToken), cancellationToken,
+                TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
     }
 }
