@@ -40,7 +40,7 @@ namespace ComplexPlanetExample
                 planetBuilder.SourceModule = generatorModule;
                 planetBuilder.DestNoiseMap = noiseMap;
 
-                planetBuilder.BuildParallel();
+                planetBuilder.Build();
 
                 return noiseMap;
             });

@@ -90,49 +90,7 @@ namespace SharpNoise.Builders
             DestNoiseMap.SetSize(destHeight, destWidth);
         }
 
-        public override void Build()
-        {
-            PrepareBuild();
-
-            Plane planeModel = new Plane(SourceModule);
-
-            var xExtent = UpperXBound - LowerXBound;
-            var zExtent = UpperZBound - LowerZBound;
-            var xDelta = xExtent / destWidth;
-            var zDelta = zExtent / destHeight;
-            var xCur = LowerXBound;
-            var zCur = LowerZBound;
-
-            for (var z = 0; z < destHeight; z++)
-            {
-                xCur = LowerXBound;
-                for (var x = 0; x < destWidth; x++)
-                {
-                    float finalValue;
-                    if (!EnableSeamless)
-                        finalValue = (float)planeModel.GetValue(xCur, zCur);
-                    else
-                    {
-                        var swValue = planeModel.GetValue(xCur, zCur);
-                        var seValue = planeModel.GetValue(xCur + xExtent, zCur);
-                        var nwValue = planeModel.GetValue(xCur, zCur + zExtent);
-                        var neValue = planeModel.GetValue(xCur + xExtent, zCur + zExtent);
-                        var xBlend = 1.0 - ((xCur - LowerXBound) / xExtent);
-                        var zBlend = 1.0 - ((zCur - LowerZBound) / zExtent);
-                        var z0 = NoiseMath.Linear(swValue, seValue, xBlend);
-                        var z1 = NoiseMath.Linear(nwValue, neValue, xBlend);
-                        finalValue = (float)NoiseMath.Linear(z0, z1, zBlend);
-                    }
-                    xCur += xDelta;
-                    DestNoiseMap[x, z] = finalValue;
-                }
-                if (callback != null)
-                    callback(DestNoiseMap.IterateLine(z));
-                zCur += zDelta;
-            }
-        }
-
-        protected override void BuildParallelImpl(CancellationToken cancellationToken)
+        protected override void BuildImpl(CancellationToken cancellationToken)
         {
             Plane planeModel = new Plane(SourceModule);
 
