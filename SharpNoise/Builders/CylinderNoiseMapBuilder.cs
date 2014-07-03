@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 using SharpNoise.Models;
 
@@ -72,7 +74,7 @@ namespace SharpNoise.Builders
             UpperHeightBound = upperHeightBound;
         }
 
-        public override void Build()
+        protected override void PrepareBuild()
         {
             if (LowerAngleBound >= UpperAngleBound ||
                 LowerHeightBound >= UpperHeightBound ||
@@ -83,6 +85,12 @@ namespace SharpNoise.Builders
                 throw new InvalidOperationException("Builder isn't properly set up.");
 
             DestNoiseMap.SetSize(destHeight, destWidth);
+        }
+
+        public override void Build()
+        {
+            PrepareBuild();
+
             Cylinder cylinderModel = new Cylinder(SourceModule);
 
             var angleExtent = UpperAngleBound - LowerAngleBound;
@@ -104,6 +112,29 @@ namespace SharpNoise.Builders
                     callback(DestNoiseMap.IterateLine(y));
                 curHeight += yDelta;
             }
+        }
+
+        protected override void BuildParallelImpl(CancellationToken cancellationToken)
+        {
+            Cylinder cylinderModel = new Cylinder(SourceModule);
+
+            var angleExtent = UpperAngleBound - LowerAngleBound;
+            var heightExtent = UpperHeightBound - LowerHeightBound;
+            var xDelta = angleExtent / destWidth;
+            var yDelta = heightExtent / destHeight;
+            var curAngle = LowerAngleBound;
+            var curHeight = LowerHeightBound;
+
+            Parallel.For(0, destHeight, y =>
+            {
+                for (var x = 0; x < destWidth; x++)
+                {
+                    var curValue = (float)cylinderModel.GetValue(curAngle, curHeight);
+                    DestNoiseMap[x, y] = curValue;
+                    curAngle += xDelta;
+                }
+                curHeight += yDelta;
+            });
         }
     }
 }
