@@ -112,11 +112,29 @@ namespace SharpNoise.Builders
         protected abstract void PrepareBuild();
         protected abstract void BuildParallelImpl(CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Builds the noise map.
+        /// </summary>
+        /// <remarks>
+        /// The width and height values specified by <see cref="SetDestSize"/> must not
+        /// exceed the maximum possible width and height for the noise map.
+        /// 
+        /// The original contents of the destination noise map is destroyed.
+        /// </remarks>
         public void BuildParallel()
         {
             BuildParallel(CancellationToken.None);
         }
 
+        /// <summary>
+        /// Builds the noise map.
+        /// </summary>
+        /// <remarks>
+        /// The width and height values specified by <see cref="SetDestSize"/> must not
+        /// exceed the maximum possible width and height for the noise map.
+        /// 
+        /// The original contents of the destination noise map is destroyed.
+        /// </remarks>
         public void BuildParallel(CancellationToken cancellationToken)
         {
             PrepareBuild();
@@ -124,6 +142,15 @@ namespace SharpNoise.Builders
             BuildParallelImpl(cancellationToken);
         }
 
+        /// <summary>
+        /// Builds the noise map.
+        /// </summary>
+        /// <remarks>
+        /// The width and height values specified by <see cref="SetDestSize"/> must not
+        /// exceed the maximum possible width and height for the noise map.
+        /// 
+        /// The original contents of the destination noise map is destroyed.
+        /// </remarks>
         public Task BuildParallelAsync(CancellationToken cancellationToken)
         {
             PrepareBuild();
