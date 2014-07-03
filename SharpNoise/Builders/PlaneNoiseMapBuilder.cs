@@ -141,7 +141,12 @@ namespace SharpNoise.Builders
             var xDelta = xExtent / destWidth;
             var zDelta = zExtent / destHeight;
 
-            Parallel.For(0, destHeight, z =>
+            var po = new ParallelOptions()
+            {
+                CancellationToken = cancellationToken,
+            };
+
+            Parallel.For(0, destHeight, po, z =>
             {
                 double zCur = LowerZBound + z * zDelta;
 
