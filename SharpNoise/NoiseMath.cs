@@ -160,30 +160,6 @@ namespace SharpNoise
         }
 
         /// <summary>
-        /// Returns the maximum of two values.
-        /// </summary>
-        /// <typeparam name="T">A comparable type.</typeparam>
-        /// <param name="a">The first value.</param>
-        /// <param name="b">The second value.</param>
-        /// <returns>The maximum of the two values.</returns>
-        public static T Max<T>(T a, T b) where T : IComparable<T>
-        {
-            return a.CompareTo(b) > 0 ? a : b;
-        }
-
-        /// <summary>
-        /// Returns the minimum of two values.
-        /// </summary>
-        /// <typeparam name="T">A comparable type.</typeparam>
-        /// <param name="a">The first value.</param>
-        /// <param name="b">The second value.</param>
-        /// <returns>The minimum of the two values.</returns>
-        public static T Min<T>(T a, T b) where T : IComparable<T>
-        {
-            return a.CompareTo(b) < 0 ? a : b;
-        }
-
-        /// <summary>
         /// Swaps two values.
         /// </summary>
         /// <param name="a">A variable containing the first value.</param>
