@@ -138,9 +138,25 @@ namespace SharpNoise
         /// - <paramref name="lowerBound" /> if <paramref name="value" /> is less than <paramref name="lowerBound" />.
         /// - <paramref name="upperBound" /> if <paramref name="value" /> is greater than <paramref name="upperBound" />.
         /// </returns>
-        public static T Clamp<T>(T value, T lowerBound, T upperBound) where T : IComparable<T>
+        public static int Clamp(int value, int lowerBound, int upperBound)
         {
-            return Max(lowerBound, Min(upperBound, value));
+            return value > upperBound ? upperBound : (value < lowerBound ? lowerBound : value);
+        }
+
+        /// <summary>
+        /// Clamps a value onto a clamping range.
+        /// </summary>
+        /// <param name="value">The value to clamp.</param>
+        /// <param name="lowerBound">The lower bound of the clamping range.</param>
+        /// <param name="upperBound">The upper bound of the clamping range.</param>
+        /// <returns>
+        /// - <paramref name="value" /> if <paramref name="value" /> lies between <paramref name="lowerBound" /> and <paramref name="upperBound" />.
+        /// - <paramref name="lowerBound" /> if <paramref name="value" /> is less than <paramref name="lowerBound" />.
+        /// - <paramref name="upperBound" /> if <paramref name="value" /> is greater than <paramref name="upperBound" />.
+        /// </returns>
+        public static double Clamp(double value, double lowerBound, double upperBound)
+        {
+            return value > upperBound ? upperBound : (value < lowerBound ? lowerBound : value);
         }
 
         /// <summary>
