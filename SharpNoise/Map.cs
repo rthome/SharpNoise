@@ -236,7 +236,7 @@ namespace SharpNoise
         /// <param name="width">The new width of the Map</param>
         /// <remarks>
         /// After changing the size of the Map,
-        /// the contents of the map are undefined.
+        /// the contents of the map are all zero.
         /// </remarks>
         public void SetSize(int height, int width)
         {
