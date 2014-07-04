@@ -32,7 +32,7 @@ namespace SharpNoise.Tests
         {
             var min = 0D;
             var max = 1D; 
-            Assert.AreEqual(max, NoiseMath.Max(min, max));
+            Assert.AreEqual(max, Math.Max(min, max));
         }
 
         [TestMethod]
@@ -40,7 +40,7 @@ namespace SharpNoise.Tests
         {
             var min = 0D;
             var max = 1D;
-            Assert.AreEqual(max, NoiseMath.Max(max, min));
+            Assert.AreEqual(max, Math.Max(max, min));
         }
 
         [TestMethod]
@@ -48,7 +48,7 @@ namespace SharpNoise.Tests
         {
             var min = 0D;
             var max = 1D;
-            Assert.AreEqual(min, NoiseMath.Min(min, max));
+            Assert.AreEqual(min, Math.Min(min, max));
         }
 
         [TestMethod]
@@ -56,7 +56,7 @@ namespace SharpNoise.Tests
         {
             var min = 0D;
             var max = 1D;
-            Assert.AreEqual(min, NoiseMath.Min(max, min));
+            Assert.AreEqual(min, Math.Min(max, min));
         }
 
         [TestMethod]
