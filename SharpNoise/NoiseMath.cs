@@ -69,6 +69,63 @@ namespace SharpNoise
         }
 
         /// <summary>
+        /// Performs linear interpolation between two values.
+        /// </summary>
+        /// <param name="n0">The first value.</param>
+        /// <param name="n1">The second value.</param>
+        /// <param name="a">The alpha value.</param>
+        /// <returns>The interpolated value.</returns>
+        /// <remarks>
+        /// The alpha value should range from 0.0 to 1.0.  If the alpha value is
+        /// 0.0, this function returns <paramref name="n0"/>.  If the alpha value is 1.0, this
+        /// function returns <paramref name="n1"/>.
+        /// </remarks>
+        public static float Linear(float n0, float n1, float a)
+        {
+            return (1 - a) * n0 + a * n1;
+        }
+
+        /// <summary>
+        /// Performs bilinear interpolation between four values.
+        /// </summary>
+        /// <returns>The interpolated value.</returns>
+        /// <remarks>
+        /// <paramref name="x"/> and <paramref name="y"/>
+        /// should range from 0.0 to 1.0.
+        /// </remarks>
+        public static float Bilinear(float x, float y,
+            float x0y0, float x0y1, float x1y0, float x1y1)
+        {
+            float c0 = Linear(x0y0, x1y0, x);
+            float c1 = Linear(x0y1, x1y1, x);
+
+            return Linear(c0, c1, y);
+        }
+
+        /// <summary>
+        /// Performs trilinear interpolation between eight values.
+        /// </summary>
+        /// <returns>The interpolated value.</returns>
+        /// <remarks>
+        /// <paramref name="x"/>, <paramref name="y"/> and <paramref name="z"/>
+        /// should range from 0.0 to 1.0.
+        /// </remarks>
+        public static float Trilinear(float x, float y, float z,
+            float x0y0z0, float x0y0z1, float x0y1z0, float x0y1z1,
+            float x1y0z0, float x1y0z1, float x1y1z0, float x1y1z1)
+        {
+            float c00 = Linear(x0y0z0, x1y0z0, x);
+            float c10 = Linear(x0y1z0, x1y1z0, x);
+            float c01 = Linear(x0y0z1, x1y0z1, x);
+            float c11 = Linear(x0y1z1, x1y1z1, x);
+
+            float c0 = Linear(c00, c10, y);
+            float c1 = Linear(c01, c11, y);
+
+            return Linear(c0, c1, z);
+        }
+
+        /// <summary>
         /// Maps a value onto a cubic S-curve.
         /// </summary>
         /// <param name="a">The value to map onto a cubic S-curve.</param>
