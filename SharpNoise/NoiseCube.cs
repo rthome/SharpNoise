@@ -191,5 +191,73 @@ namespace SharpNoise
                 }
             }
         }
+
+        /// <summary>
+        /// Create a new NoiseCube from the given source NoiseCube using trilinear filtering.
+        /// 
+        /// When the sample is outside the source BorderValue is used by default. If <see cref="clamp"/>/>
+        /// is set clamping is used instead.
+        /// </summary>
+        /// <param name="src">The source NoiseCube</param>
+        /// <param name="width">Width of the new NoiseCube</param>
+        /// <param name="height">Height of the new NoiseCube</param>
+        /// <param name="clamp">Use clamping when the sample is outside the source NoiseCube</param>
+        /// <returns>The new NoiseCube</returns>
+        public static NoiseCube TrilinearFilter(NoiseCube src, int width, int height, int depth, bool clamp = false)
+        {
+            var dest = new NoiseCube(width, height, depth);
+
+            float xratio = (float)src.Width / dest.Width;
+            float yratio = (float)src.Height / dest.Height;
+            float zratio = (float)src.Depth / dest.Depth;
+
+            Parallel.For(0, dest.Depth, z =>
+            {
+                for (int y = 0; y < dest.Height; ++y)
+                    for (int x = 0; x < dest.Width; ++x)
+                    {
+                        float u = (x + 0.5f) * xratio - 0.5f;
+                        float v = (y + 0.5f) * yratio - 0.5f;
+                        float w = (z + 0.5f) * zratio - 0.5f;
+
+                        int x0 = NoiseMath.FastFloor(u);
+                        int y0 = NoiseMath.FastFloor(v);
+                        int z0 = NoiseMath.FastFloor(w);
+                        int x1 = x0 + 1;
+                        int y1 = y0 + 1;
+                        int z1 = z0 + 1;
+
+                        float xf = u - x0;
+                        float yf = v - y0;
+                        float zf = w - z0;
+
+                        if (clamp)
+                        {
+                            x0 = NoiseMath.Clamp(x0, 0, src.Width - 1);
+                            x1 = NoiseMath.Clamp(x1, 0, src.Width - 1);
+                            y0 = NoiseMath.Clamp(y0, 0, src.Height - 1);
+                            y1 = NoiseMath.Clamp(y1, 0, src.Height - 1);
+                            z0 = NoiseMath.Clamp(z0, 0, src.Depth - 1);
+                            z1 = NoiseMath.Clamp(z1, 0, src.Depth - 1);
+                        }
+
+                        float c000 = src.GetValue(x0, y0, z0);
+                        float c001 = src.GetValue(x0, y0, z1);
+                        float c010 = src.GetValue(x0, y1, z0);
+                        float c011 = src.GetValue(x0, y1, z1);
+                        float c100 = src.GetValue(x1, y0, z0);
+                        float c101 = src.GetValue(x1, y0, z1);
+                        float c110 = src.GetValue(x1, y1, z0);
+                        float c111 = src.GetValue(x1, y1, z1);
+
+                        float val = NoiseMath.Trilinear(xf, yf, zf,
+                            c000, c001, c010, c011, c100, c101, c110, c111);
+
+                        dest.SetValue(x, y, z, val);
+                    }
+            });
+
+            return dest;
+        }
     }
 }
