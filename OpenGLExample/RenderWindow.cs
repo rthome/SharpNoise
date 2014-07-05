@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace OpenGLExample
 {
@@ -14,8 +15,8 @@ namespace OpenGLExample
     {
         const int PrimitiveRestart = 12345678;
 
-        const int Rows = 20;
-        const int Cols = 20;
+        const int Rows = 50;
+        const int Cols = 50;
 
         int ProgramHandle;
         Matrix4 ModelMatrix, ViewMatrix, ProjectionMatrix, MvpMatrix;
@@ -174,13 +175,13 @@ namespace OpenGLExample
         float[] GenerateElevationNoise(int rows, int cols, double time)
         {
             var elevationData = new float[rows * cols];
-            for (int y = 0; y < rows; y++)
+            Parallel.For(0, Rows, (y) =>
             {
                 for (int x = 0; x < cols; x++)
                 {
                     elevationData[y * cols + x] = (float)NoiseModule.GetValue(x * 0.1, y * 0.1, time * 0.25);
                 }
-            }
+            });
             return elevationData;
         }
 
@@ -194,7 +195,6 @@ namespace OpenGLExample
         protected override void OnLoad(EventArgs e)
         {
             GL.ClearColor(Color4.Gray);
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
 
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.PrimitiveRestart);
@@ -210,8 +210,8 @@ namespace OpenGLExample
             SetupBuffers();
 
             // Initialize model and view matrices once
-            ViewMatrix = Matrix4.LookAt(new Vector3(40, 0, 20), Vector3.Zero, Vector3.UnitZ);
-            ModelMatrix = Matrix4.CreateTranslation(-(Cols / 2.0f), -(Rows / 2.0f), 0) * Matrix4.CreateScale(2);
+            ViewMatrix = Matrix4.LookAt(new Vector3(45, 0, 25), Vector3.Zero, Vector3.UnitZ);
+            ModelMatrix = Matrix4.CreateTranslation(-0.5f * Rows, -0.5f * Cols, 0);
 
             // Set up noise module
             NoiseModule = new Perlin();

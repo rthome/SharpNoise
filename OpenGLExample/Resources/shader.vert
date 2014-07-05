@@ -12,6 +12,6 @@ void main()
 	// Scale elevation to [0, 1] range
 	float clampedElevation = clamp((vElevation + 1) * 0.5, 0, 1);
 
-	vFragColor = vec4(vec3(1), 1);
+	vFragColor = vec4(vec3(clampedElevation), 1);
 	gl_Position = MVP * vec4(vVertex.xy, vVertex.z + vElevation, 1);
 }
