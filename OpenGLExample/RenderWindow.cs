@@ -2,6 +2,7 @@
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using SharpNoise.Modules;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,8 +14,20 @@ namespace OpenGLExample
     {
         const int PrimitiveRestart = 12345678;
 
+        const int Rows = 20;
+        const int Cols = 20;
+
         int ProgramHandle;
-        Matrix4 ModelviewMatrix, ProjectionMatrix;
+        Matrix4 ModelMatrix, ViewMatrix, ProjectionMatrix, MvpMatrix;
+        int MvpUniformLocation;
+
+        int VertexArrayObject;
+        int VertexBuffer, NormalBuffer, ElevationBuffer, IndexBuffer;
+        int ElementCount;
+
+        double AccumTime = 0;
+
+        Module NoiseModule;
 
         #region Shader Loading
 
@@ -68,24 +81,22 @@ namespace OpenGLExample
 
         #region Buffer setup
 
-        int CreatePlaneDataBuffer()
+        Vector3[] CreatePlanePositions(int rows, int cols)
         {
-            // # VBOs: positions, indices
-            var buffers = new int[2];
-            GL.GenBuffers(2, buffers);
-
             // Position data
-            var positions = new Vector3[100];
-            for (int y = 0; y < 10; y++)
+            var positions = new Vector3[rows * cols];
+            for (int y = 0; y < rows; y++)
             {
-                for (int x = 0; x < 10; x++)
+                for (int x = 0; x < cols; x++)
                 {
-                    positions[y * 10 + x] = new Vector3(x, y, 0);
+                    positions[y * cols + x] = new Vector3(x, y, 0);
                 }
             }
-            GL.BindBuffer(BufferTarget.ArrayBuffer, buffers[0]);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(Vector3.SizeInBytes * positions.Length), positions, BufferUsageHint.StaticDraw);
+            return positions;
+        }
 
+        int[] CreatePlaneIndices(int rows, int cols)
+        {
             // Indices
             // Triangulate like this:
             // 
@@ -100,48 +111,134 @@ namespace OpenGLExample
             // x   x   x   x
             //
             var indices = new List<int>();
-            for(int row = 0; row < 9; row++)
+            for (int y = 0; y < rows - 1; y++)
             {
-                indices.Add(row * 10);
-                indices.Add((row + 1) * 10);
-                for (int x = 0; x < 9; x++)
+                indices.Add(y * cols);
+                indices.Add((y + 1) * cols);
+                for (int x = 0; x < cols - 1; x++)
                 {
-                    indices.Add(row * 10 + x + 1);
-                    indices.Add((row + 1) * 10 + x + 1);
+                    indices.Add(y * cols + x + 1);
+                    indices.Add((y + 1) * cols + x + 1);
                 }
                 indices.Add(PrimitiveRestart);
             }
+            return indices.ToArray();
+        }
 
-            // Set up VAO
-            var vertexArrayObject = GL.GenVertexArray();
+        void SetupBuffers()
+        {
+            // Generate VBOs
+            VertexBuffer = GL.GenBuffer();
+            NormalBuffer = GL.GenBuffer();
+            ElevationBuffer = GL.GenBuffer();
+            IndexBuffer = GL.GenBuffer();
 
-            return vertexArrayObject;
+            // positions
+            var positions = CreatePlanePositions(Rows, Cols);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(positions.Length * Vector3.SizeInBytes), positions, BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            // elevation, no data for now
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ElevationBuffer);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(positions.Length * sizeof(float)), IntPtr.Zero, BufferUsageHint.StreamDraw);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            // indices
+            var indices = CreatePlaneIndices(Rows, Cols);
+            ElementCount = indices.Length;
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indices.Length * sizeof(int)), indices, BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+
+
+            // Create and set up VAO
+            VertexArrayObject =  GL.GenVertexArray();
+            GL.BindVertexArray(VertexArrayObject);
+            {
+                // positions, located at attribute index 0
+                GL.EnableVertexAttribArray(0);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer);
+                GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
+
+                // elevation, located at attribute index 1
+                GL.EnableVertexAttribArray(1);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, ElevationBuffer);
+                GL.VertexAttribPointer(1, 1, VertexAttribPointerType.Float, false, 0, 0);
+            }
+            GL.BindVertexArray(0);
         }
 
         #endregion
+
+        float[] GenerateElevationNoise(int rows, int cols, double time)
+        {
+            var elevationData = new float[rows * cols];
+            for (int y = 0; y < rows; y++)
+            {
+                for (int x = 0; x < cols; x++)
+                {
+                    elevationData[y * cols + x] = (float)NoiseModule.GetValue(x * 0.1, y * 0.1, time * 0.25);
+                }
+            }
+            return elevationData;
+        }
 
         protected override void OnResize(EventArgs e)
         {
             GL.Viewport(ClientRectangle);
             ProjectionMatrix = Matrix4.CreatePerspectiveFieldOfView(
-                MathHelper.PiOver4, ClientSize.Width / (float)ClientSize.Height, 0.1f, 10);
+                MathHelper.PiOver4, ClientSize.Width / (float)ClientSize.Height, 0.1f, 1000);
         }
 
         protected override void OnLoad(EventArgs e)
         {
-            ModelviewMatrix = Matrix4.Identity;
             GL.ClearColor(Color4.Gray);
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+
+            GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.PrimitiveRestart);
             GL.PrimitiveRestartIndex(PrimitiveRestart);
 
             // Load shaders
             var vertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "vertexShader");
             var fragmentHandle = LoadShaderFromResource(ShaderType.FragmentShader, "fragmentShader");
             ProgramHandle = CreateAndLinkProgram(vertexHandle, fragmentHandle);
+            MvpUniformLocation = GL.GetUniformLocation(ProgramHandle, "MVP");
+
+            // Create plane data and set up buffers
+            SetupBuffers();
+
+            // Initialize model and view matrices once
+            ViewMatrix = Matrix4.LookAt(new Vector3(40, 0, 20), Vector3.Zero, Vector3.UnitZ);
+            ModelMatrix = Matrix4.CreateTranslation(-(Cols / 2.0f), -(Rows / 2.0f), 0) * Matrix4.CreateScale(2);
+
+            // Set up noise module
+            NoiseModule = new Perlin();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
+            AccumTime += e.Time;
 
+            // Update elevation data
+            var elevationData = GenerateElevationNoise(Rows, Cols, AccumTime);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ElevationBuffer);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(elevationData.Length * sizeof(float)), elevationData);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            var error = GL.GetError();
+            if (error != ErrorCode.NoError)
+                Debug.Print("OpenGL error: " + error.ToString());
+
+            // Rotate the plane
+            var modelRotation = Matrix4.CreateRotationZ((float)(e.Time * 0.1));
+            Matrix4.Mult(ref ModelMatrix, ref modelRotation, out ModelMatrix);
+
+            // Update MVP matrix
+            Matrix4 mvMatrix;
+            Matrix4.Mult(ref ModelMatrix, ref ViewMatrix, out mvMatrix);
+            Matrix4.Mult(ref mvMatrix, ref ProjectionMatrix, out MvpMatrix);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -149,6 +246,14 @@ namespace OpenGLExample
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             GL.UseProgram(ProgramHandle);
+            GL.BindVertexArray(VertexArrayObject);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
+
+            GL.UniformMatrix4(MvpUniformLocation, false, ref MvpMatrix);
+            GL.DrawElements(PrimitiveType.TriangleStrip, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
+
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+            GL.BindVertexArray(0);
             GL.UseProgram(0);
 
             SwapBuffers();
@@ -156,8 +261,7 @@ namespace OpenGLExample
 
         public RenderWindow()
             : base(800, 600, GraphicsMode.Default, "SharpNoise OpenGL Example",
-            GameWindowFlags.Default, DisplayDevice.Default, 3, 3,
-            GraphicsContextFlags.ForwardCompatible)
+            GameWindowFlags.Default, DisplayDevice.Default, 3, 3, GraphicsContextFlags.ForwardCompatible)
         {
             VSync = VSyncMode.Adaptive;
         }
