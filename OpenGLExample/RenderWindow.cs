@@ -2,6 +2,7 @@
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using SharpNoise;
 using SharpNoise.Modules;
 using System;
 using System.Collections.Generic;
@@ -26,9 +27,15 @@ namespace OpenGLExample
         int VertexBuffer, NormalBuffer, ElevationBuffer, IndexBuffer;
         int ElementCount;
 
+        Vector3[] Positions;
+        int[] Indices;
+
         double AccumTime = 0;
 
         Module NoiseModule;
+
+        float NoiseGranularity = 0.1f;
+        float NoiseSpeed = 1.0f;
 
         #region Shader Loading
 
@@ -84,13 +91,16 @@ namespace OpenGLExample
 
         Vector3[] CreatePlanePositions(int rows, int cols)
         {
+            var xOffs = cols / 2.0f;
+            var yOffs = rows / 2.0f;
+
             // Position data
             var positions = new Vector3[rows * cols];
             for (int y = 0; y < rows; y++)
             {
                 for (int x = 0; x < cols; x++)
                 {
-                    positions[y * cols + x] = new Vector3(x, y, 0);
+                    positions[y * cols + x] = new Vector3(x - xOffs, y - yOffs, 0);
                 }
             }
             return positions;
@@ -136,8 +146,14 @@ namespace OpenGLExample
 
             // positions
             var positions = CreatePlanePositions(Rows, Cols);
+            Positions = positions;
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer);
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(positions.Length * Vector3.SizeInBytes), positions, BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            // normals, no data for now
+            GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(positions.Length * Vector3.SizeInBytes), IntPtr.Zero, BufferUsageHint.StreamDraw);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             // elevation, no data for now
@@ -147,6 +163,7 @@ namespace OpenGLExample
 
             // indices
             var indices = CreatePlaneIndices(Rows, Cols);
+            Indices = indices;
             ElementCount = indices.Length;
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indices.Length * sizeof(int)), indices, BufferUsageHint.StaticDraw);
@@ -154,7 +171,7 @@ namespace OpenGLExample
 
 
             // Create and set up VAO
-            VertexArrayObject =  GL.GenVertexArray();
+            VertexArrayObject = GL.GenVertexArray();
             GL.BindVertexArray(VertexArrayObject);
             {
                 // positions, located at attribute index 0
@@ -162,27 +179,60 @@ namespace OpenGLExample
                 GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer);
                 GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
 
-                // elevation, located at attribute index 1
+                // normals, located at atteibute location 1
                 GL.EnableVertexAttribArray(1);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
+                GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 0, 0);
+
+                // elevation, located at attribute index 2
+                GL.EnableVertexAttribArray(2);
                 GL.BindBuffer(BufferTarget.ArrayBuffer, ElevationBuffer);
-                GL.VertexAttribPointer(1, 1, VertexAttribPointerType.Float, false, 0, 0);
+                GL.VertexAttribPointer(2, 1, VertexAttribPointerType.Float, false, 0, 0);
             }
             GL.BindVertexArray(0);
         }
 
         #endregion
 
+        Vector3[] UpdateTriangleNormals(int rows, int cols, Vector3[] positions, int[] indices, float[] elevation)
+        {
+            return new Vector3[rows * cols];
+        }
+
         float[] GenerateElevationNoise(int rows, int cols, double time)
         {
             var elevationData = new float[rows * cols];
-            Parallel.For(0, Rows, (y) =>
+            Parallel.For(0, rows, (y) =>
             {
                 for (int x = 0; x < cols; x++)
                 {
-                    elevationData[y * cols + x] = (float)NoiseModule.GetValue(x * 0.1, y * 0.1, time * 0.25);
+                    elevationData[y * cols + x] = (float)NoiseModule.GetValue(x * NoiseGranularity, y * NoiseGranularity, time * NoiseSpeed);
                 }
             });
             return elevationData;
+        }
+
+        protected override void OnKeyPress(KeyPressEventArgs e)
+        {
+            switch (e.KeyChar)
+            {
+                case '+':
+                    NoiseGranularity *= 1.2f;
+                    break;
+                case '-':
+                    NoiseGranularity *= 0.8f;
+                    break;
+                case '*':
+                    NoiseSpeed *= 1.2f;
+                    break;
+                case '/':
+                    NoiseSpeed *= 0.8f;
+                    break;
+                default:
+                    break;
+            }
+
+            base.OnKeyPress(e);
         }
 
         protected override void OnResize(EventArgs e)
@@ -211,7 +261,7 @@ namespace OpenGLExample
 
             // Initialize model and view matrices once
             ViewMatrix = Matrix4.LookAt(new Vector3(45, 0, 25), Vector3.Zero, Vector3.UnitZ);
-            ModelMatrix = Matrix4.CreateTranslation(-0.5f * Rows, -0.5f * Cols, 0);
+            ModelMatrix = Matrix4.CreateScale(1.0f);
 
             // Set up noise module
             NoiseModule = new Perlin();
@@ -225,6 +275,12 @@ namespace OpenGLExample
             var elevationData = GenerateElevationNoise(Rows, Cols, AccumTime);
             GL.BindBuffer(BufferTarget.ArrayBuffer, ElevationBuffer);
             GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(elevationData.Length * sizeof(float)), elevationData);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            // Update normals
+            var normalData = UpdateTriangleNormals(Rows, Cols, Positions, Indices, elevationData);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(normalData.Length * Vector3.SizeInBytes), normalData);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             var error = GL.GetError();
