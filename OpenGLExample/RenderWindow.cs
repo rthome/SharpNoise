@@ -196,7 +196,10 @@ namespace OpenGLExample
 
         Vector3[] UpdateTriangleNormals(int rows, int cols, Vector3[] positions, int[] indices, float[] elevation)
         {
-            return new Vector3[rows * cols];
+            var normalData = new Vector3[rows * cols];
+            for (int i = 0; i < normalData.Length; i++)
+                normalData[i] = Vector3.UnitZ;
+            return normalData;
         }
 
         float[] GenerateElevationNoise(int rows, int cols, double time)
