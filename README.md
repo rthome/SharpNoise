@@ -20,4 +20,4 @@ These modules can be joined together in a tree structure to generate very comple
 To see how to use SharpNoise, check out the example applications:
 
 * [ComplexPlanetExample](https://bitbucket.org/rthome/sharpnoise/src/tip/ComplexPlanetExample/?at=default) generates a complex planetary surface, using [over 100 connected noise modules](https://bitbucket.org/rthome/sharpnoise/src/tip/ComplexPlanetExample/PlanetGenerator.cs?at=default).
-* [OpenGLExample] renders ever-changing data from a simpler noise generator in real time, using OpenGL 3.3.
+* [OpenGLExample](https://bitbucket.org/rthome/sharpnoise/src/tip/OpenGLExample/?at=default) renders ever-changing data from a simpler noise generator in real time, using OpenGL 3.3.
