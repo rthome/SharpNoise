@@ -41,7 +41,7 @@ namespace SharpNoise.Modules
         }
 
         [NonSerialized]
-        ThreadLocal<CacheEntry> localCacheEntry = new ThreadLocal<CacheEntry>();
+        ThreadLocal<CacheEntry> localCacheEntry;
 
         /// <summary>
         /// Gets or sets the first source module
@@ -55,7 +55,9 @@ namespace SharpNoise.Modules
         public override void SetSourceModule(int index, Module module)
         {
             base.SetSourceModule(index, module);
-            localCacheEntry.Value = null;
+            if (localCacheEntry != null)
+                localCacheEntry.Dispose();
+            localCacheEntry = new ThreadLocal<CacheEntry>();
         }
 
         /// <summary>

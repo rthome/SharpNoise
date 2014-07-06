@@ -28,38 +28,6 @@ namespace SharpNoise.Tests
         }
 
         [TestMethod]
-        public void Math_Max_Test()
-        {
-            var min = 0D;
-            var max = 1D; 
-            Assert.AreEqual(max, NoiseMath.Max(min, max));
-        }
-
-        [TestMethod]
-        public void Math_Max_Reversed_Test()
-        {
-            var min = 0D;
-            var max = 1D;
-            Assert.AreEqual(max, NoiseMath.Max(max, min));
-        }
-
-        [TestMethod]
-        public void Math_Min_Test()
-        {
-            var min = 0D;
-            var max = 1D;
-            Assert.AreEqual(min, NoiseMath.Min(min, max));
-        }
-
-        [TestMethod]
-        public void Math_Min_Reversed_Test()
-        {
-            var min = 0D;
-            var max = 1D;
-            Assert.AreEqual(min, NoiseMath.Min(max, min));
-        }
-
-        [TestMethod]
         public void Math_Interp_Linear_Middle_Test()
         {
             var value1 = 0D;
