@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Builders\CylinderNoiseMapBuilder.cs" />
+    <Compile Include="Builders\LinearNoiseCubeBuilder.cs" />
     <Compile Include="Builders\NoiseMapBuilder.cs" />
     <Compile Include="Builders\PlaneNoiseMapBuilder.cs" />
     <Compile Include="Builders\SphereNoiseMapBuilder.cs" />
@@ -86,6 +87,8 @@
     <Compile Include="Modules\TranslatePoint.cs" />
     <Compile Include="Modules\Turbulence.cs" />
     <Compile Include="Modules\Voronoi.cs" />
+    <Compile Include="NoiseCube.cs" />
+    <Compile Include="Builders\NoiseCubeBuilder.cs" />
     <Compile Include="NoiseGenerator.cs" />
     <Compile Include="NoiseMath.cs" />
     <Compile Include="NoiseQuality.cs" />
