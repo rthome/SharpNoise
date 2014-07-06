@@ -13,4 +13,11 @@ SharpNoise has [modules](https://bitbucket.org/rthome/sharpnoise/src/tip/SharpNo
 * Generators, which produce the actual noise
 * Modifiers and Combiners, which take one or more inputs and do something with them, producing a new value
 
-These modules can be joined together in a tree structure to [generate very complex noise patterns](https://bitbucket.org/rthome/sharpnoise/src/tip/ComplexPlanetExample/PlanetGenerator.cs?at=default).
+These modules can be joined together in a tree structure to generate very complex noise patterns.
+
+### Example Applications
+
+To see how to use SharpNoise, check out the example applications:
+
+* [ComplexPlanetExample](https://bitbucket.org/rthome/sharpnoise/src/tip/ComplexPlanetExample/?at=default) generates a complex planetary surface, using [over 100 connected noise modules](https://bitbucket.org/rthome/sharpnoise/src/tip/ComplexPlanetExample/PlanetGenerator.cs?at=default).
+* [OpenGLExample] renders ever-changing data from a simpler noise generator in real time, using OpenGL 3.3.
