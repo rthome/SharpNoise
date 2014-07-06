@@ -574,7 +574,7 @@ namespace SharpNoise.Utilities.Imaging
                 (byte)((int)(red * 255) & 0xff),
                 (byte)((int)(green * 255) & 0xff),
                 (byte)((int)(blue * 255) & 0xff),
-                NoiseMath.Max(sourceColor.Alpha, backgroundColor.Alpha));
+                Math.Max(sourceColor.Alpha, backgroundColor.Alpha));
             return newColor;
         }
 
@@ -612,7 +612,7 @@ namespace SharpNoise.Utilities.Imaging
             var io = I_MAX * NoiseMath.Sqrt2 * sinElevation / 2.0;
             var ix = (I_MAX - io) * lightContrast * NoiseMath.Sqrt2 * cosElevation * cosAzimuth;
             var iy = (I_MAX - io) * lightContrast * NoiseMath.Sqrt2 * cosElevation * sinAzimuth;
-            var intensity = NoiseMath.Max(ix * (left - right) + iy * (down - up) + io, 0);
+            var intensity = Math.Max(ix * (left - right) + iy * (down - up) + io, 0);
             return intensity;
         }
 

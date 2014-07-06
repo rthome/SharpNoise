@@ -282,7 +282,7 @@ namespace SharpNoise.Modules
         /// <param name="sourceModuleCount">The number of required source modules.</param>
         protected Module(int sourceModuleCount)
         {
-            sourceModuleCount = NoiseMath.Max(0, sourceModuleCount);
+            sourceModuleCount = Math.Max(0, sourceModuleCount);
             this.sourceModuleCount = sourceModuleCount;
 
             if (sourceModuleCount > 0)

@@ -138,33 +138,25 @@ namespace SharpNoise
         /// - <paramref name="lowerBound" /> if <paramref name="value" /> is less than <paramref name="lowerBound" />.
         /// - <paramref name="upperBound" /> if <paramref name="value" /> is greater than <paramref name="upperBound" />.
         /// </returns>
-        public static T Clamp<T>(T value, T lowerBound, T upperBound) where T : IComparable<T>
+        public static int Clamp(int value, int lowerBound, int upperBound)
         {
-            return Max(lowerBound, Min(upperBound, value));
+            return value > upperBound ? upperBound : (value < lowerBound ? lowerBound : value);
         }
 
         /// <summary>
-        /// Returns the maximum of two values.
+        /// Clamps a value onto a clamping range.
         /// </summary>
-        /// <typeparam name="T">A comparable type.</typeparam>
-        /// <param name="a">The first value.</param>
-        /// <param name="b">The second value.</param>
-        /// <returns>The maximum of the two values.</returns>
-        public static T Max<T>(T a, T b) where T : IComparable<T>
+        /// <param name="value">The value to clamp.</param>
+        /// <param name="lowerBound">The lower bound of the clamping range.</param>
+        /// <param name="upperBound">The upper bound of the clamping range.</param>
+        /// <returns>
+        /// - <paramref name="value" /> if <paramref name="value" /> lies between <paramref name="lowerBound" /> and <paramref name="upperBound" />.
+        /// - <paramref name="lowerBound" /> if <paramref name="value" /> is less than <paramref name="lowerBound" />.
+        /// - <paramref name="upperBound" /> if <paramref name="value" /> is greater than <paramref name="upperBound" />.
+        /// </returns>
+        public static double Clamp(double value, double lowerBound, double upperBound)
         {
-            return a.CompareTo(b) > 0 ? a : b;
-        }
-
-        /// <summary>
-        /// Returns the minimum of two values.
-        /// </summary>
-        /// <typeparam name="T">A comparable type.</typeparam>
-        /// <param name="a">The first value.</param>
-        /// <param name="b">The second value.</param>
-        /// <returns>The minimum of the two values.</returns>
-        public static T Min<T>(T a, T b) where T : IComparable<T>
-        {
-            return a.CompareTo(b) < 0 ? a : b;
+            return value > upperBound ? upperBound : (value < lowerBound ? lowerBound : value);
         }
 
         /// <summary>
