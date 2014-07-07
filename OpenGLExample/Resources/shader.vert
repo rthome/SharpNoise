@@ -46,6 +46,7 @@ void main()
 	float clampedElevation = clamp((vElevation + 1) * 0.5, 0, 1);
 
 	vec4 shLightColor = sh_light(vNormal);
-	vFragColor = mix(vec4(vec3(clampedElevation), 1), shLightColor, 0.5);
-	gl_Position = MVP * vec4(vVertex.xy, vVertex.z + vElevation * 3, 1);
+	vec4 elevationColor = mix(vec4(0, 0, 1, 1), vec4(0.25, 1, 1, 1), clampedElevation);
+	vFragColor = mix(elevationColor, shLightColor, 0.2);
+	gl_Position = MVP * vec4(vVertex.xy, vElevation * 3, 1);
 }
