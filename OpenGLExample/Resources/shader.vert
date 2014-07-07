@@ -42,11 +42,13 @@ vec4 sh_light(vec3 normal)
 
 void main()
 {
-	// Scale elevation to [0, 1] range
+	// Scale elevation to about [0, 1] range and clamp
 	float clampedElevation = clamp((vElevation + 1) * 0.5, 0, 1);
 
 	vec4 shLightColor = sh_light(vNormal);
-	vec4 elevationColor = mix(vec4(0, 0, 1, 1), vec4(0.25, 1, 1, 1), clampedElevation);
+	vec4 elevationColor = mix(vec4(0, 0, 0, 1), vec4(1, 1, 1, 1), clampedElevation);
 	vFragColor = mix(elevationColor, shLightColor, 0.2);
-	gl_Position = MVP * vec4(vVertex.xy, vElevation * 5, 1);
+
+	vec3 shiftedPosition = (vNormal * vElevation) + vVertex;
+	gl_Position = MVP * vec4(shiftedPosition, 1);
 }
