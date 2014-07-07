@@ -14,8 +14,9 @@ namespace OpenGLExample
 {
     class RenderWindow : GameWindow
     {
-        const int Rows = 80;
-        const int Cols = 80;
+        const int LatitudeBands = 50;
+        const int LongitudeBands = 100;
+        const float SphereRadius = 1.6f;
 
         int ProgramHandle;
         Matrix4 ModelMatrix, ViewMatrix, ProjectionMatrix, MvpMatrix;
@@ -84,59 +85,56 @@ namespace OpenGLExample
 
         #region Buffer setup
 
-        Vector3[] CreatePlanePositions(int rows, int cols)
+        void CreateVertexData()
         {
-            var xOffs = cols / 2.0f;
-            var yOffs = rows / 2.0f;
-
-            // Position data
-            var positions = new Vector3[rows * cols];
-            for (int y = 0; y < rows; y++)
-            {
-                for (int x = 0; x < cols; x++)
-                {
-                    positions[y * cols + x] = new Vector3(x - xOffs, y - yOffs, 0);
-                }
-            }
-            return positions;
-        }
-
-        int[] CreatePlaneIndices(int rows, int cols)
-        {
-            // Indices
-            // Triangulate like this:
-            // 
-            // x   x   x   x
-            // |1 /|3 /|5 /|
-            // | / | / | / |
-            // |/ 2|/ 4|/ 6|
-            // x   x   x   x
-            // |7 /|9 /|  /|
-            // | / | / | / |
-            // |/ 8|/  |/  |
-            // x   x   x   x
-            //
+            var positions = new List<Vector3>();
+            var normals = new List<Vector3>();
             var indices = new List<int>();
-            for (int y = 0; y < rows - 1; y++)
-            {
-                // On each iteration, generate the two triangles that make up the quad
-                // between the current x position and the next
-                for (int x = 0; x < cols - 1; x++)
-                {
-                    // First triangle
-                    // "upper right half"
-                    indices.Add(y * cols + x);
-                    indices.Add(y * cols + x + 1);
-                    indices.Add((y + 1) * cols + x);
 
-                    // Second triangle
-                    // "lower left half"
-                    indices.Add(y * cols + x + 1);
-                    indices.Add((y + 1) * cols + x + 1);
-                    indices.Add((y + 1) * cols + x);
+            for (double latitudeNum = 0; latitudeNum <= LatitudeBands; latitudeNum++)
+            {
+                var theta = latitudeNum * MathHelper.Pi / LatitudeBands;
+                var sinTheta = Math.Sin(theta);
+                var cosTheta = Math.Cos(theta);
+
+                for (double longitudeNum = 0; longitudeNum <= LongitudeBands; longitudeNum++)
+                {
+                    var phi = longitudeNum * MathHelper.TwoPi / LongitudeBands;
+                    var sinPhi = Math.Sin(phi);
+                    var cosPhi = Math.Cos(phi);
+
+                    var x = cosPhi * sinTheta;
+                    var y = sinPhi * sinTheta;
+                    var z = cosTheta;
+
+                    var normal = new Vector3((float)x, (float)y, (float)z);
+                    var position = normal * SphereRadius;
+                    normals.Add(normal);
+                    positions.Add(position);
                 }
             }
-            return indices.ToArray();
+
+            for (int latitudeNum = 0; latitudeNum < LatitudeBands; latitudeNum++)
+            {
+                for (int longitudeNum = 0; longitudeNum <= LongitudeBands; longitudeNum++)
+                {
+                    var i0 = (latitudeNum * (LongitudeBands + 1)) + longitudeNum;
+                    var i1 = i0 + LongitudeBands + 1;
+
+                    indices.Add(i0);
+                    indices.Add(i1);
+                    indices.Add(i0 + 1);
+
+                    indices.Add(i1);
+                    indices.Add(i1 + 1);
+                    indices.Add(i0 + 1);
+                }
+            }
+
+            Positions = positions.ToArray();
+            Normals = normals.ToArray();
+            Indices = indices.ToArray();
+            ElementCount = Indices.Length;
         }
 
         void SetupBuffers()
@@ -147,31 +145,28 @@ namespace OpenGLExample
             ElevationBuffer = GL.GenBuffer();
             IndexBuffer = GL.GenBuffer();
 
+            // Create positions, normals, and indices
+            CreateVertexData();
+
             // positions
-            var positions = CreatePlanePositions(Rows, Cols);
-            Positions = positions;
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(positions.Length * Vector3.SizeInBytes), positions, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(Positions.Length * Vector3.SizeInBytes), Positions, BufferUsageHint.StaticDraw);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             // normals, no data for now
             GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(positions.Length * Vector3.SizeInBytes), IntPtr.Zero, BufferUsageHint.StreamDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(Normals.Length * Vector3.SizeInBytes), IntPtr.Zero, BufferUsageHint.StreamDraw);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             // elevation, no data for now
             GL.BindBuffer(BufferTarget.ArrayBuffer, ElevationBuffer);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(positions.Length * sizeof(float)), IntPtr.Zero, BufferUsageHint.StreamDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(Positions.Length * sizeof(float)), IntPtr.Zero, BufferUsageHint.StreamDraw);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             // indices
-            var indices = CreatePlaneIndices(Rows, Cols);
-            Indices = indices;
-            ElementCount = indices.Length;
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indices.Length * sizeof(int)), indices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(Indices.Length * sizeof(int)), Indices, BufferUsageHint.StaticDraw);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-
 
             // Create and set up VAO
             VertexArrayObject = GL.GenVertexArray();
@@ -199,8 +194,7 @@ namespace OpenGLExample
 
         void UpdateTriangleNormals(Vector3[] positions, int[] indices, float[] elevation)
         {
-            for (int i = 0; i < Normals.Length; i++)
-                Normals[i] = Vector3.UnitZ;
+            // Do nothing
         }
 
         void GenerateElevationNoise(double timeDelta)
@@ -214,24 +208,29 @@ namespace OpenGLExample
             // Set up noise module tree
             TimeTranslator = new TranslatePoint
             {
-                Source0 = new ScalePoint
+                Source0 = new ScaleBias
                 {
-                    XScale = 0.1,
-                    ZScale = 0.1,
-                    YScale = 0.75,
-                    Source0 = new Perlin(),
+                    Scale = 0.8,
+                    Bias = 0,
+                    Source0 = new ScalePoint
+                    {
+                        XScale = 0.0375,
+                        ZScale = 0.0375,
+                        YScale = 0.625,
+                        Source0 = new Billow(),
+                    },
                 },
             };
 
             // Set up target noise map and noise map builder
             NoiseMap = new NoiseMap();
-            NoiseMapBuilder = new PlaneNoiseMapBuilder()
+            NoiseMapBuilder = new PlaneNoiseMapBuilder
             {
                 DestNoiseMap = NoiseMap,
                 SourceModule = TimeTranslator,
             };
-            NoiseMapBuilder.SetBounds(0, Cols / 2, 0, Rows / 2);
-            NoiseMapBuilder.SetDestSize(Cols, Rows);
+            NoiseMapBuilder.SetBounds(0, LongitudeBands, 0, LatitudeBands);
+            NoiseMapBuilder.SetDestSize(LongitudeBands, LatitudeBands);
         }
 
         protected override void OnResize(EventArgs e)
@@ -257,11 +256,10 @@ namespace OpenGLExample
             MvpUniformLocation = GL.GetUniformLocation(ProgramHandle, "MVP");
 
             // Create plane data and set up buffers
-            Normals = new Vector3[Rows * Cols];
             SetupBuffers();
 
             // Initialize model and view matrices once
-            ViewMatrix = Matrix4.LookAt(new Vector3(80, 0, 50), Vector3.Zero, Vector3.UnitZ);
+            ViewMatrix = Matrix4.LookAt(new Vector3(7, 0, 0), Vector3.Zero, Vector3.UnitZ);
             ModelMatrix = Matrix4.CreateScale(1.0f);
 
             // Set up noise module
@@ -287,7 +285,7 @@ namespace OpenGLExample
                 Debug.Print("OpenGL error: " + error.ToString());
 
             // Rotate the plane
-            var modelRotation = Matrix4.CreateRotationZ((float)(e.Time * 0.1));
+            var modelRotation = Matrix4.CreateRotationZ((float)(e.Time));
             Matrix4.Mult(ref ModelMatrix, ref modelRotation, out ModelMatrix);
 
             // Update MVP matrix
