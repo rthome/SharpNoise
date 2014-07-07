@@ -16,8 +16,8 @@ namespace OpenGLExample
     {
         const int PrimitiveRestart = 12345678;
 
-        const int Rows = 50;
-        const int Cols = 50;
+        const int Rows = 100;
+        const int Cols = 100;
 
         int ProgramHandle;
         Matrix4 ModelMatrix, ViewMatrix, ProjectionMatrix, MvpMatrix;
@@ -27,7 +27,7 @@ namespace OpenGLExample
         int VertexBuffer, NormalBuffer, ElevationBuffer, IndexBuffer;
         int ElementCount;
 
-        Vector3[] Positions;
+        Vector3[] Positions, Normals;
         int[] Indices;
 
         TranslatePoint TimeTranslator;
@@ -191,12 +191,10 @@ namespace OpenGLExample
 
         #endregion
 
-        Vector3[] UpdateTriangleNormals(Vector3[] positions, int[] indices, float[] elevation)
+        void UpdateTriangleNormals(Vector3[] positions, int[] indices, float[] elevation)
         {
-            var normalData = new Vector3[Rows * Cols];
-            for (int i = 0; i < normalData.Length; i++)
-                normalData[i] = Vector3.UnitZ;
-            return normalData;
+            for (int i = 0; i < Normals.Length; i++)
+                Normals[i] = Vector3.UnitZ;
         }
 
         void GenerateElevationNoise(double timeDelta)
@@ -207,7 +205,7 @@ namespace OpenGLExample
 
         void SetupNoiseMapBuilder()
         {
-            // set up noise module tree
+            // Set up noise module tree
             TimeTranslator = new TranslatePoint
             {
                 Source0 = new ScalePoint
@@ -226,7 +224,7 @@ namespace OpenGLExample
                 DestNoiseMap = NoiseMap,
                 SourceModule = TimeTranslator,
             };
-            NoiseMapBuilder.SetBounds(0, Cols, 0, Rows);
+            NoiseMapBuilder.SetBounds(0, Cols / 2, 0, Rows / 2);
             NoiseMapBuilder.SetDestSize(Cols, Rows);
         }
 
@@ -242,8 +240,11 @@ namespace OpenGLExample
             GL.ClearColor(Color4.Gray);
 
             GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.PrimitiveRestart);
             GL.PrimitiveRestartIndex(PrimitiveRestart);
+            GL.FrontFace(FrontFaceDirection.Cw);
+            GL.CullFace(CullFaceMode.Back);
 
             // Load shaders
             var vertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "vertexShader");
@@ -252,10 +253,11 @@ namespace OpenGLExample
             MvpUniformLocation = GL.GetUniformLocation(ProgramHandle, "MVP");
 
             // Create plane data and set up buffers
+            Normals = new Vector3[Rows * Cols];
             SetupBuffers();
 
             // Initialize model and view matrices once
-            ViewMatrix = Matrix4.LookAt(new Vector3(45, 0, 25), Vector3.Zero, Vector3.UnitZ);
+            ViewMatrix = Matrix4.LookAt(new Vector3(90, 0, 60), Vector3.Zero, Vector3.UnitZ);
             ModelMatrix = Matrix4.CreateScale(1.0f);
 
             // Set up noise module
@@ -271,9 +273,9 @@ namespace OpenGLExample
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             // Update normals
-            var normalData = UpdateTriangleNormals(Positions, Indices, NoiseMap.Data);
+            UpdateTriangleNormals(Positions, Indices, NoiseMap.Data);
             GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
-            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(normalData.Length * Vector3.SizeInBytes), normalData);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(Normals.Length * Vector3.SizeInBytes), Normals);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             var error = GL.GetError();
@@ -312,7 +314,7 @@ namespace OpenGLExample
             : base(800, 600, GraphicsMode.Default, "SharpNoise OpenGL Example",
             GameWindowFlags.Default, DisplayDevice.Default, 3, 3, GraphicsContextFlags.ForwardCompatible)
         {
-            VSync = VSyncMode.Adaptive;
+            VSync = VSyncMode.Off;
         }
     }
 }
