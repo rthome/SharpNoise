@@ -14,10 +14,8 @@ namespace OpenGLExample
 {
     class RenderWindow : GameWindow
     {
-        const int PrimitiveRestart = 12345678;
-
-        const int Rows = 100;
-        const int Cols = 100;
+        const int Rows = 80;
+        const int Cols = 80;
 
         int ProgramHandle;
         Matrix4 ModelMatrix, ViewMatrix, ProjectionMatrix, MvpMatrix;
@@ -121,14 +119,22 @@ namespace OpenGLExample
             var indices = new List<int>();
             for (int y = 0; y < rows - 1; y++)
             {
-                indices.Add(y * cols);
-                indices.Add((y + 1) * cols);
+                // On each iteration, generate the two triangles that make up the quad
+                // between the current x position and the next
                 for (int x = 0; x < cols - 1; x++)
                 {
+                    // First triangle
+                    // "upper right half"
+                    indices.Add(y * cols + x);
+                    indices.Add(y * cols + x + 1);
+                    indices.Add((y + 1) * cols + x);
+
+                    // Second triangle
+                    // "lower left half"
                     indices.Add(y * cols + x + 1);
                     indices.Add((y + 1) * cols + x + 1);
+                    indices.Add((y + 1) * cols + x);
                 }
-                indices.Add(PrimitiveRestart);
             }
             return indices.ToArray();
         }
@@ -241,9 +247,7 @@ namespace OpenGLExample
 
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
-            GL.Enable(EnableCap.PrimitiveRestart);
-            GL.PrimitiveRestartIndex(PrimitiveRestart);
-            GL.FrontFace(FrontFaceDirection.Cw);
+            GL.FrontFace(FrontFaceDirection.Ccw);
             GL.CullFace(CullFaceMode.Back);
 
             // Load shaders
@@ -257,7 +261,7 @@ namespace OpenGLExample
             SetupBuffers();
 
             // Initialize model and view matrices once
-            ViewMatrix = Matrix4.LookAt(new Vector3(90, 0, 60), Vector3.Zero, Vector3.UnitZ);
+            ViewMatrix = Matrix4.LookAt(new Vector3(80, 0, 50), Vector3.Zero, Vector3.UnitZ);
             ModelMatrix = Matrix4.CreateScale(1.0f);
 
             // Set up noise module
@@ -301,7 +305,7 @@ namespace OpenGLExample
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
 
             GL.UniformMatrix4(MvpUniformLocation, false, ref MvpMatrix);
-            GL.DrawElements(PrimitiveType.TriangleStrip, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
+            GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
 
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             GL.BindVertexArray(0);
