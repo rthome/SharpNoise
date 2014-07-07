@@ -3,12 +3,12 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using SharpNoise;
+using SharpNoise.Builders;
 using SharpNoise.Modules;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace OpenGLExample
 {
@@ -30,12 +30,9 @@ namespace OpenGLExample
         Vector3[] Positions;
         int[] Indices;
 
-        double AccumTime = 0;
-
-        Module NoiseModule;
-
-        float NoiseGranularity = 0.1f;
-        float NoiseSpeed = 1.0f;
+        TranslatePoint TimeTranslator;
+        NoiseMap NoiseMap;
+        PlaneNoiseMapBuilder NoiseMapBuilder;
 
         #region Shader Loading
 
@@ -194,48 +191,43 @@ namespace OpenGLExample
 
         #endregion
 
-        Vector3[] UpdateTriangleNormals(int rows, int cols, Vector3[] positions, int[] indices, float[] elevation)
+        Vector3[] UpdateTriangleNormals(Vector3[] positions, int[] indices, float[] elevation)
         {
-            var normalData = new Vector3[rows * cols];
+            var normalData = new Vector3[Rows * Cols];
             for (int i = 0; i < normalData.Length; i++)
                 normalData[i] = Vector3.UnitZ;
             return normalData;
         }
 
-        float[] GenerateElevationNoise(int rows, int cols, double time)
+        void GenerateElevationNoise(double timeDelta)
         {
-            var elevationData = new float[rows * cols];
-            Parallel.For(0, rows, (y) =>
-            {
-                for (int x = 0; x < cols; x++)
-                {
-                    elevationData[y * cols + x] = (float)NoiseModule.GetValue(x * NoiseGranularity, y * NoiseGranularity, time * NoiseSpeed);
-                }
-            });
-            return elevationData;
+            TimeTranslator.YTranslation += timeDelta;
+            NoiseMapBuilder.Build();
         }
 
-        protected override void OnKeyPress(KeyPressEventArgs e)
+        void SetupNoiseMapBuilder()
         {
-            switch (e.KeyChar)
+            // set up noise module tree
+            TimeTranslator = new TranslatePoint
             {
-                case '+':
-                    NoiseGranularity *= 1.2f;
-                    break;
-                case '-':
-                    NoiseGranularity *= 0.8f;
-                    break;
-                case '*':
-                    NoiseSpeed *= 1.2f;
-                    break;
-                case '/':
-                    NoiseSpeed *= 0.8f;
-                    break;
-                default:
-                    break;
-            }
+                Source0 = new ScalePoint
+                {
+                    XScale = 0.1,
+                    ZScale = 0.1,
+                    YScale = 0.75,
+                    Source0 = new Perlin(),
+                },
+            };
 
-            base.OnKeyPress(e);
+            // Set up target noise map and noise map builder
+            NoiseMap = new NoiseMap();
+            NoiseMapBuilder = new PlaneNoiseMapBuilder()
+            {
+                DestNoiseMap = NoiseMap,
+                SourceModule = TimeTranslator,
+            };
+            NoiseMapBuilder.SetBounds(0, Cols, 0, Rows);
+            NoiseMapBuilder.SetDestSize(Cols, Rows);
         }
 
         protected override void OnResize(EventArgs e)
@@ -267,21 +259,19 @@ namespace OpenGLExample
             ModelMatrix = Matrix4.CreateScale(1.0f);
 
             // Set up noise module
-            NoiseModule = new Perlin();
+            SetupNoiseMapBuilder();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            AccumTime += e.Time;
-
             // Update elevation data
-            var elevationData = GenerateElevationNoise(Rows, Cols, AccumTime);
+            GenerateElevationNoise(e.Time);
             GL.BindBuffer(BufferTarget.ArrayBuffer, ElevationBuffer);
-            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(elevationData.Length * sizeof(float)), elevationData);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(NoiseMap.Data.Length * sizeof(float)), NoiseMap.Data);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             // Update normals
-            var normalData = UpdateTriangleNormals(Rows, Cols, Positions, Indices, elevationData);
+            var normalData = UpdateTriangleNormals(Positions, Indices, NoiseMap.Data);
             GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
             GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(normalData.Length * Vector3.SizeInBytes), normalData);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
