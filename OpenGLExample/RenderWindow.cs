@@ -3,21 +3,19 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using SharpNoise;
+using SharpNoise.Builders;
 using SharpNoise.Modules;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace OpenGLExample
 {
     class RenderWindow : GameWindow
     {
-        const int PrimitiveRestart = 12345678;
-
-        const int Rows = 50;
-        const int Cols = 50;
+        const int Rows = 80;
+        const int Cols = 80;
 
         int ProgramHandle;
         Matrix4 ModelMatrix, ViewMatrix, ProjectionMatrix, MvpMatrix;
@@ -27,15 +25,12 @@ namespace OpenGLExample
         int VertexBuffer, NormalBuffer, ElevationBuffer, IndexBuffer;
         int ElementCount;
 
-        Vector3[] Positions;
+        Vector3[] Positions, Normals;
         int[] Indices;
 
-        double AccumTime = 0;
-
-        Module NoiseModule;
-
-        float NoiseGranularity = 0.1f;
-        float NoiseSpeed = 1.0f;
+        TranslatePoint TimeTranslator;
+        NoiseMap NoiseMap;
+        PlaneNoiseMapBuilder NoiseMapBuilder;
 
         #region Shader Loading
 
@@ -124,14 +119,22 @@ namespace OpenGLExample
             var indices = new List<int>();
             for (int y = 0; y < rows - 1; y++)
             {
-                indices.Add(y * cols);
-                indices.Add((y + 1) * cols);
+                // On each iteration, generate the two triangles that make up the quad
+                // between the current x position and the next
                 for (int x = 0; x < cols - 1; x++)
                 {
+                    // First triangle
+                    // "upper right half"
+                    indices.Add(y * cols + x);
+                    indices.Add(y * cols + x + 1);
+                    indices.Add((y + 1) * cols + x);
+
+                    // Second triangle
+                    // "lower left half"
                     indices.Add(y * cols + x + 1);
                     indices.Add((y + 1) * cols + x + 1);
+                    indices.Add((y + 1) * cols + x);
                 }
-                indices.Add(PrimitiveRestart);
             }
             return indices.ToArray();
         }
@@ -194,48 +197,41 @@ namespace OpenGLExample
 
         #endregion
 
-        Vector3[] UpdateTriangleNormals(int rows, int cols, Vector3[] positions, int[] indices, float[] elevation)
+        void UpdateTriangleNormals(Vector3[] positions, int[] indices, float[] elevation)
         {
-            var normalData = new Vector3[rows * cols];
-            for (int i = 0; i < normalData.Length; i++)
-                normalData[i] = Vector3.UnitZ;
-            return normalData;
+            for (int i = 0; i < Normals.Length; i++)
+                Normals[i] = Vector3.UnitZ;
         }
 
-        float[] GenerateElevationNoise(int rows, int cols, double time)
+        void GenerateElevationNoise(double timeDelta)
         {
-            var elevationData = new float[rows * cols];
-            Parallel.For(0, rows, (y) =>
+            TimeTranslator.YTranslation += timeDelta;
+            NoiseMapBuilder.Build();
+        }
+
+        void SetupNoiseMapBuilder()
+        {
+            // Set up noise module tree
+            TimeTranslator = new TranslatePoint
             {
-                for (int x = 0; x < cols; x++)
+                Source0 = new ScalePoint
                 {
-                    elevationData[y * cols + x] = (float)NoiseModule.GetValue(x * NoiseGranularity, y * NoiseGranularity, time * NoiseSpeed);
-                }
-            });
-            return elevationData;
-        }
+                    XScale = 0.1,
+                    ZScale = 0.1,
+                    YScale = 0.75,
+                    Source0 = new Perlin(),
+                },
+            };
 
-        protected override void OnKeyPress(KeyPressEventArgs e)
-        {
-            switch (e.KeyChar)
+            // Set up target noise map and noise map builder
+            NoiseMap = new NoiseMap();
+            NoiseMapBuilder = new PlaneNoiseMapBuilder()
             {
-                case '+':
-                    NoiseGranularity *= 1.2f;
-                    break;
-                case '-':
-                    NoiseGranularity *= 0.8f;
-                    break;
-                case '*':
-                    NoiseSpeed *= 1.2f;
-                    break;
-                case '/':
-                    NoiseSpeed *= 0.8f;
-                    break;
-                default:
-                    break;
-            }
-
-            base.OnKeyPress(e);
+                DestNoiseMap = NoiseMap,
+                SourceModule = TimeTranslator,
+            };
+            NoiseMapBuilder.SetBounds(0, Cols / 2, 0, Rows / 2);
+            NoiseMapBuilder.SetDestSize(Cols, Rows);
         }
 
         protected override void OnResize(EventArgs e)
@@ -250,8 +246,9 @@ namespace OpenGLExample
             GL.ClearColor(Color4.Gray);
 
             GL.Enable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.PrimitiveRestart);
-            GL.PrimitiveRestartIndex(PrimitiveRestart);
+            GL.Enable(EnableCap.CullFace);
+            GL.FrontFace(FrontFaceDirection.Ccw);
+            GL.CullFace(CullFaceMode.Back);
 
             // Load shaders
             var vertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "vertexShader");
@@ -260,30 +257,29 @@ namespace OpenGLExample
             MvpUniformLocation = GL.GetUniformLocation(ProgramHandle, "MVP");
 
             // Create plane data and set up buffers
+            Normals = new Vector3[Rows * Cols];
             SetupBuffers();
 
             // Initialize model and view matrices once
-            ViewMatrix = Matrix4.LookAt(new Vector3(45, 0, 25), Vector3.Zero, Vector3.UnitZ);
+            ViewMatrix = Matrix4.LookAt(new Vector3(80, 0, 50), Vector3.Zero, Vector3.UnitZ);
             ModelMatrix = Matrix4.CreateScale(1.0f);
 
             // Set up noise module
-            NoiseModule = new Perlin();
+            SetupNoiseMapBuilder();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            AccumTime += e.Time;
-
             // Update elevation data
-            var elevationData = GenerateElevationNoise(Rows, Cols, AccumTime);
+            GenerateElevationNoise(e.Time);
             GL.BindBuffer(BufferTarget.ArrayBuffer, ElevationBuffer);
-            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(elevationData.Length * sizeof(float)), elevationData);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(NoiseMap.Data.Length * sizeof(float)), NoiseMap.Data);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             // Update normals
-            var normalData = UpdateTriangleNormals(Rows, Cols, Positions, Indices, elevationData);
+            UpdateTriangleNormals(Positions, Indices, NoiseMap.Data);
             GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
-            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(normalData.Length * Vector3.SizeInBytes), normalData);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(Normals.Length * Vector3.SizeInBytes), Normals);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             var error = GL.GetError();
@@ -309,7 +305,7 @@ namespace OpenGLExample
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
 
             GL.UniformMatrix4(MvpUniformLocation, false, ref MvpMatrix);
-            GL.DrawElements(PrimitiveType.TriangleStrip, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
+            GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
 
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             GL.BindVertexArray(0);
@@ -322,7 +318,7 @@ namespace OpenGLExample
             : base(800, 600, GraphicsMode.Default, "SharpNoise OpenGL Example",
             GameWindowFlags.Default, DisplayDevice.Default, 3, 3, GraphicsContextFlags.ForwardCompatible)
         {
-            VSync = VSyncMode.Adaptive;
+            VSync = VSyncMode.Off;
         }
     }
 }
