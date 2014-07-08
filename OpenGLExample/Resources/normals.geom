@@ -37,12 +37,9 @@ void main()
 	}
 
 	// face normal
-	vec3 p0 = gl_in[0].gl_Position.xyz;
-	vec3 p1 = gl_in[1].gl_Position.xyz;
-	vec3 p2 = gl_in[2].gl_Position.xyz;
-	p0 += vertex[0].normal.xyz * vertex[0].elevation;
-	p1 += vertex[1].normal.xyz * vertex[1].elevation;
-	p2 += vertex[2].normal.xyz * vertex[2].elevation;
+	vec3 p0 = gl_in[0].gl_Position.xyz + vertex[0].normal.xyz * vertex[0].elevation;
+	vec3 p1 = gl_in[1].gl_Position.xyz + vertex[1].normal.xyz * vertex[1].elevation;
+	vec3 p2 = gl_in[2].gl_Position.xyz + vertex[2].normal.xyz * vertex[2].elevation;
 
 	vec3 u = p0 - p1;
 	vec3 v = p2 - p1;
