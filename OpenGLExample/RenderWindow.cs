@@ -18,9 +18,15 @@ namespace OpenGLExample
         const int LongitudeBands = 100;
         const float SphereRadius = 1.6f;
 
-        int ProgramHandle;
+        bool DisplayNormals = false;
+
+        int SphereProgramHandle;
         Matrix4 ModelMatrix, ViewMatrix, ProjectionMatrix, MvpMatrix;
         int MvpUniformLocation;
+
+        int NormalProgramHandle;
+        float NormalLength = 0.5f;
+        int NormalUniformLocationNormalLength, NormalUniformLocationMvpMatrix;
 
         int VertexArrayObject;
         int VertexBuffer, NormalBuffer, ElevationBuffer, IndexBuffer;
@@ -72,7 +78,7 @@ namespace OpenGLExample
             if (status == 0)
             {
                 var infoLog = GL.GetProgramInfoLog(programHandle);
-                Debug.Print("Link for shader program failed: {0}", infoLog);
+                Debug.Print("Link for shader program {0} failed: {1}", programHandle, infoLog);
             }
 
             // Delete shaders
@@ -144,9 +150,6 @@ namespace OpenGLExample
             NormalBuffer = GL.GenBuffer();
             ElevationBuffer = GL.GenBuffer();
             IndexBuffer = GL.GenBuffer();
-
-            // Create positions, normals, and indices
-            CreateVertexData();
 
             // positions
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer);
@@ -233,6 +236,14 @@ namespace OpenGLExample
             NoiseMapBuilder.SetDestSize(LongitudeBands, LatitudeBands);
         }
 
+        protected override void OnKeyPress(KeyPressEventArgs e)
+        {
+            if (e.KeyChar == ' ')
+                DisplayNormals = !DisplayNormals;
+
+            base.OnKeyPress(e);
+        }
+
         protected override void OnResize(EventArgs e)
         {
             GL.Viewport(ClientRectangle);
@@ -245,17 +256,23 @@ namespace OpenGLExample
             GL.ClearColor(Color4.Gray);
 
             GL.Enable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.CullFace);
-            GL.FrontFace(FrontFaceDirection.Ccw);
-            GL.CullFace(CullFaceMode.Back);
 
-            // Load shaders
-            var vertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "vertexShader");
-            var fragmentHandle = LoadShaderFromResource(ShaderType.FragmentShader, "fragmentShader");
-            ProgramHandle = CreateAndLinkProgram(vertexHandle, fragmentHandle);
-            MvpUniformLocation = GL.GetUniformLocation(ProgramHandle, "MVP");
+            // Load sphere shader
+            var vertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "sphere_vert");
+            var fragmentHandle = LoadShaderFromResource(ShaderType.FragmentShader, "sphere_frag");
+            SphereProgramHandle = CreateAndLinkProgram(vertexHandle, fragmentHandle);
+            MvpUniformLocation = GL.GetUniformLocation(SphereProgramHandle, "MVP");
 
-            // Create plane data and set up buffers
+            // Load normal shader
+            var normalVertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "normals_vert");
+            var normalGeometryHandle = LoadShaderFromResource(ShaderType.GeometryShader, "normals_geom");
+            var normalFragmentHandle = LoadShaderFromResource(ShaderType.FragmentShader, "normals_frag");
+            NormalProgramHandle = CreateAndLinkProgram(normalVertexHandle, normalGeometryHandle, normalFragmentHandle);
+            NormalUniformLocationMvpMatrix = GL.GetUniformLocation(NormalProgramHandle, "MVP");
+            NormalUniformLocationNormalLength = GL.GetUniformLocation(NormalProgramHandle, "NormalLength");
+
+            // Create sphere data and set up buffers
+            CreateVertexData();
             SetupBuffers();
 
             // Initialize model and view matrices once
@@ -298,7 +315,7 @@ namespace OpenGLExample
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            GL.UseProgram(ProgramHandle);
+            GL.UseProgram(SphereProgramHandle);
             GL.BindVertexArray(VertexArrayObject);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
 
@@ -308,6 +325,21 @@ namespace OpenGLExample
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             GL.BindVertexArray(0);
             GL.UseProgram(0);
+
+            if (DisplayNormals)
+            {
+                GL.UseProgram(NormalProgramHandle);
+                GL.BindVertexArray(VertexArrayObject);
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
+
+                GL.Uniform1(NormalUniformLocationNormalLength, NormalLength);
+                GL.UniformMatrix4(NormalUniformLocationMvpMatrix, false, ref MvpMatrix);
+                GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
+
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+                GL.BindVertexArray(0);
+                GL.UseProgram(0);
+            }
 
             SwapBuffers();
         }
