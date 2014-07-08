@@ -202,6 +202,7 @@ namespace OpenGLExample
 
         void GenerateElevationNoise(double timeDelta)
         {
+            // Shift time and generate noise
             TimeTranslator.YTranslation += timeDelta;
             NoiseMapBuilder.Build();
         }
@@ -302,7 +303,7 @@ namespace OpenGLExample
                 Debug.Print("OpenGL error: " + error.ToString());
 
             // Rotate the plane
-            var modelRotation = Matrix4.CreateRotationZ((float)(e.Time));
+            var modelRotation = Matrix4.CreateRotationZ((float)(e.Time * 0.5));
             Matrix4.Mult(ref ModelMatrix, ref modelRotation, out ModelMatrix);
 
             // Update MVP matrix
