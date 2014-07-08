@@ -210,16 +210,21 @@ namespace OpenGLExample
         void SetupNoiseMapBuilder()
         {
             // Set up noise module tree
+            // TranslatePoint is used to shift the generated noise over time
             TimeTranslator = new TranslatePoint
             {
+                // Scales the generated noise values down to 80%
                 Source0 = new ScaleBias
                 {
                     Scale = 0.8,
                     Bias = 0,
+                    // Scale coordinates down to get some rougher structures
                     Source0 = new ScalePoint
                     {
+                        // Scale down xz-plane
                         XScale = 0.0375,
                         ZScale = 0.0375,
+                        // Scale down "time"
                         YScale = 0.625,
                         Source0 = new Billow(),
                     },
