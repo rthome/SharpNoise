@@ -39,7 +39,7 @@ namespace SharpNoise.Modules
         /// <returns>Returns the computed value</returns>
         public override double GetValue(double x, double y, double z)
         {
-            return -1D * sourceModules[0].GetValue(x, y, z);
+            return -1D * SourceModules[0].GetValue(x, y, z);
         }
     }
 }

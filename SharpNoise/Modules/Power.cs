@@ -52,7 +52,7 @@ namespace SharpNoise.Modules
         /// <returns>Returns the computed value</returns>
         public override double GetValue(double x, double y, double z)
         {
-            return Math.Pow(sourceModules[0].GetValue(x, y, z), sourceModules[1].GetValue(x, y, z));
+            return Math.Pow(SourceModules[0].GetValue(x, y, z), SourceModules[1].GetValue(x, y, z));
         }
     }
 }

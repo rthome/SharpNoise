@@ -122,7 +122,7 @@ namespace SharpNoise.Modules
         /// <returns>Returns the computed value</returns>
         public override double GetValue(double x, double y, double z)
         {
-            return NoiseMath.Clamp(sourceModules[0].GetValue(x, y, z), LowerBound, UpperBound);
+            return NoiseMath.Clamp(SourceModules[0].GetValue(x, y, z), LowerBound, UpperBound);
         }
     }
 }

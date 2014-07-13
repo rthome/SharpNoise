@@ -94,9 +94,9 @@ namespace SharpNoise.Modules
         /// <returns>Returns the computed value</returns>
         public override double GetValue(double x, double y, double z)
         {
-            var v0 = sourceModules[0].GetValue(x, y, z);
-            var v1 = sourceModules[1].GetValue(x, y, z);
-            var alpha = (sourceModules[2].GetValue(x, y, z) + 1) / 2;
+            var v0 = SourceModules[0].GetValue(x, y, z);
+            var v1 = SourceModules[1].GetValue(x, y, z);
+            var alpha = (SourceModules[2].GetValue(x, y, z) + 1) / 2;
             return NoiseMath.Linear(v0, v1, alpha);
         }
     }

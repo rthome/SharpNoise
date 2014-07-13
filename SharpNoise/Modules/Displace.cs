@@ -156,13 +156,13 @@ namespace SharpNoise.Modules
         {
             // Get the output values from the three displacement modules.  Add each
             // value to the corresponding coordinate in the input value.
-            var xDisplace = x + (sourceModules[1].GetValue(x, y, z));
-            var yDisplace = y + (sourceModules[2].GetValue(x, y, z));
-            var zDisplace = z + (sourceModules[3].GetValue(x, y, z));
+            var xDisplace = x + (SourceModules[1].GetValue(x, y, z));
+            var yDisplace = y + (SourceModules[2].GetValue(x, y, z));
+            var zDisplace = z + (SourceModules[3].GetValue(x, y, z));
 
             // Retrieve the output value using the offsetted input value instead of
             // the original input value.
-            return sourceModules[0].GetValue(xDisplace, yDisplace, zDisplace);
+            return SourceModules[0].GetValue(xDisplace, yDisplace, zDisplace);
         }
     }
 }

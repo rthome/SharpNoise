@@ -49,8 +49,8 @@ namespace SharpNoise.Modules
         public override double GetValue(double x, double y, double z)
         {
             return Math.Min(
-                sourceModules[0].GetValue(x, y, z),
-                sourceModules[1].GetValue(x, y, z));
+                SourceModules[0].GetValue(x, y, z),
+                SourceModules[1].GetValue(x, y, z));
         }
     }
 }

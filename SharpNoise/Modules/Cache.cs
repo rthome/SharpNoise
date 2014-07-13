@@ -90,7 +90,7 @@ namespace SharpNoise.Modules
                 localCacheEntry.Value = cache = new CacheEntry();
             }
 
-            cache.value = sourceModules[0].GetValue(x, y, z);
+            cache.value = SourceModules[0].GetValue(x, y, z);
             cache.x = x;
             cache.y = y;
             cache.z = z;
