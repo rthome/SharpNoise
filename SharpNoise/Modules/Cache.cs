@@ -52,20 +52,20 @@ namespace SharpNoise.Modules
             set { SetSourceModule(0, value); }
         }
 
-        public override void SetSourceModule(int index, Module module)
-        {
-            base.SetSourceModule(index, module);
-            if (localCacheEntry != null)
-                localCacheEntry.Dispose();
-            localCacheEntry = new ThreadLocal<CacheEntry>();
-        }
-
         /// <summary>
         /// Constructor.
         /// </summary>
         public Cache()
             : base(1)
         {
+            localCacheEntry = new ThreadLocal<CacheEntry>();
+        }
+
+        public void ResetCache()
+        {
+            if (localCacheEntry != null)
+                localCacheEntry.Dispose();
+            localCacheEntry = new ThreadLocal<CacheEntry>();
         }
 
         /// <summary>
