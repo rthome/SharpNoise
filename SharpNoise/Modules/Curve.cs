@@ -111,7 +111,7 @@ namespace SharpNoise.Modules
         public Module Source0
         {
             get { return GetSourceModule(0); }
-            set { SetSourceModule(0, value); }
+            set { SourceModules[0] = value; }
         }
 
         /// <summary>

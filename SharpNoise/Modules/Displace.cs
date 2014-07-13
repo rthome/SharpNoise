@@ -56,7 +56,7 @@ namespace SharpNoise.Modules
         public Module Source0
         {
             get { return GetSourceModule(0); }
-            set { SetSourceModule(0, value); }
+            set { SourceModules[0] = value; }
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace SharpNoise.Modules
         public Module XDisplace
         {
             get { return GetSourceModule(1); }
-            set { SetSourceModule(1, value); }
+            set { SourceModules[1] = value; }
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace SharpNoise.Modules
         public Module YDisplace
         {
             get { return GetSourceModule(2); }
-            set { SetSourceModule(2, value); }
+            set { SourceModules[2] = value; }
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace SharpNoise.Modules
         public Module ZDisplace
         {
             get { return GetSourceModule(3); }
-            set { SetSourceModule(3, value); }
+            set { SourceModules[3] = value; }
         }
 
         /// <summary>
