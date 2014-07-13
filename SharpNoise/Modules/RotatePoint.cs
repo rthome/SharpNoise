@@ -145,7 +145,7 @@ namespace SharpNoise.Modules
             var nx = (matrix[0, 0] * x) + (matrix[1, 0] * y) + (matrix[2, 0] * z);
             var ny = (matrix[0, 1] * x) + (matrix[1, 1] * y) + (matrix[2, 1] * z);
             var nz = (matrix[0, 2] * x) + (matrix[1, 2] * y) + (matrix[2, 2] * z);
-            return sourceModules[0].GetValue(nx, ny, nz);
+            return SourceModules[0].GetValue(nx, ny, nz);
         }
     }
 }

@@ -267,7 +267,7 @@ namespace SharpNoise.Modules
     [Serializable]
     public abstract class Module
     {
-        protected readonly Module[] sourceModules;
+        private readonly Module[] sourceModules;
         private readonly int sourceModuleCount;
 
         /// <summary>
@@ -275,6 +275,8 @@ namespace SharpNoise.Modules
         /// module.
         /// </summary>
         public int SourceModuleCount { get { return sourceModuleCount; } }
+
+        public Module[] SourceModules { get { return sourceModules; } }
 
         static readonly Module[] emptyModulesArray = new Module[0];
 
@@ -313,12 +315,12 @@ namespace SharpNoise.Modules
         /// </remarks>
         public virtual Module GetSourceModule(int index)
         {
-            if (sourceModules[index] == null)
+            if (SourceModules[index] == null)
                 throw new NoModuleException();
 
             try
             {
-                return sourceModules[index];
+                return SourceModules[index];
             }
             catch (IndexOutOfRangeException e)
             {
@@ -364,7 +366,7 @@ namespace SharpNoise.Modules
 
             try
             {
-                sourceModules[index] = module;
+                SourceModules[index] = module;
             }
             catch (IndexOutOfRangeException e)
             {

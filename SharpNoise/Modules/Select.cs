@@ -244,7 +244,7 @@ namespace SharpNoise.Modules
         /// <returns>Returns the computed value</returns>
         public override double GetValue(double x, double y, double z)
         {
-            var controlValue = sourceModules[2].GetValue(x, y, z);
+            var controlValue = SourceModules[2].GetValue(x, y, z);
             double alpha;
             if (EdgeFalloff > 0.0)
             {
@@ -252,7 +252,7 @@ namespace SharpNoise.Modules
                 {
                     // The output value from the control module is below the selector
                     // threshold; return the output value from the first source module.
-                    return sourceModules[0].GetValue(x, y, z);
+                    return SourceModules[0].GetValue(x, y, z);
                 }
                 else if (controlValue < (LowerBound + EdgeFalloff))
                 {
@@ -262,15 +262,15 @@ namespace SharpNoise.Modules
                     double lowerCurve = (LowerBound - EdgeFalloff);
                     double upperCurve = (LowerBound + EdgeFalloff);
                     alpha = NoiseMath.SCurve3((controlValue - lowerCurve) / (upperCurve - lowerCurve));
-                    return NoiseMath.Linear(sourceModules[0].GetValue(x, y, z),
-                      sourceModules[1].GetValue(x, y, z),
+                    return NoiseMath.Linear(SourceModules[0].GetValue(x, y, z),
+                      SourceModules[1].GetValue(x, y, z),
                       alpha);
                 }
                 else if (controlValue < (UpperBound - EdgeFalloff))
                 {
                     // The output value from the control module is within the selector
                     // threshold; return the output value from the second source module.
-                    return sourceModules[1].GetValue(x, y, z);
+                    return SourceModules[1].GetValue(x, y, z);
                 }
                 else if (controlValue < (UpperBound + EdgeFalloff))
                 {
@@ -280,23 +280,23 @@ namespace SharpNoise.Modules
                     double lowerCurve = (UpperBound - EdgeFalloff);
                     double upperCurve = (UpperBound + EdgeFalloff);
                     alpha = NoiseMath.SCurve3((controlValue - lowerCurve) / (upperCurve - lowerCurve));
-                    return NoiseMath.Linear(sourceModules[1].GetValue(x, y, z),
-                      sourceModules[0].GetValue(x, y, z),
+                    return NoiseMath.Linear(SourceModules[1].GetValue(x, y, z),
+                      SourceModules[0].GetValue(x, y, z),
                       alpha);
                 }
                 else
                 {
                     // Output value from the control module is above the selector threshold;
                     // return the output value from the first source module.
-                    return sourceModules[0].GetValue(x, y, z);
+                    return SourceModules[0].GetValue(x, y, z);
                 }
             }
             else
             {
                 if (controlValue < LowerBound || controlValue > UpperBound)
-                    return sourceModules[0].GetValue(x, y, z);
+                    return SourceModules[0].GetValue(x, y, z);
                 else
-                    return sourceModules[1].GetValue(x, y, z);
+                    return SourceModules[1].GetValue(x, y, z);
             }
         }
     }

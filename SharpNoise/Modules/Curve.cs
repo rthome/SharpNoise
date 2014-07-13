@@ -191,7 +191,7 @@ namespace SharpNoise.Modules
         public override double GetValue(double x, double y, double z)
         {
             // Get the output value from the source module.
-            var sourceValue = sourceModules[0].GetValue(x, y, z);
+            var sourceValue = SourceModules[0].GetValue(x, y, z);
 
             // Find the first element in the control point array that has an input value
             // larger than the output value from the source module.

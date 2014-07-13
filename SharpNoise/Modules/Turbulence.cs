@@ -256,7 +256,7 @@ namespace SharpNoise.Modules
 
             // Retrieve the output value at the offsetted input value instead of the
             // original input value.
-            return sourceModules[0].GetValue(xDistorted, yDistorted, zDistorted);
+            return SourceModules[0].GetValue(xDistorted, yDistorted, zDistorted);
         }
     }
 }
