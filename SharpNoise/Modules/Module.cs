@@ -298,37 +298,6 @@ namespace SharpNoise.Modules
         }
 
         /// <summary>
-        /// Returns a reference to a source module connected to this noise
-        /// module.
-        /// </summary>
-        /// <param name="index">The index value assigned to the source module.</param>
-        /// <returns>A reference to the source module.</returns>
-        /// <remarks>
-        /// The index value ranges from 0 to one less than the number of
-        /// source modules required by this noise module.
-        /// A source module with the specified index value has been added
-        /// to this noise module via a call to <see cref="SetSourceModule"/>.
-        ///
-        /// Each noise module requires the attachment of a certain number of
-        /// source modules before an application can call the <see cref="GetValue"/>
-        /// method.
-        /// </remarks>
-        public Module GetSourceModule(int index)
-        {
-            if (SourceModules[index] == null)
-                throw new NoModuleException();
-
-            try
-            {
-                return SourceModules[index];
-            }
-            catch (IndexOutOfRangeException e)
-            {
-                throw new IndexOutOfRangeException("Source module index is out of range", e);
-            }
-        }
-
-        /// <summary>
         /// Serializes the entire module graph to a stream.
         /// </summary>
         /// <param name="target">The stream that the serialized data will be written to.</param>

@@ -21,9 +21,9 @@ namespace SharpNoise.Tests.ModuleTests
             Assert.AreSame(source1, module.Source1);
             Assert.AreSame(control, module.Control);
 
-            Assert.AreSame(module.Source0, module.GetSourceModule(0));
-            Assert.AreSame(module.Source1, module.GetSourceModule(1));
-            Assert.AreSame(module.Control, module.GetSourceModule(2));
+            Assert.AreSame(module.Source0, module.SourceModules[0]);
+            Assert.AreSame(module.Source1, module.SourceModules[1]);
+            Assert.AreSame(module.Control, module.SourceModules[2]);
         }
 
         [TestMethod]
@@ -39,7 +39,7 @@ namespace SharpNoise.Tests.ModuleTests
         public void InvalidGetSourceModule_NoModule_Test()
         {
             var module = new Abs();
-            module.GetSourceModule(0);
+            var source = module.SourceModules[0];
         }
 
         [TestMethod]
@@ -47,7 +47,7 @@ namespace SharpNoise.Tests.ModuleTests
         public void InvalidGetSourceModule_HighIndex_Test()
         {
             var module = new Abs();
-            module.GetSourceModule(15);
+            var source = module.SourceModules[15];
         }
 
         [TestMethod]
@@ -55,7 +55,7 @@ namespace SharpNoise.Tests.ModuleTests
         public void InvalidGetSourceModule_NegativeIndex_Test()
         {
             var module = new Abs();
-            module.GetSourceModule(-1);
+            var source = module.SourceModules[-1];
         }
     }
 }

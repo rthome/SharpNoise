@@ -170,7 +170,7 @@ namespace SharpNoise.Modules
         /// </summary>
         public Module Source0
         {
-            get { return GetSourceModule(0); }
+            get { return SourceModules[0]; }
             set { SourceModules[0] = value; }
         }
 
@@ -179,7 +179,7 @@ namespace SharpNoise.Modules
         /// </summary>
         public Module Source1
         {
-            get { return GetSourceModule(1); }
+            get { return SourceModules[1]; }
             set { SourceModules[1] = value; }
         }
 
@@ -196,7 +196,7 @@ namespace SharpNoise.Modules
         /// </remarks>
         public Module Control
         {
-            get { return GetSourceModule(2); }
+            get { return SourceModules[2]; }
             set { SourceModules[2] = value; }
         }
 
