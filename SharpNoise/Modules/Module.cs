@@ -286,11 +286,7 @@ namespace SharpNoise.Modules
             this.sourceModuleCount = sourceModuleCount;
 
             if (sourceModuleCount > 0)
-            {
                 sourceModules = new Module[sourceModuleCount];
-                for (var i = 0; i < sourceModuleCount; i++)
-                    sourceModules[i] = null;
-            }
             else
                 sourceModules = null;
         }
