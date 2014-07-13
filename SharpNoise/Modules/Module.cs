@@ -276,6 +276,8 @@ namespace SharpNoise.Modules
         /// </summary>
         public int SourceModuleCount { get { return sourceModuleCount; } }
 
+        static readonly Module[] emptyModulesArray = new Module[0];
+
         /// <summary>
         /// Constructor, called from derived classes
         /// </summary>
@@ -290,7 +292,7 @@ namespace SharpNoise.Modules
             if (sourceModuleCount > 0)
                 sourceModules = new Module[sourceModuleCount];
             else
-                sourceModules = null;
+                sourceModules = emptyModulesArray;
         }
 
         /// <summary>
