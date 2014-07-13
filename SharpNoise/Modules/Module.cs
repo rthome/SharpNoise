@@ -313,7 +313,7 @@ namespace SharpNoise.Modules
         /// source modules before an application can call the <see cref="GetValue"/>
         /// method.
         /// </remarks>
-        public virtual Module GetSourceModule(int index)
+        public Module GetSourceModule(int index)
         {
             if (SourceModules[index] == null)
                 throw new NoModuleException();
@@ -325,52 +325,6 @@ namespace SharpNoise.Modules
             catch (IndexOutOfRangeException e)
             {
                 throw new IndexOutOfRangeException("Source module index is out of range", e);
-            }
-        }
-
-        /// <summary>
-        /// Connects a source module to this noise module.
-        /// </summary>
-        /// <param name="index">An index value to assign to this source module.</param>
-        /// <param name="module">The source module to attach.</param>
-        /// <remarks>
-        /// The index value ranges from 0 to one less than the number of
-        /// source modules required by this noise module.
-        ///
-        /// A noise module mathematically combines the output values from the
-        /// source modules to generate the value returned by <see cref="GetValue"/>.
-        ///
-        /// The index value to assign a source module is a unique identifier
-        /// for that source module.  If an index value has already been
-        /// assigned to a source module, this noise module replaces the old
-        /// source module with the new source module.
-        ///
-        /// Before an application can call the <see cref="GetValue"/>v method, it must
-        /// first connect all required source modules.  To determine the
-        /// number of source modules required by this noise module, call the
-        /// <see cref="GetSourceModuleCount" /> method.
-        ///
-        /// This source module must exist throughout the lifetime of this
-        /// noise module unless another source module replaces that source
-        /// module.
-        ///
-        /// A noise module does not modify a source module; it only modifies
-        /// its output values.
-        /// </remarks>
-        public virtual void SetSourceModule(int index, Module module)
-        {
-            if (module == null)
-                throw new ArgumentNullException("module", "The given Module must not be null.");
-            if (ReferenceEquals(this, module))
-                throw new ArgumentException("You cannot set a module as it's own source module.");
-
-            try
-            {
-                SourceModules[index] = module;
-            }
-            catch (IndexOutOfRangeException e)
-            {
-                throw new IndexOutOfRangeException("Target index is out of range", e);
             }
         }
 
