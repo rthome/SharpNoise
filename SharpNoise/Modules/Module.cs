@@ -268,13 +268,12 @@ namespace SharpNoise.Modules
     public abstract class Module
     {
         private readonly Module[] sourceModules;
-        private readonly int sourceModuleCount;
 
         /// <summary>
         /// Returns the number of source modules required by this noise
         /// module.
         /// </summary>
-        public int SourceModuleCount { get { return sourceModuleCount; } }
+        public int SourceModuleCount { get { return sourceModules.Length; } }
 
         public Module[] SourceModules { get { return sourceModules; } }
 
@@ -288,8 +287,6 @@ namespace SharpNoise.Modules
         {
             if (sourceModuleCount < 0)
                 throw new ArgumentException("sourceModuleCount < 0");
-
-            this.sourceModuleCount = sourceModuleCount;
 
             if (sourceModuleCount > 0)
                 sourceModules = new Module[sourceModuleCount];
