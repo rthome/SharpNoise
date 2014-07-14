@@ -64,7 +64,7 @@ namespace SharpNoise.Modules
         /// <summary>
         /// Default value for EnableDistance
         /// </summary>
-        public bool DefaultEnableDistance = false;
+        public const bool DefaultEnableDistance = false;
 
         /// <summary>
         /// Default seed of the noise function
