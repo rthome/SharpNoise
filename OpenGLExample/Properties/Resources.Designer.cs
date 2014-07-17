@@ -63,9 +63,9 @@ namespace OpenGLExample.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] fragmentShader {
+        internal static byte[] normals_frag {
             get {
-                object obj = ResourceManager.GetObject("fragmentShader", resourceCulture);
+                object obj = ResourceManager.GetObject("normals_frag", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -73,9 +73,39 @@ namespace OpenGLExample.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] vertexShader {
+        internal static byte[] normals_geom {
             get {
-                object obj = ResourceManager.GetObject("vertexShader", resourceCulture);
+                object obj = ResourceManager.GetObject("normals_geom", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] normals_vert {
+            get {
+                object obj = ResourceManager.GetObject("normals_vert", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sphere_frag {
+            get {
+                object obj = ResourceManager.GetObject("sphere_frag", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sphere_vert {
+            get {
+                object obj = ResourceManager.GetObject("sphere_vert", resourceCulture);
                 return ((byte[])(obj));
             }
         }

@@ -14,7 +14,7 @@ namespace OpenGLExample
             
             using (var window = new RenderWindow())
             {
-                window.Run(60);
+                window.Run();
             }
         }
     }

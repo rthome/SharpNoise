@@ -70,6 +70,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\normals.frag" />
+    <None Include="Resources\normals.geom" />
+    <None Include="Resources\normals.vert" />
     <None Include="Resources\shader.frag" />
     <None Include="Resources\shader.vert" />
   </ItemGroup>
