@@ -3,39 +3,41 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using SharpNoise;
+using SharpNoise.Builders;
 using SharpNoise.Modules;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace OpenGLExample
 {
     class RenderWindow : GameWindow
     {
-        const int PrimitiveRestart = 12345678;
+        const int LatitudeBands = 50;
+        const int LongitudeBands = 100;
+        const float SphereRadius = 1.6f;
 
-        const int Rows = 50;
-        const int Cols = 50;
+        bool DisplayNormals = false;
 
-        int ProgramHandle;
+        int SphereProgramHandle;
         Matrix4 ModelMatrix, ViewMatrix, ProjectionMatrix, MvpMatrix;
         int MvpUniformLocation;
+
+        int NormalProgramHandle;
+        float NormalLength = 0.5f;
+        int NormalUniformLocationNormalLength, NormalUniformLocationMvpMatrix;
 
         int VertexArrayObject;
         int VertexBuffer, NormalBuffer, ElevationBuffer, IndexBuffer;
         int ElementCount;
 
-        Vector3[] Positions;
+        Vector3[] Positions, Normals;
         int[] Indices;
 
-        double AccumTime = 0;
-
-        Module NoiseModule;
-
-        float NoiseGranularity = 0.1f;
-        float NoiseSpeed = 1.0f;
+        TranslatePoint TimeTranslator;
+        NoiseMap NoiseMap;
+        PlaneNoiseMapBuilder NoiseMapBuilder;
 
         #region Shader Loading
 
@@ -76,7 +78,7 @@ namespace OpenGLExample
             if (status == 0)
             {
                 var infoLog = GL.GetProgramInfoLog(programHandle);
-                Debug.Print("Link for shader program failed: {0}", infoLog);
+                Debug.Print("Link for shader program {0} failed: {1}", programHandle, infoLog);
             }
 
             // Delete shaders
@@ -89,51 +91,56 @@ namespace OpenGLExample
 
         #region Buffer setup
 
-        Vector3[] CreatePlanePositions(int rows, int cols)
+        void CreateVertexData()
         {
-            var xOffs = cols / 2.0f;
-            var yOffs = rows / 2.0f;
-
-            // Position data
-            var positions = new Vector3[rows * cols];
-            for (int y = 0; y < rows; y++)
-            {
-                for (int x = 0; x < cols; x++)
-                {
-                    positions[y * cols + x] = new Vector3(x - xOffs, y - yOffs, 0);
-                }
-            }
-            return positions;
-        }
-
-        int[] CreatePlaneIndices(int rows, int cols)
-        {
-            // Indices
-            // Triangulate like this:
-            // 
-            // x   x   x   x
-            // |1 /|3 /|5 /|
-            // | / | / | / |
-            // |/ 2|/ 4|/ 6|
-            // x   x   x   x
-            // |7 /|9 /|  /|
-            // | / | / | / |
-            // |/ 8|/  |/  |
-            // x   x   x   x
-            //
+            var positions = new List<Vector3>();
+            var normals = new List<Vector3>();
             var indices = new List<int>();
-            for (int y = 0; y < rows - 1; y++)
+
+            for (double latitudeNum = 0; latitudeNum <= LatitudeBands; latitudeNum++)
             {
-                indices.Add(y * cols);
-                indices.Add((y + 1) * cols);
-                for (int x = 0; x < cols - 1; x++)
+                var theta = latitudeNum * MathHelper.Pi / LatitudeBands;
+                var sinTheta = Math.Sin(theta);
+                var cosTheta = Math.Cos(theta);
+
+                for (double longitudeNum = 0; longitudeNum <= LongitudeBands; longitudeNum++)
                 {
-                    indices.Add(y * cols + x + 1);
-                    indices.Add((y + 1) * cols + x + 1);
+                    var phi = longitudeNum * MathHelper.TwoPi / LongitudeBands;
+                    var sinPhi = Math.Sin(phi);
+                    var cosPhi = Math.Cos(phi);
+
+                    var x = cosPhi * sinTheta;
+                    var y = sinPhi * sinTheta;
+                    var z = cosTheta;
+
+                    var normal = new Vector3((float)x, (float)y, (float)z);
+                    var position = normal * SphereRadius;
+                    normals.Add(normal);
+                    positions.Add(position);
                 }
-                indices.Add(PrimitiveRestart);
             }
-            return indices.ToArray();
+
+            for (int latitudeNum = 0; latitudeNum < LatitudeBands; latitudeNum++)
+            {
+                for (int longitudeNum = 0; longitudeNum <= LongitudeBands; longitudeNum++)
+                {
+                    var i0 = (latitudeNum * (LongitudeBands + 1)) + longitudeNum;
+                    var i1 = i0 + LongitudeBands + 1;
+
+                    indices.Add(i0);
+                    indices.Add(i1);
+                    indices.Add(i0 + 1);
+
+                    indices.Add(i1);
+                    indices.Add(i1 + 1);
+                    indices.Add(i0 + 1);
+                }
+            }
+
+            Positions = positions.ToArray();
+            Normals = normals.ToArray();
+            Indices = indices.ToArray();
+            ElementCount = Indices.Length;
         }
 
         void SetupBuffers()
@@ -145,30 +152,24 @@ namespace OpenGLExample
             IndexBuffer = GL.GenBuffer();
 
             // positions
-            var positions = CreatePlanePositions(Rows, Cols);
-            Positions = positions;
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(positions.Length * Vector3.SizeInBytes), positions, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(Positions.Length * Vector3.SizeInBytes), Positions, BufferUsageHint.StaticDraw);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             // normals, no data for now
             GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(positions.Length * Vector3.SizeInBytes), IntPtr.Zero, BufferUsageHint.StreamDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(Normals.Length * Vector3.SizeInBytes), IntPtr.Zero, BufferUsageHint.StreamDraw);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             // elevation, no data for now
             GL.BindBuffer(BufferTarget.ArrayBuffer, ElevationBuffer);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(positions.Length * sizeof(float)), IntPtr.Zero, BufferUsageHint.StreamDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(Positions.Length * sizeof(float)), IntPtr.Zero, BufferUsageHint.StreamDraw);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             // indices
-            var indices = CreatePlaneIndices(Rows, Cols);
-            Indices = indices;
-            ElementCount = indices.Length;
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indices.Length * sizeof(int)), indices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(Indices.Length * sizeof(int)), Indices, BufferUsageHint.StaticDraw);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-
 
             // Create and set up VAO
             VertexArrayObject = GL.GenVertexArray();
@@ -194,46 +195,57 @@ namespace OpenGLExample
 
         #endregion
 
-        Vector3[] UpdateTriangleNormals(int rows, int cols, Vector3[] positions, int[] indices, float[] elevation)
+        void UpdateTriangleNormals(Vector3[] positions, int[] indices, float[] elevation)
         {
-            var normalData = new Vector3[rows * cols];
-            for (int i = 0; i < normalData.Length; i++)
-                normalData[i] = Vector3.UnitZ;
-            return normalData;
+            // Do nothing
         }
 
-        float[] GenerateElevationNoise(int rows, int cols, double time)
+        void GenerateElevationNoise(double timeDelta)
         {
-            var elevationData = new float[rows * cols];
-            Parallel.For(0, rows, (y) =>
+            // Shift time and generate noise
+            TimeTranslator.YTranslation += timeDelta;
+            NoiseMapBuilder.Build();
+        }
+
+        void SetupNoiseMapBuilder()
+        {
+            // Set up noise module tree
+            // TranslatePoint is used to shift the generated noise over time
+            TimeTranslator = new TranslatePoint
             {
-                for (int x = 0; x < cols; x++)
+                // Scales the generated noise values down to 80%
+                Source0 = new ScaleBias
                 {
-                    elevationData[y * cols + x] = (float)NoiseModule.GetValue(x * NoiseGranularity, y * NoiseGranularity, time * NoiseSpeed);
-                }
-            });
-            return elevationData;
+                    Scale = 0.8,
+                    Bias = 0,
+                    // Scale coordinates down to get some rougher structures
+                    Source0 = new ScalePoint
+                    {
+                        // Scale down xz-plane
+                        XScale = 0.0375,
+                        ZScale = 0.0375,
+                        // Scale down "time"
+                        YScale = 0.625,
+                        Source0 = new Billow(),
+                    },
+                },
+            };
+
+            // Set up target noise map and noise map builder
+            NoiseMap = new NoiseMap();
+            NoiseMapBuilder = new PlaneNoiseMapBuilder
+            {
+                DestNoiseMap = NoiseMap,
+                SourceModule = TimeTranslator,
+            };
+            NoiseMapBuilder.SetBounds(0, LongitudeBands, 0, LatitudeBands);
+            NoiseMapBuilder.SetDestSize(LongitudeBands, LatitudeBands);
         }
 
         protected override void OnKeyPress(KeyPressEventArgs e)
         {
-            switch (e.KeyChar)
-            {
-                case '+':
-                    NoiseGranularity *= 1.2f;
-                    break;
-                case '-':
-                    NoiseGranularity *= 0.8f;
-                    break;
-                case '*':
-                    NoiseSpeed *= 1.2f;
-                    break;
-                case '/':
-                    NoiseSpeed *= 0.8f;
-                    break;
-                default:
-                    break;
-            }
+            if (e.KeyChar == ' ')
+                DisplayNormals = !DisplayNormals;
 
             base.OnKeyPress(e);
         }
@@ -250,40 +262,45 @@ namespace OpenGLExample
             GL.ClearColor(Color4.Gray);
 
             GL.Enable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.PrimitiveRestart);
-            GL.PrimitiveRestartIndex(PrimitiveRestart);
 
-            // Load shaders
-            var vertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "vertexShader");
-            var fragmentHandle = LoadShaderFromResource(ShaderType.FragmentShader, "fragmentShader");
-            ProgramHandle = CreateAndLinkProgram(vertexHandle, fragmentHandle);
-            MvpUniformLocation = GL.GetUniformLocation(ProgramHandle, "MVP");
+            // Load sphere shader
+            var vertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "sphere_vert");
+            var fragmentHandle = LoadShaderFromResource(ShaderType.FragmentShader, "sphere_frag");
+            SphereProgramHandle = CreateAndLinkProgram(vertexHandle, fragmentHandle);
+            MvpUniformLocation = GL.GetUniformLocation(SphereProgramHandle, "MVP");
 
-            // Create plane data and set up buffers
+            // Load normal shader
+            var normalVertexHandle = LoadShaderFromResource(ShaderType.VertexShader, "normals_vert");
+            var normalGeometryHandle = LoadShaderFromResource(ShaderType.GeometryShader, "normals_geom");
+            var normalFragmentHandle = LoadShaderFromResource(ShaderType.FragmentShader, "normals_frag");
+            NormalProgramHandle = CreateAndLinkProgram(normalVertexHandle, normalGeometryHandle, normalFragmentHandle);
+            NormalUniformLocationMvpMatrix = GL.GetUniformLocation(NormalProgramHandle, "MVP");
+            NormalUniformLocationNormalLength = GL.GetUniformLocation(NormalProgramHandle, "NormalLength");
+
+            // Create sphere data and set up buffers
+            CreateVertexData();
             SetupBuffers();
 
             // Initialize model and view matrices once
-            ViewMatrix = Matrix4.LookAt(new Vector3(45, 0, 25), Vector3.Zero, Vector3.UnitZ);
+            ViewMatrix = Matrix4.LookAt(new Vector3(7, 0, 0), Vector3.Zero, Vector3.UnitZ);
             ModelMatrix = Matrix4.CreateScale(1.0f);
 
             // Set up noise module
-            NoiseModule = new Perlin();
+            SetupNoiseMapBuilder();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            AccumTime += e.Time;
-
             // Update elevation data
-            var elevationData = GenerateElevationNoise(Rows, Cols, AccumTime);
+            GenerateElevationNoise(e.Time);
             GL.BindBuffer(BufferTarget.ArrayBuffer, ElevationBuffer);
-            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(elevationData.Length * sizeof(float)), elevationData);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(NoiseMap.Data.Length * sizeof(float)), NoiseMap.Data);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             // Update normals
-            var normalData = UpdateTriangleNormals(Rows, Cols, Positions, Indices, elevationData);
+            UpdateTriangleNormals(Positions, Indices, NoiseMap.Data);
             GL.BindBuffer(BufferTarget.ArrayBuffer, NormalBuffer);
-            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(normalData.Length * Vector3.SizeInBytes), normalData);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(Normals.Length * Vector3.SizeInBytes), Normals);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             var error = GL.GetError();
@@ -291,7 +308,7 @@ namespace OpenGLExample
                 Debug.Print("OpenGL error: " + error.ToString());
 
             // Rotate the plane
-            var modelRotation = Matrix4.CreateRotationZ((float)(e.Time * 0.1));
+            var modelRotation = Matrix4.CreateRotationZ((float)(e.Time * 0.5));
             Matrix4.Mult(ref ModelMatrix, ref modelRotation, out ModelMatrix);
 
             // Update MVP matrix
@@ -304,16 +321,31 @@ namespace OpenGLExample
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            GL.UseProgram(ProgramHandle);
+            GL.UseProgram(SphereProgramHandle);
             GL.BindVertexArray(VertexArrayObject);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
 
             GL.UniformMatrix4(MvpUniformLocation, false, ref MvpMatrix);
-            GL.DrawElements(PrimitiveType.TriangleStrip, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
+            GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
 
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             GL.BindVertexArray(0);
             GL.UseProgram(0);
+
+            if (DisplayNormals)
+            {
+                GL.UseProgram(NormalProgramHandle);
+                GL.BindVertexArray(VertexArrayObject);
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBuffer);
+
+                GL.Uniform1(NormalUniformLocationNormalLength, NormalLength);
+                GL.UniformMatrix4(NormalUniformLocationMvpMatrix, false, ref MvpMatrix);
+                GL.DrawElements(PrimitiveType.Triangles, ElementCount, DrawElementsType.UnsignedInt, IntPtr.Zero);
+
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+                GL.BindVertexArray(0);
+                GL.UseProgram(0);
+            }
 
             SwapBuffers();
         }
@@ -322,7 +354,7 @@ namespace OpenGLExample
             : base(800, 600, GraphicsMode.Default, "SharpNoise OpenGL Example",
             GameWindowFlags.Default, DisplayDevice.Default, 3, 3, GraphicsContextFlags.ForwardCompatible)
         {
-            VSync = VSyncMode.Adaptive;
+            VSync = VSyncMode.Off;
         }
     }
 }

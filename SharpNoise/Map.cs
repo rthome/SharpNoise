@@ -190,6 +190,20 @@ namespace SharpNoise
         }
 
         /// <summary>
+        /// Gets the data array of the Map.
+        /// </summary>
+        /// <remarks>
+        /// This should be used for bulk reading of values.
+        /// </remarks>
+        public T[] Data
+        {
+            get
+            {
+                return values;
+            }
+        }
+
+        /// <summary>
         /// Create a LineIterator for the specified row in the Map.
         /// </summary>
         /// <param name="line">The index of the row that will be read.</param>
