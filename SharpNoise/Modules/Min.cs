@@ -16,8 +16,8 @@ namespace SharpNoise.Modules
         /// </summary>
         public Module Source0
         {
-            get { return GetSourceModule(0); }
-            set { SetSourceModule(0, value); }
+            get { return SourceModules[0]; }
+            set { SourceModules[0] = value; }
         }
 
         /// <summary>
@@ -25,8 +25,8 @@ namespace SharpNoise.Modules
         /// </summary>
         public Module Source1
         {
-            get { return GetSourceModule(1); }
-            set { SetSourceModule(1, value); }
+            get { return SourceModules[1]; }
+            set { SourceModules[1] = value; }
         }
 
         /// <summary>
@@ -49,8 +49,8 @@ namespace SharpNoise.Modules
         public override double GetValue(double x, double y, double z)
         {
             return Math.Min(
-                sourceModules[0].GetValue(x, y, z),
-                sourceModules[1].GetValue(x, y, z));
+                SourceModules[0].GetValue(x, y, z),
+                SourceModules[1].GetValue(x, y, z));
         }
     }
 }
