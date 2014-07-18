@@ -125,8 +125,8 @@ namespace SharpNoise.Modules
         /// </summary>
         public Module Source0
         {
-            get { return GetSourceModule(0); }
-            set { SetSourceModule(0, value); }
+            get { return SourceModules[0]; }
+            set { SourceModules[0] = value; }
         }
 
         /// <summary>
@@ -256,7 +256,7 @@ namespace SharpNoise.Modules
 
             // Retrieve the output value at the offsetted input value instead of the
             // original input value.
-            return sourceModules[0].GetValue(xDistorted, yDistorted, zDistorted);
+            return SourceModules[0].GetValue(xDistorted, yDistorted, zDistorted);
         }
     }
 }

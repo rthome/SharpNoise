@@ -70,8 +70,8 @@ namespace SharpNoise.Modules
         /// </summary>
         public Module Source0
         {
-            get { return GetSourceModule(0); }
-            set { SetSourceModule(0, value); }
+            get { return SourceModules[0]; }
+            set { SourceModules[0] = value; }
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace SharpNoise.Modules
         public override double GetValue(double x, double y, double z)
         {
             // Get the output value from the source module.
-            double sourceModuleValue = sourceModules[0].GetValue(x, y, z);
+            double sourceModuleValue = SourceModules[0].GetValue(x, y, z);
 
             // Find the first element in the control point array that has a value
             // larger than the output value from the source module.

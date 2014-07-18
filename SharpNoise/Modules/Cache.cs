@@ -48,16 +48,8 @@ namespace SharpNoise.Modules
         /// </summary>
         public Module Source0
         {
-            get { return GetSourceModule(0); }
-            set { SetSourceModule(0, value); }
-        }
-
-        public override void SetSourceModule(int index, Module module)
-        {
-            base.SetSourceModule(index, module);
-            if (localCacheEntry != null)
-                localCacheEntry.Dispose();
-            localCacheEntry = new ThreadLocal<CacheEntry>();
+            get { return SourceModules[0]; }
+            set { SourceModules[0] = value; }
         }
 
         /// <summary>
@@ -66,6 +58,14 @@ namespace SharpNoise.Modules
         public Cache()
             : base(1)
         {
+            localCacheEntry = new ThreadLocal<CacheEntry>();
+        }
+
+        public void ResetCache()
+        {
+            if (localCacheEntry != null)
+                localCacheEntry.Dispose();
+            localCacheEntry = new ThreadLocal<CacheEntry>();
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace SharpNoise.Modules
                 localCacheEntry.Value = cache = new CacheEntry();
             }
 
-            cache.value = sourceModules[0].GetValue(x, y, z);
+            cache.value = SourceModules[0].GetValue(x, y, z);
             cache.x = x;
             cache.y = y;
             cache.z = z;
