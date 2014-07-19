@@ -19,8 +19,8 @@ namespace SharpNoise.Modules
     /// module returns the cached output value without having the source
     /// module recalculate the output value.
     ///
-    /// If an application passes a new source module to the <see cref="SetSourceModule"/>
-    /// method, the cache is invalidated.
+    /// If a source module changes, the cache must be invalidated 
+    /// by calling  <see cref="ResetCache"/>.
     ///
     /// Caching a noise module is useful if it is used as a source module for
     /// multiple noise modules.  If a source module is not cached, the source
