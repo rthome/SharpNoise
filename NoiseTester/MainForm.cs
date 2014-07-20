@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,7 +11,7 @@ using Module = SharpNoise.Modules.Module;
 
 namespace NoiseTester
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         List<NoiseControl> m_controls = new List<NoiseControl>();
 
@@ -25,7 +24,7 @@ namespace NoiseTester
             public NoiseControl Control;
         }
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
 
