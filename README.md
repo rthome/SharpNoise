@@ -8,10 +8,10 @@ Available on NuGet: https://www.nuget.org/packages/SharpNoise
 
 ## Usage
 
-SharpNoise has [modules](https://bitbucket.org/rthome/sharpnoise/src/tip/SharpNoise/Modules/?at=default) as building blocks for noise generators. There are two kinds of modules:
+SharpNoise has [modules](https://github.com/rthome/SharpNoise/tree/master/SharpNoise/Modules) as building blocks for noise generators. There are two kinds of modules:
 
-* Generators, which produce the actual noise
-* Modifiers and Combiners, which take one or more inputs and do something with them, producing a new value
+* Generator modules, which produce the actual noise
+* Modifier and Combiner modules, which take one or more inputs and do something with them, producing a new value
 
 These modules can be joined together in a tree structure to generate very complex noise patterns.
 
@@ -19,5 +19,5 @@ These modules can be joined together in a tree structure to generate very comple
 
 To see how to use SharpNoise, check out the example applications:
 
-* [ComplexPlanetExample](https://bitbucket.org/rthome/sharpnoise/src/tip/ComplexPlanetExample/?at=default) generates a complex planetary surface, using [over 100 connected noise modules](https://bitbucket.org/rthome/sharpnoise/src/tip/ComplexPlanetExample/PlanetGenerator.cs?at=default).
-* [OpenGLExample](https://bitbucket.org/rthome/sharpnoise/src/tip/OpenGLExample/?at=default) renders ever-changing data from a simpler noise generator in real time, using OpenGL 3.3.
+* [ComplexPlanetExample](https://github.com/rthome/SharpNoise/tree/master/ComplexPlanetExample) generates a complex planetary surface, using [over 100 connected noise modules](https://github.com/rthome/SharpNoise/blob/master/ComplexPlanetExample/PlanetGenerator.cs).
+* [OpenGLExample](https://github.com/rthome/SharpNoise/tree/master/OpenGLExample) renders ever-changing data from a simpler noise generator in real time, using OpenGL 3.3.
