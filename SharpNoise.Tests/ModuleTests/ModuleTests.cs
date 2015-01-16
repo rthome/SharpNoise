@@ -49,13 +49,5 @@ namespace SharpNoise.Tests.ModuleTests
             var module = new Abs();
             var source = module.SourceModules[15];
         }
-
-        [TestMethod]
-        [ExpectedException(typeof(IndexOutOfRangeException))]
-        public void InvalidGetSourceModule_NegativeIndex_Test()
-        {
-            var module = new Abs();
-            var source = module.SourceModules[-1];
-        }
     }
 }
