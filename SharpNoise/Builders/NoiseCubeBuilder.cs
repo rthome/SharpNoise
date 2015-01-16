@@ -106,11 +106,11 @@ namespace SharpNoise.Builders
         /// 
         /// The original contents of the destination noise cube is destroyed.
         /// </remarks>
-        public Task BuildAsync(CancellationToken cancellationToken)
+        public async Task BuildAsync(CancellationToken cancellationToken)
         {
             PrepareBuild();
 
-            return Task.Factory.StartNew(() => BuildImpl(cancellationToken), cancellationToken,
+            await Task.Factory.StartNew(() => BuildImpl(cancellationToken), cancellationToken,
                 TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
     }
