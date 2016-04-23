@@ -35,11 +35,12 @@ namespace SharpNoise.Tests.ModuleTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NoModuleException))]
         public void InvalidGetSourceModule_NoModule_Test()
         {
             var module = new Abs();
             var source = module.SourceModules[0];
+
+            Assert.IsNull(source);
         }
 
         [TestMethod]
