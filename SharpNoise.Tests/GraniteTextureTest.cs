@@ -4,6 +4,7 @@ using SharpNoise.Modules;
 using SharpNoise.Utilities.Imaging;
 using SharpNoise.Builders;
 using System.IO;
+using System.Diagnostics;
 
 namespace SharpNoise.Tests
 {
@@ -15,7 +16,7 @@ namespace SharpNoise.Tests
     public class GraniteTextureTest
     {
         private static Module testModule;
-        
+
         private ImageRenderer testRenderer;
         private Image testTextureImage;
 
@@ -85,7 +86,6 @@ namespace SharpNoise.Tests
             testRenderer.LightColor = new Color(255, 255, 255, 0);
         }
 
-        //[Ignore]
         [TestMethod]
         public void GraniteTexture_PlanarRender()
         {
@@ -117,9 +117,6 @@ namespace SharpNoise.Tests
             testRenderer.SourceNoiseMap = noiseMap;
             testRenderer.DestinationImage = testTextureImage;
             testRenderer.Render();
-
-            var bitmap = testTextureImage.ToGdiBitmap();
-            bitmap.Save(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "test.bmp"), System.Drawing.Imaging.ImageFormat.Bmp);
         }
     }
 }
