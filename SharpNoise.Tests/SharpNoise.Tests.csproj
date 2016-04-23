@@ -51,6 +51,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ModuleTests\DiscreteTests.cs" />
     <Compile Include="ModuleTests\MinMaxTests.cs" />
     <Compile Include="ModuleTests\ArithmeticTests.cs" />
     <Compile Include="ModuleTests\ClampTests.cs" />
