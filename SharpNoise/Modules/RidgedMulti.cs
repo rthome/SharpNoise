@@ -103,7 +103,7 @@ namespace SharpNoise.Modules
         /// <summary>
         /// Gets or sets the frequency of the first octave.
         /// </summary>
-        public double Frequency { get; set; }
+        public double Frequency { get; set; } = DefaultFrequency;
 
         /// <summary>
         /// Gets or sets the lacunarity of the ridged-multifractal noise.
@@ -128,7 +128,7 @@ namespace SharpNoise.Modules
         /// <summary>
         /// Gets or sets the quality of the ridged-multifractal noise.
         /// </summary>
-        public NoiseQuality Quality { get; set; }
+        public NoiseQuality Quality { get; set; } = DefaultQuality;
 
         /// <summary>
         /// Gets or sets the number of octaves that generate the
@@ -153,7 +153,7 @@ namespace SharpNoise.Modules
         /// Gets or sets the seed value used by the ridged-multifractal-noise
         /// function.
         /// </summary>
-        public int Seed { get; set; }
+        public int Seed { get; set; } = DefaultSeed;
 
         double[] spectralWeights;
         double lacunarity;
@@ -165,11 +165,8 @@ namespace SharpNoise.Modules
         public RidgedMulti()
             : base(0)
         {
-            Frequency = DefaultFrequency;
             Lacunarity = DefaultLacunarity;
-            Quality = DefaultQuality;
             OctaveCount = DefaultOctaveCount;
-            Seed = DefaultSeed;
         }
 
         /// <summary>
