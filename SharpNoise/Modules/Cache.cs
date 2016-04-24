@@ -63,8 +63,7 @@ namespace SharpNoise.Modules
 
         public void ResetCache()
         {
-            if (localCacheEntry != null)
-                localCacheEntry.Dispose();
+            localCacheEntry?.Dispose();
             localCacheEntry = new ThreadLocal<CacheEntry>();
         }
 
@@ -78,24 +77,24 @@ namespace SharpNoise.Modules
         /// <returns>Returns the computed value</returns>
         public override double GetValue(double x, double y, double z)
         {
-            CacheEntry cache = localCacheEntry.Value;
+            CacheEntry cached = localCacheEntry.Value;
 
-            if (cache != null)
+            if (localCacheEntry.IsValueCreated)
             {
-                if (cache.x == x && cache.y == y && cache.z == z)
-                    return cache.value;
+                if (cached.x == x && cached.y == y && cached.z == z)
+                    return cached.value;
             }
             else
             {
-                localCacheEntry.Value = cache = new CacheEntry();
+                localCacheEntry.Value = cached = new CacheEntry();
             }
 
-            cache.value = SourceModules[0].GetValue(x, y, z);
-            cache.x = x;
-            cache.y = y;
-            cache.z = z;
+            cached.value = SourceModules[0].GetValue(x, y, z);
+            cached.x = x;
+            cached.y = y;
+            cached.z = z;
 
-            return cache.value;
+            return cached.value;
         }
     }
 }
