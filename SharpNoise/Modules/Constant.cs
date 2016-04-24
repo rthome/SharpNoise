@@ -24,7 +24,7 @@ namespace SharpNoise.Modules
         /// <summary>
         /// The value that will be produced by the module
         /// </summary>
-        public double ConstantValue { get; set; }
+        public double ConstantValue { get; set; } = DefaultConstantValue;
 
         /// <summary>
         /// Constructor.
@@ -32,7 +32,6 @@ namespace SharpNoise.Modules
         public Constant()
             : base(0)
         {
-            ConstantValue = DefaultConstantValue;
         }
 
         /// <summary>
