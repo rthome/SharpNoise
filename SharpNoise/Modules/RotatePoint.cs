@@ -98,6 +98,7 @@ namespace SharpNoise.Modules
             : base(1)
         {
             matrix = new double[3, 3];
+            SetAngles(DefaultRotation, DefaultRotation, DefaultRotation);
         }
 
         /// <summary>
