@@ -238,7 +238,7 @@ namespace SharpNoise.Modules
         /// <summary>
         /// Gets or sets the frequency of the first octave.
         /// </summary>
-        public double Frequency { get; set; }
+        public double Frequency { get; set; } = DefaultFrequency;
 
         /// <summary>
         /// Gets or sets the lacunarity of the Simplex noise.
@@ -250,7 +250,7 @@ namespace SharpNoise.Modules
         /// For best results, set the lacunarity to a number between 1.5 and
         /// 3.5.
         /// </remarks>
-        public double Lacunarity { get; set; }
+        public double Lacunarity { get; set; } = DefaultLacunarity;
 
         /// <summary>
         /// Gets or sets the number of octaves that generate the Simplex noise.
@@ -262,7 +262,7 @@ namespace SharpNoise.Modules
         /// The larger the number of octaves, the more time required to
         /// calculate the Simplex noise value.
         /// </remarks>
-        public int OctaveCount { get; set; }
+        public int OctaveCount { get; set; } = DefaultOctaveCount;
 
         /// <summary>
         /// Gets or sets the persistence value of the Simplex noise.
@@ -273,7 +273,7 @@ namespace SharpNoise.Modules
         /// For best results, set the persistence to a number between 0.0 and
         /// 1.0.
         /// </remarks>
-        public double Persistence { get; set; }
+        public double Persistence { get; set; } = DefaultPersistence;
 
         /// <summary>
         /// See documentation on the base class
@@ -312,10 +312,6 @@ namespace SharpNoise.Modules
         public Simplex()
             : base(0)
         {
-            Frequency = DefaultFrequency;
-            Lacunarity = DefaultLacunarity;
-            OctaveCount = DefaultOctaveCount;
-            Persistence = DefaultPersistence;
         }
     }
 }
