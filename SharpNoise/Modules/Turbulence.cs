@@ -136,7 +136,7 @@ namespace SharpNoise.Modules
         /// The power of the turbulence determines the scaling factor that is
         /// applied to the displacement amount.
         /// </remarks>
-        public double Power { get; set; }
+        public double Power { get; set; } = DefaultPower;
 
         /// <summary>
         /// Gets or sets the frequency of the turbulence.

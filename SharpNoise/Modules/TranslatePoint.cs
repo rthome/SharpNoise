@@ -38,19 +38,19 @@ namespace SharpNoise.Modules
         /// Gets or sets the translation amount to apply to theb x coordinate of
         /// the input value.
         /// </summary>
-        public double XTranslation { get; set; }
+        public double XTranslation { get; set; } = DefaultTranslation;
 
         /// <summary>
         /// Gets or sets the translation amount to apply to theb y coordinate of
         /// the input value.
         /// </summary>
-        public double YTranslation { get; set; }
+        public double YTranslation { get; set; } = DefaultTranslation;
 
         /// <summary>
         /// Gets or sets the translation amount to apply to the z coordinate of
         /// the input value.
         /// </summary>
-        public double ZTranslation { get; set; }
+        public double ZTranslation { get; set; } = DefaultTranslation;
 
         /// <summary>
         /// Constructor.
@@ -58,7 +58,6 @@ namespace SharpNoise.Modules
         public TranslatePoint()
             : base(1)
         {
-            SetTranslation(DefaultTranslation);
         }
 
         /// <summary>
