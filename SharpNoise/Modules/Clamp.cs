@@ -34,7 +34,8 @@ namespace SharpNoise.Modules
         /// </summary>
         public const double DefaultUpperBound = 1D;
 
-        double lowerBound, upperBound;
+        double lowerBound = DefaultLowerBound;
+        double upperBound = DefaultUpperBound;
 
         /// <summary>
         /// Gets the lower bound of the clamping range.
@@ -85,7 +86,6 @@ namespace SharpNoise.Modules
         public Clamp()
             : base(1)
         {
-            SetBounds(DefaultLowerBound, DefaultUpperBound);
         }
 
         /// <summary>
