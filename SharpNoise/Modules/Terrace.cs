@@ -47,7 +47,7 @@ namespace SharpNoise.Modules
         /// Enables or disables the inversion of the terrace-forming curve
         /// between the control points.
         /// </summary>
-        public bool InvertTerraces { get; set; }
+        public bool InvertTerraces { get; set; } = false;
 
         /// <summary>
         /// Gets or sets all ControlPoints in the Module
@@ -81,7 +81,6 @@ namespace SharpNoise.Modules
             : base(1)
         {
             controlPoints = new List<double>();
-            InvertTerraces = false;
         }
 
         /// <summary>
