@@ -41,7 +41,7 @@ namespace SharpNoise.Modules
         /// range becomes 0.0 to 1.0), maps that value onto an exponential
         /// curve, then rescales that value back to the original range.
         /// </remarks>
-        public double Exp { get; set; }
+        public double Exp { get; set; } = DefaultExponent;
 
         /// <summary>
         /// Constructor.
@@ -49,7 +49,6 @@ namespace SharpNoise.Modules
         public Exponent()
             : base(1)
         {
-            Exp = DefaultExponent;
         }
 
         /// <summary>
