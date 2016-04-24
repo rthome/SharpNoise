@@ -89,11 +89,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SharpNoise.Utilities\SharpNoise.Utilities.csproj">
+    <ProjectReference Include="..\..\SharpNoise.Utilities\SharpNoise.Utilities.csproj">
       <Project>{efe8b9d6-9a63-4112-9830-e46901ed4578}</Project>
       <Name>SharpNoise.Utilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SharpNoise\SharpNoise.csproj">
+    <ProjectReference Include="..\..\SharpNoise\SharpNoise.csproj">
       <Project>{948b0e7c-6fb1-41ed-bafc-971e54f8c14d}</Project>
       <Name>SharpNoise</Name>
     </ProjectReference>
