@@ -42,7 +42,7 @@ namespace SharpNoise.Modules
         /// Increasing the frequency increases the density of the concentric
         /// spheres, reducing the distances between them.
         /// </remarks>
-        public double Frequency { get; set; }
+        public double Frequency { get; set; } = DefaultFrequency;
 
         /// <summary>
         /// Constructor.
@@ -50,7 +50,6 @@ namespace SharpNoise.Modules
         public Spheres()
             : base(0)
         {
-            Frequency = DefaultFrequency;
         }
 
         /// <summary>
