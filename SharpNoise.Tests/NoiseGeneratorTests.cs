@@ -1,25 +1,25 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections;
+using Xunit;
 
 namespace SharpNoise.Tests
 {
-    [TestClass]
+    /// <summary>
+    /// Tests for <see cref="NoiseGenerator"/>
+    /// </summary>
     public class NoiseGeneratorTests
     {
-        [TestInitialize]
-        public void SetUp()
+        public NoiseGeneratorTests()
         {
             NoiseGenerator.SetDefaultVectorTable();
         }
 
-        [TestMethod]
-        public void NoiseGenerator_SetVectorTable_Test()
+        [Fact]
+        public void SetVectorTableTest()
         {
-            var table = NoiseGenerator.GenerateRandomVectorTable(Environment.TickCount);
+            var table = NoiseGenerator.GenerateRandomVectorTable(1);
             NoiseGenerator.SetVectorTable(table);
 
-            CollectionAssert.AreEqual(table, NoiseGenerator.VectorTable);
+            Assert.Equal(table, NoiseGenerator.VectorTable);
         }
     }
 }
