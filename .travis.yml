@@ -2,7 +2,7 @@ language: csharp
 mono:
     - latest
     - 4.2.1
-    - 4.0.4
+    - 4.0.5
 solution: SharpNoise.sln
 install:
     - nuget restore SharpNoise.sln
