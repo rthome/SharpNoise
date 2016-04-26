@@ -8,7 +8,7 @@ solution: SharpNoise.sln
 install:
     - nuget restore SharpNoise.sln
 script:
-    - xbuild /p:Configuration=Release SharpNoise.sln
-    - xbuild /p:Configuration=Debug SharpNoise.sln
+    - xbuild /p:TargetFrameworkVersion="v4.5" /p:Configuration=Release SharpNoise.sln
+    - xbuild /p:TargetFrameworkVersion="v4.5" /p:Configuration=Debug SharpNoise.sln
     - mono ./packages/xunit.runner.console.*/tools/xunit.console.exe ./SharpNoise.Tests/bin/Release/SharpNoise.Tests.dll
     - mono ./packages/xunit.runner.console.*/tools/xunit.console.exe ./SharpNoise.Tests/bin/Debug/SharpNoise.Tests.dll
