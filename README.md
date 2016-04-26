@@ -21,9 +21,10 @@ To see how to use SharpNoise, check out the example applications:
 
 * [ComplexPlanetExample](https://github.com/rthome/SharpNoise/tree/master/Examples/ComplexPlanetExample) generates a complex planetary surface, using [over 100 connected noise modules](https://github.com/rthome/SharpNoise/blob/master/Examples/ComplexPlanetExample/PlanetGenerator.cs).
 * [OpenGLExample](https://github.com/rthome/SharpNoise/tree/master/Examples/OpenGLExample) renders ever-changing data from a simpler noise generator in real time, using OpenGL 3.3.
+* [NoiseTester](https://github.com/rthome/SharpNoise/tree/master/Examples/NoiseTester) is a rough visualization tool that shows how the output of different modules is combined.
 
 There is a separate solution with the example applications in the Examples/ folder.
 
 ### Development
 
-I think SharpNoise is in a pretty OK state and am not actively developing it any more. I would like to hear about (and fix) any bugs or other issues that crop up though. So please open a ticket if anything isn't working the way it should.
+I think SharpNoise is in a pretty OK state and am not doing a lot of work on it any more. However, I would like to fix any bugs or other issues that crop up. So if anything's not right, please let me know.
