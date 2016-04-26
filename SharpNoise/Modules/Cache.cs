@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Threading;
 
 namespace SharpNoise.Modules
@@ -30,7 +31,7 @@ namespace SharpNoise.Modules
     /// This noise module requires one source module.
     /// </remarks>
     [Serializable]
-    public class Cache : Module
+    public class Cache : Module, IDeserializationCallback
     {
         class CacheEntry
         {
@@ -52,6 +53,11 @@ namespace SharpNoise.Modules
             set { SourceModules[0] = value; }
         }
 
+        void IDeserializationCallback.OnDeserialization(object sender)
+        {
+            ResetCache();
+        }
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -63,8 +69,9 @@ namespace SharpNoise.Modules
 
         public void ResetCache()
         {
-            localCacheEntry?.Dispose();
+            var oldCacheEntry = localCacheEntry;
             localCacheEntry = new ThreadLocal<CacheEntry>();
+            oldCacheEntry?.Dispose();
         }
 
         /// <summary>
@@ -79,7 +86,7 @@ namespace SharpNoise.Modules
         {
             CacheEntry cached = localCacheEntry.Value;
 
-            if (localCacheEntry.IsValueCreated)
+            if (cached != null)
             {
                 if (cached.x == x && cached.y == y && cached.z == z)
                     return cached.value;
