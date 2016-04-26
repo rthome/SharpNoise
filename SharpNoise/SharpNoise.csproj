@@ -63,6 +63,7 @@
     <Compile Include="Modules\Checkerboard.cs" />
     <Compile Include="Modules\Clamp.cs" />
     <Compile Include="Modules\Constant.cs" />
+	<Compile Include="Modules\Discrete.cs" />
     <Compile Include="Modules\Min.cs" />
     <Compile Include="Modules\Curve.cs" />
     <Compile Include="Modules\Cylinders.cs" />
