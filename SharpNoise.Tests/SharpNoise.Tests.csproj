@@ -59,10 +59,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GraniteTextureTest.cs" />
     <Compile Include="MapTests.cs" />
     <Compile Include="NoiseGeneratorTests.cs" />
     <Compile Include="NoiseMathTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SerializationTests.cs" />
+    <Compile Include="WoodTextureTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
