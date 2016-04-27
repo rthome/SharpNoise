@@ -1,229 +1,79 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using Xunit;
 
 namespace SharpNoise.Tests
 {
-    [TestClass]
+    /// <summary>
+    /// Tests for <see cref="NoiseMath"/>
+    /// </summary>
     public class NoiseMathTests
     {
-        [TestMethod]
-        public void Math_Clamp_OutOfRange_Upper_Test()
+        [Theory]
+        [InlineData(10.0)]
+        [InlineData(-10.0)]
+        public void ClampOutOfRangeTest(double data)
         {
-            var expected = 10;
-            Assert.AreEqual(expected, NoiseMath.Clamp(15, 0, expected));
+            Assert.NotInRange(data, -1.0, 1.0);
+            Assert.InRange(NoiseMath.Clamp(data, -1.0, 1.0), -1.0, 1.0);
         }
 
-        [TestMethod]
-        public void Math_Clamp_InRange_Test()
+        [Theory]
+        [InlineData(1.0)]
+        [InlineData(-1.0)]
+        [InlineData(0.0)]
+        [InlineData(0.5)]
+        public void ClampInRangeTest(double data)
         {
-            var expected = 5;
-            Assert.AreEqual(expected, NoiseMath.Clamp(expected, 0, 10));
+            Assert.InRange(data, -1.0, 1.0);
+            Assert.Equal(data, NoiseMath.Clamp(data, -1.0, 1.0));
         }
 
-        [TestMethod]
-        public void Math_Clamp_OutOfRange_Lower_Test()
+        [Theory]
+        [InlineData(0.5)]
+        [InlineData(0.0)]
+        [InlineData(0.1)]
+        [InlineData(1.0 / 3.0)]
+        public void LinearInterpTest(double alpha)
         {
-            var expected = 10;
-            Assert.AreEqual(expected, NoiseMath.Clamp(5, expected, 20));
+            const double N0 = 0.0;
+            const double N1 = 1.0;
+
+            Assert.Equal(alpha, NoiseMath.Linear(N0, N1, alpha));
         }
 
-        [TestMethod]
-        public void Math_Interp_Linear_Middle_Test()
-        {
-            var value1 = 0D;
-            var value2 = 1D;
-            var alpha = 0.5D;
-
-            var expected = 0.5D;
-            var actual = NoiseMath.Linear(value1, value2, alpha);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [TestMethod]
-        public void Math_Interp_Linear_Left_Test()
-        {
-            var value1 = 0D;
-            var value2 = 1D;
-            var alpha = 0D;
-
-            var expected = 0D;
-            var actual = NoiseMath.Linear(value1, value2, alpha);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [TestMethod]
-        public void Math_Interp_Linear_Right_Test()
-        {
-            var value1 = 0D;
-            var value2 = 5D;
-            var alpha = 1D;
-
-            var expected = 5D;
-            var actual = NoiseMath.Linear(value1, value2, alpha);
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        [TestMethod]
-        public void Math_LatLonToXYZ_Test_1()
+        [Theory]
+        [InlineData(0.0, 0.0, 1.0, 0.0, 0.0)]
+        [InlineData(-51.0, 63.0, 0.285705, -0.777146, 0.560729)]
+        [InlineData(45.0, 0.0, 0.707107, 0.707107, 0.0)]
+        [InlineData(45.0, 45.0, 0.5, 0.707107, 0.5)]
+        public void LatLonTest(double lat, double lon, double expX, double expY, double expZ)
         {
             double x, y, z;
-            NoiseMath.LatLonToXYZ(0, 0, out x, out y, out z);
-
-            double expectedX = 1, 
-                   expectedY = 0, 
-                   expectedZ = 0;
-
-            Assert.AreEqual(expectedX, x);
-            Assert.AreEqual(expectedY, y);
-            Assert.AreEqual(expectedZ, z);
+            NoiseMath.LatLonToXYZ(lat, lon, out x, out y, out z);
+            Assert.Equal(expX, x, 6);
+            Assert.Equal(expY, y, 6);
+            Assert.Equal(expZ, z, 6);
         }
 
-        [TestMethod]
-        public void Math_LatLonToXYZ_Test_2()
+        [Theory]
+        [InlineData(0.0, 0.0)]
+        [InlineData(1.0, 1.0)]
+        [InlineData(0.5, 0.5)]
+        [InlineData(0.333, 0.258815)]
+        [InlineData(0.9, 0.972)]
+        public void SCurve3Test(double a, double expected)
         {
-            double x, y, z;
-            NoiseMath.LatLonToXYZ(-51, 63, out x, out y, out z);
-
-            double expectedX = 0.285705,
-                   expectedY = -0.777146,
-                   expectedZ = 0.560729;
-
-            Assert.AreEqual(expectedX, Math.Round(x, 6));
-            Assert.AreEqual(expectedY, Math.Round(y, 6));
-            Assert.AreEqual(expectedZ, Math.Round(z, 6));
+            Assert.Equal(expected, NoiseMath.SCurve3(a), 6);
         }
 
-        [TestMethod]
-        public void Math_LatLonToXYZ_Test_3()
+        [Theory]
+        [InlineData(0.0, 0.0)]
+        [InlineData(1.0, 1.0)]
+        [InlineData(0.5, 0.5)]
+        [InlineData(0.333, 0.209383)]
+        [InlineData(0.9, 0.99144)]
+        public void SCurve5Test(double a, double expected)
         {
-            double x, y, z;
-            NoiseMath.LatLonToXYZ(45, 0, out x, out y, out z);
-
-            double expectedX = 0.707107,
-                   expectedY = 0.707107,
-                   expectedZ = 0;
-
-            Assert.AreEqual(expectedX, Math.Round(x, 6));
-            Assert.AreEqual(expectedY, Math.Round(y, 6));
-            Assert.AreEqual(expectedZ, Math.Round(z, 6));
-        }
-
-        [TestMethod]
-        public void Math_LatLonToXYZ_Test_4()
-        {
-            double x, y, z;
-            NoiseMath.LatLonToXYZ(45, 45, out x, out y, out z);
-
-            double expectedX = 0.5,
-                   expectedY = 0.707107,
-                   expectedZ = 0.5;
-
-            Assert.AreEqual(expectedX, Math.Round(x, 6));
-            Assert.AreEqual(expectedY, Math.Round(y, 6));
-            Assert.AreEqual(expectedZ, Math.Round(z, 6));
-        }
-
-        [TestMethod]
-        public void Math_Interp_SCurve3_Lower_Test()
-        {
-            double v = 0;
-
-            double expected = 0;
-
-            Assert.AreEqual(expected, NoiseMath.SCurve3(v));
-        }
-
-        [TestMethod]
-        public void Math_Interp_SCurve3_Upper_Test()
-        {
-            double v = 1;
-
-            double expected = 1;
-
-            Assert.AreEqual(expected, NoiseMath.SCurve3(v));
-        }
-
-        [TestMethod]
-        public void Math_Interp_SCurve3_Middle_Test()
-        {
-            double v = 0.5;
-
-            double expected = 0.5;
-
-            Assert.AreEqual(expected, NoiseMath.SCurve3(v));
-        }
-
-        [TestMethod]
-        public void Math_Interp_SCurve3_Somewhere_Test_1()
-        {
-            double v = 0.333;
-
-            double expected = 0.258815;
-
-            Assert.AreEqual(expected, Math.Round(NoiseMath.SCurve3(v), 6));
-        }
-
-        [TestMethod]
-        public void Math_Interp_SCurve3_Somewhere_Test_2()
-        {
-            double v = 0.9;
-
-            double expected = 0.972;
-
-            Assert.AreEqual(expected, NoiseMath.SCurve3(v));
-        }
-
-        [TestMethod]
-        public void Math_Interp_SCurve5_Lower_Test()
-        {
-            double v = 0;
-
-            double expected = 0;
-
-            Assert.AreEqual(expected, NoiseMath.SCurve5(v));
-        }
-
-        [TestMethod]
-        public void Math_Interp_SCurve5_Upper_Test()
-        {
-            double v = 1;
-
-            double expected = 1;
-
-            Assert.AreEqual(expected, NoiseMath.SCurve5(v));
-        }
-
-        [TestMethod]
-        public void Math_Interp_SCurve5_Middle_Test()
-        {
-            double v = 0.5;
-
-            double expected = 0.5;
-
-            Assert.AreEqual(expected, NoiseMath.SCurve5(v));
-        }
-
-        [TestMethod]
-        public void Math_Interp_SCurve5_Somewhere_Test_1()
-        {
-            double v = 0.333;
-
-            double expected = 0.209383;
-
-            Assert.AreEqual(expected, Math.Round(NoiseMath.SCurve5(v), 6));
-        }
-
-        [TestMethod]
-        public void Math_Interp_SCurve5_Somewhere_Test_2()
-        {
-            double v = 0.9;
-
-            double expected = 0.99144;
-
-            Assert.AreEqual(expected, Math.Round(NoiseMath.SCurve5(v), 6));
+            Assert.Equal(expected, NoiseMath.SCurve5(a), 6);
         }
     }
 }

@@ -1,15 +1,39 @@
-﻿using System.IO;
+﻿using SharpNoise.Modules;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpNoise.Modules;
+using System.Text;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace SharpNoise.Tests
 {
-    [TestClass]
-    public class ModuleSerializationTests
+    public class SerializationTests
     {
-        [TestMethod]
-        public void SerializeAllModules()
+        [Fact]
+        public void ConstantSerializeTest()
+        {
+            var module = new Constant() { ConstantValue = 5D };
+            var formatter = new BinaryFormatter();
+
+            byte[] data;
+            using (var ms = new MemoryStream())
+            {
+                module.Serialize(ms);
+                data = ms.ToArray();
+            }
+
+            Constant deserializedModule;
+            using (var ms = new MemoryStream(data))
+                deserializedModule = Constant.Deserialize<Constant>(ms, formatter);
+
+            Assert.Equal(module.ConstantValue, deserializedModule.ConstantValue);
+        }
+
+        [Fact]
+        public void SerializeAllModulesTest()
         {
             var source0 = new Constant() { ConstantValue = 5D };
             var source1 = new Add() { Source0 = source0, Source1 = source0 };
@@ -69,29 +93,9 @@ namespace SharpNoise.Tests
 
             for (var i = 0; i < modules.Length; i++)
             {
-                Assert.AreEqual(modules[i].GetValue(0, 0, 0), deserializedModules[i].GetValue(0, 0, 0));
-                Assert.AreEqual(modules[i].GetValue(1, 2, 3), deserializedModules[i].GetValue(1, 2, 3));
+                Assert.Equal(modules[i].GetValue(0, 0, 0), deserializedModules[i].GetValue(0, 0, 0));
+                Assert.Equal(modules[i].GetValue(1, 2, 3), deserializedModules[i].GetValue(1, 2, 3));
             }
-        }
-
-        [TestMethod]
-        public void ConstantSerializeTest()
-        {
-            var module = new Constant() { ConstantValue = 5D };
-            var formatter = new BinaryFormatter();
-
-            byte[] data;
-            using (var ms = new MemoryStream())
-            {
-                module.Serialize(ms);
-                data = ms.ToArray();
-            }
-
-            Constant deserializedModule;
-            using (var ms = new MemoryStream(data))
-                deserializedModule = Constant.Deserialize<Constant>(ms, formatter);
-
-            Assert.AreEqual(module.ConstantValue, deserializedModule.ConstantValue);
         }
     }
 }
