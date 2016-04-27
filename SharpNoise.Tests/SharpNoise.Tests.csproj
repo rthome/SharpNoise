@@ -61,6 +61,14 @@
   <ItemGroup>
     <Compile Include="GraniteTextureTest.cs" />
     <Compile Include="MapTests.cs" />
+    <Compile Include="Modules\AbsTests.cs" />
+    <Compile Include="Modules\AddTests.cs" />
+    <Compile Include="Modules\ClampTests.cs" />
+    <Compile Include="Modules\MaxTests.cs" />
+    <Compile Include="Modules\MinTests.cs" />
+    <Compile Include="Modules\ModuleTests.cs" />
+    <Compile Include="Modules\MultiplyTests.cs" />
+    <Compile Include="Modules\ScalePointTests.cs" />
     <Compile Include="NoiseGeneratorTests.cs" />
     <Compile Include="NoiseMathTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,9 +80,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Modules\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\SharpNoise.Utilities\SharpNoise.Utilities.csproj">
       <Project>{efe8b9d6-9a63-4112-9830-e46901ed4578}</Project>
