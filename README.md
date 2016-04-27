@@ -6,6 +6,8 @@ SharpNoise is a loose port of Jason Bevins' [libNoise](http://libnoise.sourcefor
 
 Available on NuGet: https://www.nuget.org/packages/SharpNoise
 
+[![Build Status](https://travis-ci.org/rthome/SharpNoise.svg?branch=master)](https://travis-ci.org/rthome/SharpNoise)
+
 ## Usage
 
 SharpNoise has [modules](https://github.com/rthome/SharpNoise/tree/master/SharpNoise/Modules) as building blocks for noise generators. There are two kinds of modules:
