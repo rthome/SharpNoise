@@ -65,6 +65,7 @@
     <Compile Include="Modules\AddTests.cs" />
     <Compile Include="Modules\BillowTests.cs" />
     <Compile Include="Modules\BlendTests.cs" />
+    <Compile Include="Modules\CacheTests.cs" />
     <Compile Include="Modules\ClampTests.cs" />
     <Compile Include="Modules\MaxTests.cs" />
     <Compile Include="Modules\MinTests.cs" />
