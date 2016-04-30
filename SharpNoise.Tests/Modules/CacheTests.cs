@@ -66,13 +66,21 @@ namespace SharpNoise.Tests.Modules
                     for (int k = 0; k < 100; k++)
                     {
                         SpinWait.SpinUntil(() => startFlag);
-                        var sourceValue = source.GetValue(i + k, i, i);
-                        Assert.Equal(sourceValue, cache.GetValue(i + k, i, i));
-                        Assert.Equal(sourceValue, cache.GetValue(i + k, i, i));
-                        Assert.Equal(sourceValue, cache.GetValue(i, i + k, i));
-                        Assert.Equal(sourceValue, cache.GetValue(i, i + k, i));
-                        Assert.Equal(sourceValue, cache.GetValue(i, i, i + k));
-                        Assert.Equal(sourceValue, cache.GetValue(i, i, i + k));
+
+                        var sourceValue1 = source.GetValue(i + k, i, i);
+                        Assert.Equal(sourceValue1, cache.GetValue(i + k, i, i));
+                        Assert.Equal(sourceValue1, cache.GetValue(i + k, i, i));
+
+                        var sourceValue2 = source.GetValue(i, i + k, i);
+                        Assert.Equal(sourceValue2, cache.GetValue(i, i + k, i));
+                        Assert.Equal(sourceValue2, cache.GetValue(i, i + k, i));
+
+                        var sourceValue3 = source.GetValue(i, i, i + k);
+                        Assert.Equal(sourceValue3, cache.GetValue(i, i, i + k));
+                        Assert.Equal(sourceValue3, cache.GetValue(i, i, i + k));
+
+                        Assert.NotEqual(sourceValue1, sourceValue2);
+                        Assert.NotEqual(sourceValue1, sourceValue3);
                     }
                 });
             }
