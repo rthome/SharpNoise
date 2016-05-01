@@ -6,10 +6,10 @@ SharpNoise is a loose port of Jason Bevins' [libNoise](http://libnoise.sourcefor
 
 Available on NuGet: https://www.nuget.org/packages/SharpNoise
 
-Builds:
+CI Builds:
 
-- Travis CI: [![Build Status](https://travis-ci.org/rthome/SharpNoise.svg?branch=master)](https://travis-ci.org/rthome/SharpNoise)
-- AppVeyor CI: [![Build status](https://ci.appveyor.com/api/projects/status/7sngtl1u2xghsymy/branch/master?svg=true)](https://ci.appveyor.com/project/rthome/sharpnoise/branch/master)
+- Linux/Mono (Travis): [![Build Status](https://travis-ci.org/rthome/SharpNoise.svg?branch=master)](https://travis-ci.org/rthome/SharpNoise)
+- Windows/.Net (AppVeyor): [![Build status](https://ci.appveyor.com/api/projects/status/7sngtl1u2xghsymy/branch/master?svg=true)](https://ci.appveyor.com/project/rthome/sharpnoise/branch/master)
 
 ## Usage
 
