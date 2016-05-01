@@ -1,0 +1,9 @@
+version: 1.0.{build}
+configuration:
+- Debug
+- Release
+before_build:
+- cmd: nuget restore SharpNoise.sln
+build:
+  project: SharpNoise.sln
+  verbosity: minimal
