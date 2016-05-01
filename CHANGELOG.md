@@ -5,7 +5,7 @@
 - Moved project to GitHub (from Bitbucket)
 - Rewrite and clean up unit tests with xUnit instead of MSTest, making them run on Mono.
 - Improve test coverage with new unit tests
-- Continuous Integration with Travis CI - but only under Mono at the moment.
+- Continuous Integration with Travis CI for Linux/Mono and AppVeyor for Windows/.NET
 - Some code refactoring to use C# 6 features
 - Move sample applications into a separate solution
 - Fix Cache module: Works now after deserialization
