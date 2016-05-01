@@ -11,11 +11,11 @@ namespace SharpNoise.Tests.Modules
     /// </summary>
     public class CacheTests
     {
-        class TestModule : Module
+        class CounterModule : Module
         {
             public double Counter { get; private set; }
 
-            public TestModule()
+            public CounterModule()
                 : base(0)
             {
             }
@@ -23,6 +23,19 @@ namespace SharpNoise.Tests.Modules
             public override double GetValue(double x, double y, double z)
             {
                 return ++Counter;
+            }
+        }
+
+        class ThreadIdModule : Module
+        {
+            public ThreadIdModule()
+                : base(0)
+            {
+            }
+
+            public override double GetValue(double x, double y, double z)
+            {
+                return Thread.CurrentThread.ManagedThreadId;
             }
         }
 
@@ -37,7 +50,7 @@ namespace SharpNoise.Tests.Modules
         [MemberData("PositionData")]
         public void TestGetValueCalledOnce(double x, double y, double z)
         {
-            var testModule = new TestModule();
+            var testModule = new CounterModule();
             var cache = new Cache { Source0 = testModule };
 
             var cachedValue = cache.GetValue(x, y, z);
@@ -53,7 +66,7 @@ namespace SharpNoise.Tests.Modules
         [InlineData(100)]
         public void TestMultithreaded(int threadCount)
         {
-            var source = new Perlin();
+            var source = new ThreadIdModule();
             var cache = new Cache { Source0 = source };
 
             var threadArray = new Thread[threadCount];
@@ -63,24 +76,13 @@ namespace SharpNoise.Tests.Modules
             {
                 threadArray[i] = new Thread(() =>
                 {
-                    for (int k = 0; k < 100; k++)
+                    for (int k = 0; k < 500; k++)
                     {
                         SpinWait.SpinUntil(() => startFlag);
 
-                        var sourceValue1 = source.GetValue(i + k, i, i);
-                        Assert.Equal(sourceValue1, cache.GetValue(i + k, i, i));
-                        Assert.Equal(sourceValue1, cache.GetValue(i + k, i, i));
-
-                        var sourceValue2 = source.GetValue(i, i + k, i);
-                        Assert.Equal(sourceValue2, cache.GetValue(i, i + k, i));
-                        Assert.Equal(sourceValue2, cache.GetValue(i, i + k, i));
-
-                        var sourceValue3 = source.GetValue(i, i, i + k);
-                        Assert.Equal(sourceValue3, cache.GetValue(i, i, i + k));
-                        Assert.Equal(sourceValue3, cache.GetValue(i, i, i + k));
-
-                        Assert.NotEqual(sourceValue1, sourceValue2);
-                        Assert.NotEqual(sourceValue1, sourceValue3);
+                        var sourceValue = source.GetValue(0, 0, 0);
+                        Assert.Equal(sourceValue, cache.GetValue(0, 0, 0));
+                        Assert.Equal(sourceValue, cache.GetValue(0, 0, 0));
                     }
                 });
             }
