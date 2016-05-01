@@ -71,6 +71,8 @@
     <Compile Include="Modules\ConstantTests.cs" />
     <Compile Include="Modules\CurveTests.cs" />
     <Compile Include="Modules\CylindersTests.cs" />
+    <Compile Include="Modules\DisplaceTests.cs" />
+    <Compile Include="Modules\ExponentTests.cs" />
     <Compile Include="Modules\MaxTests.cs" />
     <Compile Include="Modules\MinTests.cs" />
     <Compile Include="Modules\ModuleTests.cs" />
