@@ -31,7 +31,7 @@ namespace SharpNoise.Modules
     /// This noise module requires one source module.
     /// </remarks>
     [Serializable]
-    public class Cache : Module, IDeserializationCallback
+    public class Cache : Module, IDeserializationCallback, IDisposable
     {
         class CacheEntry
         {
@@ -41,8 +41,10 @@ namespace SharpNoise.Modules
             public double value;
         }
 
+        private bool disposedValue = false;
+
         [NonSerialized]
-        ThreadLocal<CacheEntry> localCacheEntry;
+        ThreadLocal<CacheEntry> localCacheEntry = new ThreadLocal<CacheEntry>();
 
         /// <summary>
         /// Gets or sets the first source module
@@ -53,20 +55,20 @@ namespace SharpNoise.Modules
             set { SourceModules[0] = value; }
         }
 
-        void IDeserializationCallback.OnDeserialization(object sender)
-        {
-            ResetCache();
-        }
-
         /// <summary>
         /// Constructor.
         /// </summary>
         public Cache()
             : base(1)
         {
-            localCacheEntry = new ThreadLocal<CacheEntry>();
         }
 
+        /// <summary>
+        /// Reset cached value
+        /// </summary>
+        /// <remarks>
+        /// Resets the cache for all threads
+        /// </remarks>
         public void ResetCache()
         {
             var oldCacheEntry = localCacheEntry;
@@ -103,5 +105,39 @@ namespace SharpNoise.Modules
 
             return cached.value;
         }
+
+        /// <summary>
+        /// Callback for .NET serialization to perform additional initialization after an object has been reconstructed
+        /// </summary>
+        /// <param name="sender">The sender object</param>
+        /// <seealso cref="IDeserializationCallback"/>
+        public virtual void OnDeserialization(object sender)
+        {
+            ResetCache();
+        }
+
+        #region IDisposable Support
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects).
+                }
+
+                localCacheEntry?.Dispose();
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        #endregion
     }
 }
