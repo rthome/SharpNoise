@@ -15,10 +15,10 @@ CI Builds:
 
 SharpNoise has [modules](https://github.com/rthome/SharpNoise/tree/master/SharpNoise/Modules) as building blocks for noise generators. There are two kinds of modules:
 
-* Generator modules, which produce the actual noise
-* Modifier and Combiner modules, which take one or more inputs and do something with them, producing a new value
+* Generator modules, which produce noise values and have no sources
+* Modifier and Combiner modules, which take one or more source modules and produce a new output from the values of their sources.
 
-These modules can be joined together in a tree structure to generate very complex noise patterns.
+These modules can be joined together in a tree of noise modules to generate very complex noise patterns.
 
 ### Example Applications
 
