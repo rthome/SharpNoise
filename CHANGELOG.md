@@ -9,6 +9,7 @@
 - Some code refactoring to use C# 6 features
 - Move sample applications into a separate solution
 - Cache module: Works now after deserialization and implements IDisposable
+- Separate SharpNoise.Utilities into a separate NuGet package
 
 ## 0.10.0
 
