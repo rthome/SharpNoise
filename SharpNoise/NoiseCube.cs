@@ -201,6 +201,7 @@ namespace SharpNoise
         /// <param name="src">The source NoiseCube</param>
         /// <param name="width">Width of the new NoiseCube</param>
         /// <param name="height">Height of the new NoiseCube</param>
+        /// <param name="depth">Depth of the new NoiseCube</param>
         /// <param name="clamp">Use clamping when the sample is outside the source NoiseCube</param>
         /// <returns>The new NoiseCube</returns>
         public static NoiseCube TrilinearFilter(NoiseCube src, int width, int height, int depth, bool clamp = false)

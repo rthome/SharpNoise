@@ -41,7 +41,9 @@ namespace SharpNoise.Tests.Modules
         public void SourceIndexOutOfRangeTest()
         {
             var module = new Abs();
+#pragma warning disable CS0251 // Indexing an array with a negative index
             Assert.Throws<IndexOutOfRangeException>(() => module.SourceModules[-1]);
+#pragma warning restore CS0251 // Indexing an array with a negative index
             Assert.Throws<IndexOutOfRangeException>(() => module.SourceModules[module.SourceModuleCount]);
             Assert.Throws<IndexOutOfRangeException>(() => module.SourceModules[module.SourceModuleCount + 2]);
         }

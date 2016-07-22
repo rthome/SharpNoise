@@ -37,7 +37,7 @@ namespace SharpNoise.Modules
     /// method.
     ///
     /// An application can set the control module with the <see cref="Control"/>
-    /// property instead of the <see cref="SetSourceModule"/> method.  This may make the
+    /// property instead of the <see cref="Module.SourceModules"/> property.  This may make the
     /// application code easier to read.
     ///
     /// By default, there is an abrupt transition between the output values
