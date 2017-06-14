@@ -1,10 +1,8 @@
 language: csharp
 mono:
     - latest
-    - 4.2.4
-    - 4.4.2
     - 4.6.2
-    - 4.8.0
+    - 4.8.1
 install:
     - nuget restore SharpNoise.sln
     - nuget restore Examples/SharpNoiseSamples.sln
