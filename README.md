@@ -23,6 +23,7 @@ These modules can be joined together in a tree of noise modules to generate very
 
 To see how to use SharpNoise, check out the example applications:
 
+* [BeginnerSample](https://github.com/rthome/SharpNoise/tree/master/Examples/BeginnerSample) is a very simple first sample that just renders an image from a noisemap and saves it as a PNG.
 * [ComplexPlanetExample](https://github.com/rthome/SharpNoise/tree/master/Examples/ComplexPlanetExample) generates a complex planetary surface, using [over 100 connected noise modules](https://github.com/rthome/SharpNoise/blob/master/Examples/ComplexPlanetExample/PlanetGenerator.cs).
 * [OpenGLExample](https://github.com/rthome/SharpNoise/tree/master/Examples/OpenGLExample) renders ever-changing data from a simpler noise generator in real time, using OpenGL 3.3.
 * [NoiseTester](https://github.com/rthome/SharpNoise/tree/master/Examples/NoiseTester) is a rough visualization tool that shows how the output of different modules is combined.
