@@ -1,14 +1,10 @@
 # SharpNoise
 
-A library for generating coherent noise. It can be used to procedurally create natural-looking textures (such as wood, stone, or clouds), terrain heightmaps, and other things.
+A library for generating coherent noise. It can be used to procedurally create natural-looking textures (such as wood, stone, or clouds), terrain heightmaps, normal maps, and a lot more.
 
-SharpNoise is a loose port of Jason Bevins' [libNoise](http://libnoise.sourceforge.net/) to C#. It adds some .NET features such as serialization and support for [C# Object Initializer syntax](http://msdn.microsoft.com/en-us/library/bb384062.aspx). SharpNoise is published unter the terms of the Gnu LGPL 3.
+SharpNoise is a loose port of Jason Bevins' [libNoise](http://libnoise.sourceforge.net/) to C#. SharpNoise is published unter the terms of the Gnu LGPL 3.
 
 Available on NuGet: https://www.nuget.org/packages/SharpNoise
-
-|Travis CI|AppVeyor|
-|:--:|:--:|
-|[![Build Status](https://travis-ci.org/rthome/SharpNoise.svg?branch=master)](https://travis-ci.org/rthome/SharpNoise)|[![Build status](https://ci.appveyor.com/api/projects/status/7sngtl1u2xghsymy/branch/master?svg=true)](https://ci.appveyor.com/project/rthome/sharpnoise/branch/master)|
 
 ## Usage
 
