@@ -194,13 +194,12 @@ namespace SharpNoise.Modules
         // And ported over to C# by me!
         public override double GetValue(double x, double y, double z)
         {
+            double value = 0.0;
+            double weight = 1.0;
+
             x *= Frequency;
             y *= Frequency;
             z *= Frequency;
-
-            double signal = 0.0;
-            double value = 0.0;
-            double weight = 1.0;
 
             // These parameters should be user-defined; they may be exposed in a
             // future version of libnoise.
@@ -210,8 +209,8 @@ namespace SharpNoise.Modules
             for (var curOctave = 0; curOctave < OctaveCount; curOctave++)
             {
                 // Get the coherent-noise value.
-                int seed = (Seed + curOctave) & 0x7fffffff;
-                signal = NoiseGenerator.GradientCoherentNoise3D(x, y, z, seed, Quality);
+                var seed = (Seed + curOctave) & 0x7fffffff;
+                var signal = NoiseGenerator.GradientCoherentNoise3D(x, y, z, seed, Quality);
 
                 // Make the ridges.
                 signal = offset - Math.Abs(signal);

@@ -47,8 +47,7 @@ namespace SharpNoise.Tests
         [InlineData(45.0, 45.0, 0.5, 0.707107, 0.5)]
         public void LatLonTest(double lat, double lon, double expX, double expY, double expZ)
         {
-            double x, y, z;
-            NoiseMath.LatLonToXYZ(lat, lon, out x, out y, out z);
+            NoiseMath.LatLonToXYZ(lat, lon, out double x, out double y, out double z);
             Assert.Equal(expX, x, 6);
             Assert.Equal(expY, y, 6);
             Assert.Equal(expZ, z, 6);

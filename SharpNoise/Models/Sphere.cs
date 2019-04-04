@@ -56,8 +56,7 @@ namespace SharpNoise.Models
         /// </remarks>
         public double GetValue(double lat, double lon)
         {
-            double x, y, z;
-            NoiseMath.LatLonToXYZ(lat, lon, out x, out y, out z);
+            NoiseMath.LatLonToXYZ(lat, lon, out double x, out double y, out double z);
             return Source.GetValue(x, y, z);
         }
     }
