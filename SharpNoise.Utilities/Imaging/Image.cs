@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace SharpNoise.Utilities.Imaging
 {
@@ -20,16 +21,7 @@ namespace SharpNoise.Utilities.Imaging
     /// </remarks>
     public class Image : Map<Color>
     {
-        public override int UsedMemory
-        {
-            get
-            {
-                unsafe
-                {
-                    return values.Length * sizeof(Color);
-                }
-            }
-        }
+        public override int UsedMemory => values.Length * Marshal.SizeOf<Color>();
 
         /// <summary>
         /// Constructor.

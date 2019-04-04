@@ -3,6 +3,7 @@ using SharpNoise.Builders;
 using SharpNoise.Utilities.Imaging;
 using System;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -107,7 +108,7 @@ namespace ComplexPlanetExample
                 filename = sfd.FileName;
             }
 
-            planetImage.SaveGdiBitmap(filename, System.Drawing.Imaging.ImageFormat.Png);
+            planetImage.SaveGdiBitmap(filename, ImageFormat.Png);
         }
     }
 }

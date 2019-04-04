@@ -1,6 +1,8 @@
-﻿using SharpNoise.Modules;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+
+using SharpNoise.Modules;
+
 using Xunit;
 
 namespace SharpNoise.Tests.Modules
@@ -13,7 +15,7 @@ namespace SharpNoise.Tests.Modules
         public static IEnumerable<object[]> ConstantDataSource => Enumerable.Range(-5, 11).Select(i => i / 10.0).Select(d => new object[] { d });
 
         [Theory]
-        [MemberData("ConstantDataSource")]
+        [MemberData(nameof(ConstantDataSource))]
         public void TestValues(double data)
         {
             var constant = new Constant { ConstantValue = data };
@@ -22,7 +24,7 @@ namespace SharpNoise.Tests.Modules
         }
 
         [Theory]
-        [MemberData("ConstantDataSource")]
+        [MemberData(nameof(ConstantDataSource))]
         public void TestSettingValues(double data)
         {
             var constant = new Constant { ConstantValue = data };

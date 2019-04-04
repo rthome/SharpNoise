@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNoise", "SharpNoise\SharpNoise.csproj", "{948B0E7C-6FB1-41ED-BAFC-971E54F8C14D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNoise", "SharpNoise\SharpNoise.csproj", "{0EC15AFB-4158-4B8D-AFE0-E183A52FE237}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNoise.Utilities", "SharpNoise.Utilities\SharpNoise.Utilities.csproj", "{EFE8B9D6-9A63-4112-9830-E46901ED4578}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNoise.Utilities", "SharpNoise.Utilities\SharpNoise.Utilities.csproj", "{745A2708-52F7-4744-B6E9-37CF344A5824}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNoise.Tests", "SharpNoise.Tests\SharpNoise.Tests.csproj", "{F554D61C-2026-45B3-AB95-851FA60EBAB6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNoise.Tests", "SharpNoise.Tests\SharpNoise.Tests.csproj", "{654D7D14-347F-4489-B963-B63D2A4BED4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,20 +15,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{948B0E7C-6FB1-41ED-BAFC-971E54F8C14D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{948B0E7C-6FB1-41ED-BAFC-971E54F8C14D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{948B0E7C-6FB1-41ED-BAFC-971E54F8C14D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{948B0E7C-6FB1-41ED-BAFC-971E54F8C14D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EFE8B9D6-9A63-4112-9830-E46901ED4578}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EFE8B9D6-9A63-4112-9830-E46901ED4578}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EFE8B9D6-9A63-4112-9830-E46901ED4578}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EFE8B9D6-9A63-4112-9830-E46901ED4578}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F554D61C-2026-45B3-AB95-851FA60EBAB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F554D61C-2026-45B3-AB95-851FA60EBAB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F554D61C-2026-45B3-AB95-851FA60EBAB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F554D61C-2026-45B3-AB95-851FA60EBAB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EC15AFB-4158-4B8D-AFE0-E183A52FE237}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EC15AFB-4158-4B8D-AFE0-E183A52FE237}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EC15AFB-4158-4B8D-AFE0-E183A52FE237}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EC15AFB-4158-4B8D-AFE0-E183A52FE237}.Release|Any CPU.Build.0 = Release|Any CPU
+		{745A2708-52F7-4744-B6E9-37CF344A5824}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{745A2708-52F7-4744-B6E9-37CF344A5824}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{745A2708-52F7-4744-B6E9-37CF344A5824}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{745A2708-52F7-4744-B6E9-37CF344A5824}.Release|Any CPU.Build.0 = Release|Any CPU
+		{654D7D14-347F-4489-B963-B63D2A4BED4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{654D7D14-347F-4489-B963-B63D2A4BED4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{654D7D14-347F-4489-B963-B63D2A4BED4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{654D7D14-347F-4489-B963-B63D2A4BED4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {955BCE85-6AD5-4020-9439-B7FE93F4E137}
 	EndGlobalSection
 EndGlobal

@@ -8,7 +8,7 @@ using SharpNoise.Utilities.Imaging;
 
 namespace BeginnerSample
 {
-	class MainClass
+	class Program
 	{
 		public static void Main(string[] args)
 		{

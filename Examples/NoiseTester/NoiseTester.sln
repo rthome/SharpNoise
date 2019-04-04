@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoiseTester", "NoiseTester.csproj", "{3AACDC91-A8E3-4129-8B71-8A09286F3BC2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharpNoise", "SharpNoise", "{121454AF-6558-4838-9A9C-945667C2DBDE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpNoise", "..\..\SharpNoise\SharpNoise.csproj", "{5E84E11D-5E5E-4B33-BFC2-F80CC0FBE07E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpNoise.Utilities", "..\..\SharpNoise.Utilities\SharpNoise.Utilities.csproj", "{5A57DD1C-61E4-41DB-8C98-7F238ED32B30}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3AACDC91-A8E3-4129-8B71-8A09286F3BC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AACDC91-A8E3-4129-8B71-8A09286F3BC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AACDC91-A8E3-4129-8B71-8A09286F3BC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AACDC91-A8E3-4129-8B71-8A09286F3BC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E84E11D-5E5E-4B33-BFC2-F80CC0FBE07E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E84E11D-5E5E-4B33-BFC2-F80CC0FBE07E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E84E11D-5E5E-4B33-BFC2-F80CC0FBE07E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E84E11D-5E5E-4B33-BFC2-F80CC0FBE07E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A57DD1C-61E4-41DB-8C98-7F238ED32B30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A57DD1C-61E4-41DB-8C98-7F238ED32B30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A57DD1C-61E4-41DB-8C98-7F238ED32B30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A57DD1C-61E4-41DB-8C98-7F238ED32B30}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5E84E11D-5E5E-4B33-BFC2-F80CC0FBE07E} = {121454AF-6558-4838-9A9C-945667C2DBDE}
+		{5A57DD1C-61E4-41DB-8C98-7F238ED32B30} = {121454AF-6558-4838-9A9C-945667C2DBDE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9CC82CE7-E725-453C-9DEC-4A3D25C773F6}
+	EndGlobalSection
+EndGlobal
