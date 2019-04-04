@@ -3,6 +3,8 @@
 ## 0.12.0
 
 - Upgraded the project to target .NET Standard 2.0 (at last)
+- Add new white noise module (by https://github.com/SirePi)
+- Generalize Voronoi to support several cell functions (by https://github.com/SirePi)
 
 ## 0.11.0
 

@@ -34,7 +34,7 @@ namespace SharpNoise.Tests
                     {
                         Scale = -0.5,
                         Bias = 0,
-                        Source0 = new Voronoi
+                        Source0 = new Cell
                         {
                             Seed = 1,
                             Frequency = 16,

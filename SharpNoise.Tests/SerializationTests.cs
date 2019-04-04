@@ -67,7 +67,8 @@ namespace SharpNoise.Tests
                 new Spheres() { Frequency=Spheres.DefaultFrequency*2},
                 new TranslatePoint() { Source0=source0, XTranslation=2, YTranslation=3, ZTranslation=4},
                 new Turbulence() { Source0=source0, Frequency=Turbulence.DefaultFrequency*2},
-                new Voronoi(){ Displacement=Voronoi.DefaultDisplacement*2},
+                new Cell(){ Displacement=Cell.DefaultDisplacement*2},
+                new White(){ Seed=123 },
             };
 
             var serializedModules = new byte[modules.Length][];
