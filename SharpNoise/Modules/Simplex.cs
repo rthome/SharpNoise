@@ -47,8 +47,8 @@ namespace SharpNoise.Modules
             138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
         };
 
-        private static short[] Perm = new short[512];
-        private static short[] PermMod12 = new short[512];
+        private static readonly short[] Perm = new short[512];
+        private static readonly short[] PermMod12 = new short[512];
 
         static Simplex()
         {
@@ -285,7 +285,6 @@ namespace SharpNoise.Modules
         public override double GetValue(double x, double y, double z)
         {
             double value = 0D;
-            double signal = 0D;
             double currentPersistence = 1D;
 
             x *= Frequency;
@@ -294,7 +293,7 @@ namespace SharpNoise.Modules
 
             for (var currentOctave = 0; currentOctave < OctaveCount; currentOctave++)
             {
-                signal = SimplexNoise3D(x, y, z);
+                var signal = SimplexNoise3D(x, y, z);
                 value += signal * currentPersistence;
 
                 x *= Lacunarity;

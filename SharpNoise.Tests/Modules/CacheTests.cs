@@ -1,7 +1,8 @@
-﻿using SharpNoise.Modules;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
+
+using SharpNoise.Modules;
+
 using Xunit;
 
 namespace SharpNoise.Tests.Modules
@@ -47,7 +48,7 @@ namespace SharpNoise.Tests.Modules
         }
 
         [Theory]
-        [MemberData("PositionData")]
+        [MemberData(nameof(PositionData))]
         public void TestGetValueCalledOnce(double x, double y, double z)
         {
             var testModule = new CounterModule();

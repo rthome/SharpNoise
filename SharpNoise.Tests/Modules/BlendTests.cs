@@ -1,7 +1,8 @@
-﻿using SharpNoise.Modules;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+
+using SharpNoise.Modules;
+
 using Xunit;
 
 namespace SharpNoise.Tests.Modules
@@ -27,7 +28,7 @@ namespace SharpNoise.Tests.Modules
         }
 
         [Theory]
-        [MemberData("AlphaDataSource")]
+        [MemberData(nameof(AlphaDataSource))]
         public void BlendZeroToOneTest(double a)
         {
             var module = new Blend
@@ -42,7 +43,7 @@ namespace SharpNoise.Tests.Modules
         }
 
         [Theory]
-        [MemberData("ScaledAlphas")]
+        [MemberData(nameof(ScaledAlphas))]
         public void BlendScaledRangeTest(double a, double scale)
         {
             //var a = data[0];

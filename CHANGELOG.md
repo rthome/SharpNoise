@@ -1,6 +1,10 @@
 # SharpNoise Changelog
 
-## 0.11.0 (in development)
+## 0.12.0
+
+- Upgraded the project to target .NET Standard 2.0 (at last)
+
+## 0.11.0
 
 - Moved project to GitHub (from Bitbucket)
 - Rewrite and clean up unit tests with xUnit instead of MSTest, making them run on Mono.

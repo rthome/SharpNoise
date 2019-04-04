@@ -1,48 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{90C37104-C707-41F4-A5F7-B488963E3481}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>BeginnerSample</RootNamespace>
-    <AssemblyName>BeginnerSample</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <StartupObject>BeginnerSample.Program</StartupObject>
+    <Authors>Raffael Thome</Authors>
+    <Product>SharpNoise</Product>
+    <Copyright>Copyright © Raffael Thome</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/rthome/SharpNoise</PackageProjectUrl>
+    <PackageIconUrl></PackageIconUrl>
+    <RepositoryUrl>https://github.com/rthome/SharpNoise.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ExternalConsole>true</ExternalConsole>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ExternalConsole>true</ExternalConsole>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Drawing" />
+    <ProjectReference Include="..\..\SharpNoise.Utilities\SharpNoise.Utilities.csproj" />
+    <ProjectReference Include="..\..\SharpNoise\SharpNoise.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\SharpNoise.Utilities\SharpNoise.Utilities.csproj">
-      <Project>{EFE8B9D6-9A63-4112-9830-E46901ED4578}</Project>
-      <Name>SharpNoise.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\SharpNoise\SharpNoise.csproj">
-      <Project>{948B0E7C-6FB1-41ED-BAFC-971E54F8C14D}</Project>
-      <Name>SharpNoise</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
 </Project>
