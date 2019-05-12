@@ -48,7 +48,7 @@ namespace SharpNoise
             var q = (n0 - n1) - p;
             var r = n2 - n0;
             var s = n1;
-            return (p * a * a * a) + (q * a * a * a) + (r * a) + s;
+            return (p * a * a * a) + (q * a * a) + (r * a) + s;
         }
 
         /// <summary>
