@@ -734,7 +734,7 @@ namespace ComplexPlanetExample
                         // generate the detail to add to the dunes.  By enabling the distance
                         // algorithm, small polygonal pits are generated; the edges of the pits
                         // are joined to the edges of nearby pits.
-                        Source0 = new Voronoi
+                        Source0 = new Cell
                         {
                             Seed = Settings.Seed + 81,
                             Frequency = 16183.25,
