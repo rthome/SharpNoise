@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.12.1.0</Version>
+    <Version>0.12.1.1</Version>
     <Authors>Raffael Thome</Authors>
     <Company>Raffael Thome</Company>
     <Description>A library for generating coherent noise.</Description>
@@ -11,6 +11,7 @@
     <PackageProjectUrl>https://github.com/rthome/SharpNoise</PackageProjectUrl>
     <RepositoryUrl>https://github.com/rthome/SharpNoise.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
