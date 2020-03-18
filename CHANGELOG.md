@@ -1,5 +1,10 @@
 # SharpNoise Changelog
 
+## 0.12.1
+
+- Fix bug in cubic interpolation function ([Issue #18](https://github.com/rthome/SharpNoise/issues/18))
+- Fix PlanetBuilderExample which was broken by the rename of the Cell module (formerly known as Voronoi)
+
 ## 0.12.0
 
 - Upgraded the project to target .NET Standard 2.0 (at last)
