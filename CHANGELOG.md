@@ -1,5 +1,9 @@
 # SharpNoise Changelog
 
+## 0.12.1.1
+
+- Generate xml doc files on build and include them in NuGet packages
+
 ## 0.12.1
 
 - Fix bug in cubic interpolation function ([Issue #18](https://github.com/rthome/SharpNoise/issues/18))
