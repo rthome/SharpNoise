@@ -62,6 +62,10 @@ namespace SharpNoise.Modules
         /// <returns>Returns the computed value</returns>
         public override double GetValue(double x, double y, double z)
         {
+            x *= Frequency;
+            y *= Frequency;
+            z *= Frequency;
+
             var distFromCenter = Math.Sqrt(x * x + y * y + z * z);
             var distFromSmallerSphere = distFromCenter - Math.Floor(distFromCenter);
             var distFromLargerSphere = 1.0 - distFromSmallerSphere;
